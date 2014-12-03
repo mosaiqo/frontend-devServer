@@ -1,3 +1,5 @@
+/* global require, module, process, __dirname */
+/* jshint -W097 */
 'use strict';
 
 // simple express server
