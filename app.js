@@ -35,7 +35,6 @@ var mongoConfigParser = require('./lib/mongoConfigParser');
 
 var mongoConn = new mongoConfigParser()
   .setEnvDir( rootDir + 'db/mongo/env' )
-  .setMongoConfigFile( rootDir + 'db/mongo/conf/mongodb.conf' )
   .getConnectionString();
 
 console.log(mongoConn);
