@@ -7,11 +7,12 @@
 // =============================================================================
 var
   express    = require('express'),
-  app        = express(),
   bodyParser = require('body-parser'),
-  router     = express.Router(),
-  publicDir  = __dirname + '/../../dist',
-  port       = process.env.PORT || 5000;
+
+  rootDir    = __dirname + '/../../',
+  publicDir  = rootDir + 'dist/',
+  port       = process.env.PORT || 5000,
+  app        = express();
 
 
 // configure app to use bodyParser()
@@ -24,12 +25,27 @@ app.use(express.static(publicDir));
 
 // root
 app.get('/', function(req, res) {
-    res.sendfile(publicDir + '/index.html');
+    res.sendfile(publicDir + 'index.html');
 });
+
+
+// MONGO CONF.
+// =============================================================================
+var mongoConfigParser = require('./lib/mongoConfigParser');
+
+var mongoConn = new mongoConfigParser()
+  .setEnvDir( rootDir + 'db/mongo/env' )
+  .setMongoConfigFile( rootDir + 'db/mongo/conf/mongodb.conf' )
+  .getConnectionString();
+
+console.log(mongoConn);
+
 
 
 // API ROUTES
 // =============================================================================
+
+var router = express.Router();
 
 // test route to make sure everything is working (accessed at GET http://localhost:PORT/api)
 router.get('/', function(req, res) {
