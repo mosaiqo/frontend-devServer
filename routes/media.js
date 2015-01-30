@@ -28,8 +28,10 @@ module.exports = function(router) {
 
       // save the media and check for errors
       model.save(function(err) {
-        if (err)
+        if (err) {
           res.send(err);
+          return;
+        }
 
         res.json({ message: 'Media created!' });
       });
@@ -42,8 +44,17 @@ module.exports = function(router) {
     // get the media with that id (accessed at GET http://localhost:port/api/media/:media_id)
     .get(function(req, res) {
       Media.findById(req.params.media_id, function(err, model) {
-        if (err)
+
+        if (err) {
           res.send(err);
+          return;
+        }
+
+        if (!model) {
+          res.sendStatus(404);
+          return;
+        }
+
         res.json(model);
       });
     })
@@ -55,8 +66,15 @@ module.exports = function(router) {
       // use our media model to find the media we want
       Media.findById(req.params.media_id, function(err, model) {
 
-        if (err)
+        if (err) {
           res.send(err);
+          return;
+        }
+
+        if (!model) {
+          res.sendStatus(404);
+          return;
+        }
 
         // update the media info
         model.name        = req.body.name;
@@ -65,8 +83,10 @@ module.exports = function(router) {
 
         // save the model
         model.save(function(err) {
-          if (err)
+          if (err) {
             res.send(err);
+            return;
+          }
 
           res.json({ message: 'Media updated!' });
         });
@@ -79,8 +99,11 @@ module.exports = function(router) {
       Media.remove({
         _id: req.params.media_id
       }, function(err, model) {
-        if (err)
+
+        if (err) {
           res.send(err);
+          return;
+        }
 
         res.json({ message: 'Successfully deleted' });
       });
