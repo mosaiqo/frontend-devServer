@@ -37,7 +37,7 @@ module.exports = function(router) {
           return;
         }
 
-        res.json({ message: 'Media created!' });
+        res.json(model);
       });
 
     });
@@ -92,7 +92,7 @@ module.exports = function(router) {
             return;
           }
 
-          res.json({ message: 'Media updated!' });
+          res.json(model);
         });
       });
     })
