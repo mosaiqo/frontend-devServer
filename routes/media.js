@@ -8,8 +8,12 @@ module.exports = function(router) {
     // get all the media (accessed at GET http://localhost:port/api/media)
     .get(function(req, res) {
       Media.find(function(err, models) {
-        if (err)
+
+        if (err) {
           res.send(err);
+          return;
+        }
+
         res.json(models);
       });
     })
