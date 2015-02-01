@@ -20,7 +20,7 @@ describe('api/media', function() {
     // populate the database (the dev. one, this is only for development purposes!)
     var exec = require('child_process').exec;
 
-    this.timeout(2000);
+    this.timeout(10000);
     exec('grunt mongo:populate', done);
   });
 
