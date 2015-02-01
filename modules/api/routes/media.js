@@ -1,7 +1,10 @@
 module.exports = function(router) {
 'use strict';
 
-  var Media = require('../models/Media');
+  var
+    Media   = require('../models/Media'),
+    apiUtil = require('../../../lib/apiUtil');;
+
 
   router.route('/media')
 
@@ -10,7 +13,7 @@ module.exports = function(router) {
       Media.find(function(err, models) {
 
         if (err) {
-          res.send(err);
+          res.status(500).json(apiUtil.getErrorResponse(500, null, err));
           return;
         }
 
@@ -33,7 +36,7 @@ module.exports = function(router) {
       // save the media and check for errors
       model.save(function(err) {
         if (err) {
-          res.send(err);
+          res.status(500).json(apiUtil.getErrorResponse(500, null, err));
           return;
         }
 
@@ -50,12 +53,12 @@ module.exports = function(router) {
       Media.findById(req.params.media_id, function(err, model) {
 
         if (err) {
-          res.send(err);
+          res.status(500).json(apiUtil.getErrorResponse(500, null, err));
           return;
         }
 
         if (!model) {
-          res.sendStatus(404);
+          res.status(404).json(apiUtil.getErrorResponse(404));
           return;
         }
 
@@ -71,12 +74,12 @@ module.exports = function(router) {
       Media.findById(req.params.media_id, function(err, model) {
 
         if (err) {
-          res.send(err);
+          res.status(500).json(apiUtil.getErrorResponse(500, null, err));
           return;
         }
 
         if (!model) {
-          res.sendStatus(404);
+          res.status(404).json(apiUtil.getErrorResponse(404));
           return;
         }
 
@@ -100,16 +103,21 @@ module.exports = function(router) {
 
     // delete the media with this id (accessed at DELETE http://localhost:port/api/media/:media_id)
     .delete(function(req, res) {
-      Media.remove({
+      Media.findOneAndRemove({
         _id: req.params.media_id
       }, function(err, model) {
 
         if (err) {
-          res.send(err);
+          res.status(500).json(apiUtil.getErrorResponse(500, null, err));
           return;
         }
 
-        res.json({ message: 'Successfully deleted' });
+        if (!model) {
+          res.status(404).json(apiUtil.getErrorResponse(404));
+          return;
+        }
+
+        res.json({ message: 'Successfully deleted', model: model });
       });
     });
 
