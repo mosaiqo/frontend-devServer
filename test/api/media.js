@@ -148,11 +148,13 @@ describe('api/media', function() {
   // -- DELETE ----------------------------------
   describe('Delete a media object -> DELETE /api/media/:id', function() {
 
+    var deletedModel;
+
     it('responds with json', function(done) {
       request(app)
         .delete('/api/media/a-non-existing-record-id')
         .set('Accept', 'application/json')
-        .expect('Content-Type', /application\/json/, done)
+        .expect('Content-Type', /application\/json/)
         .expect(404, done);
     });
 
@@ -164,6 +166,33 @@ describe('api/media', function() {
     });
 
 
+    it('returns the deleted model', function(done) {
+      request(app)
+        .delete('/api/media/'+firstRecord._id)
+        .end(function(err, res) {
+
+          expect(err).to.not.exist;
+
+          deletedModel = res.body;
+
+          expect(deletedModel).to.be.an('object');
+
+          expect(deletedModel).to.have.property('_id');
+          expect(deletedModel).to.have.property('name');
+          expect(deletedModel).to.have.property('description');
+          expect(deletedModel).to.have.property('url');
+          expect(deletedModel).to.have.property('active');
+
+          expect(deletedModel._id).not.to.be.null;
+
+          done();
+        });
+    });
+
+
+    it('deletes the requested model', function(done) {
+      request(app).get('/api/media/'+deletedModel._id).expect(404, done);
+    });
 
 
   });
