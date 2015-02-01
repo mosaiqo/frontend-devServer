@@ -15,6 +15,22 @@ describe('api/media', function() {
 
   var firstRecord;
 
+  var isValidMediaObject = function(obj) {
+
+    expect(obj).to.be.an('object');
+
+    expect(obj).to.have.property('_id');
+    expect(obj).to.have.property('name');
+    expect(obj).to.have.property('description');
+    expect(obj).to.have.property('url');
+    expect(obj).to.have.property('active');
+
+    expect(obj._id).not.to.be.null;
+  };
+
+
+
+
 
   before(function(done) {
     // populate the database (the dev. one, this is only for development purposes!)
@@ -53,11 +69,8 @@ describe('api/media', function() {
           // save a reference for later usage
           firstRecord = res.body[0];
 
-          expect(firstRecord).to.have.property('_id');
-          expect(firstRecord).to.have.property('name');
-          expect(firstRecord).to.have.property('description');
-          expect(firstRecord).to.have.property('url');
-          expect(firstRecord).to.have.property('active');
+          // check the node attributes
+          isValidMediaObject(firstRecord);
 
           done();
         });
@@ -93,17 +106,8 @@ describe('api/media', function() {
 
           expect(err).to.not.exist;
 
-          var model = res.body;
-
-          expect(model).to.be.an('object');
-
-          expect(model).to.have.property('_id');
-          expect(model).to.have.property('name');
-          expect(model).to.have.property('description');
-          expect(model).to.have.property('url');
-          expect(model).to.have.property('active');
-
-          expect(model._id).not.to.be.null;
+          // check the node attributes
+          isValidMediaObject(res.body);
 
           done();
         });
@@ -187,15 +191,8 @@ describe('api/media', function() {
 
           deletedModel = res.body;
 
-          expect(deletedModel).to.be.an('object');
-
-          expect(deletedModel).to.have.property('_id');
-          expect(deletedModel).to.have.property('name');
-          expect(deletedModel).to.have.property('description');
-          expect(deletedModel).to.have.property('url');
-          expect(deletedModel).to.have.property('active');
-
-          expect(deletedModel._id).not.to.be.null;
+          // check the node attributes
+          isValidMediaObject(deletedModel);
 
           done();
         });
