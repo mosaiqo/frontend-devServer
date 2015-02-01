@@ -10,7 +10,7 @@ var
   rootDir    = __dirname + '/../../',
   publicDir  = rootDir + 'dist/',
   port       = process.env.PORT || 5000,
-  app        = express();
+  app        = exports.app = express();
 
 
 // BASE SETUP
