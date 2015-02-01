@@ -103,10 +103,11 @@ module.exports = function(router) {
 
     // delete the media with this id (accessed at DELETE http://localhost:port/api/media/:media_id)
     .delete(function(req, res) {
-      Media.findOneAndRemove({
+      var model = Media.findOne({
         _id: req.params.media_id
-      }, function(err, model) {
+      })
 
+      Media.findById(req.params.media_id, function(err, model) {
         if (err) {
           res.status(500).json(apiUtil.getErrorResponse(500, null, err));
           return;
@@ -117,7 +118,9 @@ module.exports = function(router) {
           return;
         }
 
-        res.json({ message: 'Successfully deleted', model: model });
+        model.remove(function() {
+          res.json(model);
+        });
       });
     });
 
