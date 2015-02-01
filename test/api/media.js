@@ -16,6 +16,15 @@ describe('api/media', function() {
   var firstRecord;
 
 
+  before(function(done) {
+    // populate the database (the dev. one, this is only for development purposes!)
+    var exec = require('child_process').exec;
+
+    this.timeout(2000);
+    exec('grunt mongo:populate', done);
+  });
+
+
   // -- GET ALL ---------------------------------
 
   describe('Get all media objects -> GET /api/media', function() {
@@ -104,6 +113,7 @@ describe('api/media', function() {
 
 
   // -- CREATE ----------------------------------
+
   describe('Create a new media object -> POST /api/media', function() {
 
 /*
@@ -122,6 +132,7 @@ describe('api/media', function() {
 
 
   // -- UPDATE ----------------------------------
+
   describe('Update a media object -> PUT /api/media/:id', function() {
 
     /*
@@ -146,6 +157,7 @@ describe('api/media', function() {
 
 
   // -- DELETE ----------------------------------
+
   describe('Delete a media object -> DELETE /api/media/:id', function() {
 
     var deletedModel;
