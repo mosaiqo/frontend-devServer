@@ -5,6 +5,7 @@ var
 var MediaSchema = new Schema({
   name:        String,
   description: String,
+  url:         String,
   active:      Boolean
 });
 
