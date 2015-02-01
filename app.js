@@ -41,7 +41,7 @@ var mongoConn = new mongoConfigParser()
   .getConnectionString();
 
 // connect
-mongoose.connect(mongoConn)
+mongoose.connect(mongoConn);
 
 
 
