@@ -7,8 +7,7 @@ var
   express    = require('express'),
   bodyParser = require('body-parser'),
 
-  rootDir    = __dirname + '/../frontend/',
-  publicDir  = rootDir + 'dist/',
+  publicDir  = process.env.appPublicDir,
   port       = process.env.PORT || 5000,
   app        = exports.app = express();
 
@@ -26,7 +25,7 @@ app.use(express.static(publicDir));
 
 // root
 app.get('/', function(req, res) {
-    res.sendfile(publicDir + 'index.html');
+    res.sendfile(publicDir + '/index.html');
 });
 
 

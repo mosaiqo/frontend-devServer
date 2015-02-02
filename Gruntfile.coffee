@@ -1,5 +1,20 @@
 module.exports = (grunt) ->
 
+  # Default path to the frontend public dir (called 'dist')
+  frontendAppPublicDir = '../frontend'
+
+  # The path can be overrided so you can place the frontendApp wherever you want
+  # Just create a file called 'env.json' at the project root with this contents:
+  #
+  # {
+  #   "appPublicDir" : "path_to_the_frontEndApp_public_dir"
+  # }
+  #
+  if grunt.file.exists('env.json')
+    frontendAppPublicDir = grunt.file.readJSON('env.json').appPublicDir
+  process.env.appPublicDir = frontendAppPublicDir
+
+
   # Autoloading for the grunt tasks, jitGrunt enables loading them on demand
   require('load-grunt-config') grunt,
     jitGrunt: true
@@ -8,9 +23,10 @@ module.exports = (grunt) ->
     data:
       # Directories:
       srcDir:    '.'
-      buildDir:  './../frontend/dist'
+      buildDir : frontendAppPublicDir
       assetsDir: '<%= buildDir %>/assets'
       docsDir:   'docs'
+
 
       # Dev. server settings:
       serverPort: 9000
@@ -21,8 +37,10 @@ module.exports = (grunt) ->
  © <%= package.author %> - All rights reserved |
  <%= package.homepage %> */\n'
 
+
   # Display the elapsed execution time of grunt tasks
   require('time-grunt') grunt
+
 
   # Load explicitly the notify tasks,
   # otherwise, no notifications will be fired or errors
