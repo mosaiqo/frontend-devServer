@@ -3,7 +3,7 @@
 'use strict';
 
 var
-  serverRootDir = __dirname + '/../../',
+  serverRootDir = __dirname + '/../../../',
   mocha         = require('mocha'),
   expect        = require('chai').expect,
   request       = require('supertest'),

@@ -3,7 +3,7 @@
 'use strict';
 
 var
-  serverRootDir = __dirname + '/../../',
+  serverRootDir = __dirname + '/../../../',
   mocha         = require('mocha'),
   expect        = require('chai').expect,
   request       = require('supertest'),
@@ -202,7 +202,6 @@ describe('api/media', function() {
     it('deletes the requested model', function(done) {
       request(app).get('/api/media/'+deletedModel._id).expect(404, done);
     });
-
 
   });
 
