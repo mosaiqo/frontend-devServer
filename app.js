@@ -7,7 +7,7 @@ var
   express    = require('express'),
   bodyParser = require('body-parser'),
 
-  rootDir    = __dirname + '/../../',
+  rootDir    = __dirname + '/../frontend/',
   publicDir  = rootDir + 'dist/',
   port       = process.env.PORT || 5000,
   app        = exports.app = express();

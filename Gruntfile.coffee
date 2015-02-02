@@ -7,10 +7,10 @@ module.exports = (grunt) ->
     # Data available to the tasks:
     data:
       # Directories:
-      srcDir:    '../src'
-      buildDir:  '../dist'
+      srcDir:    '.'
+      buildDir:  './../frontend/dist'
       assetsDir: '<%= buildDir %>/assets'
-      docsDir:   '../docs'
+      docsDir:   'docs'
 
       # Dev. server settings:
       serverPort: 9000

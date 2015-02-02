@@ -4,7 +4,7 @@
 
 var
   fs          = require('fs'),
-  rootDir     = __dirname + '/../../../',
+  rootDir     = __dirname + '/../',
   fixturesDir = __dirname + '/../test/fixtures/';
 
 

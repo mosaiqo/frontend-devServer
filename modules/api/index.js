@@ -6,7 +6,7 @@ var
   fs         = require('fs'),
   express    = require('express'),
   mongoose   = require('mongoose'),
-  rootDir    = __dirname + '/../../../../',
+  rootDir    = __dirname + '/../../',
   routesDir  = __dirname + '/routes/';
 
 
