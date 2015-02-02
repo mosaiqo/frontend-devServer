@@ -1,5 +1,6 @@
-/* global require, module, process, console, __dirname */
+/* global require, module, process, console, describe, it, before, __dirname */
 /* jshint -W097 */
+/* jshint expr: true */
 'use strict';
 
 var
@@ -19,7 +20,7 @@ describe('Express rest api server', function() {
         .set('Accept', 'application/json')
         .expect('Content-Type', /application\/json/)
         .expect(200, done);
-      })
+      });
   });
 
   // TODO: auth (when implemented)

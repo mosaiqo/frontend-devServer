@@ -1,9 +1,12 @@
-module.exports = function(router) {
+/* global require, module, process, console, __dirname */
+/* jshint -W097 */
 'use strict';
+
+module.exports = function(router) {
 
   var
     Media   = require('../models/Media'),
-    apiUtil = require('../../../lib/apiUtil');;
+    apiUtil = require('../../../lib/apiUtil');
 
 
   router.route('/media')
@@ -105,7 +108,7 @@ module.exports = function(router) {
     .delete(function(req, res) {
       var model = Media.findOne({
         _id: req.params.media_id
-      })
+      });
 
       Media.findById(req.params.media_id, function(err, model) {
         if (err) {

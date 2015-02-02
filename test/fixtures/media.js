@@ -1,3 +1,5 @@
+/* global require, module, process, console, __dirname */
+/* jshint -W097 */
 module.exports = (function() {
   'use strict';
 
@@ -11,7 +13,7 @@ module.exports = (function() {
       "name"        : faker.lorem.words(Math.floor(Math.random() * 4) + 1).join(' '),
       "description" : faker.lorem.sentence(),
       "url"         : faker.image.cats(),
-      "active"      : Math.random() > .5
+      "active"      : Math.random() > 0.5
     });
   }
 
