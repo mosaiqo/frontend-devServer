@@ -14,8 +14,19 @@ var
 
 describe('api/media', function() {
 
+  /**
+   * First Media object reference returned whn listing
+   *
+   * Used for the update/dlete tests
+   * @type {Object}
+   */
   var firstRecord;
 
+
+  /**
+   * Aux. method to check the node attributes returned by the CRUD operations
+   * @param  {Object}  obj json node returned by the API
+   */
   var isValidMediaObject = function(obj) {
 
     expect(obj).to.be.an('object');
@@ -30,11 +41,12 @@ describe('api/media', function() {
   };
 
 
-
-
-
+  /**
+   * Reset the database before executing the tests
+   * by emptying it and filling with the fixtures.
+   * This is just a test/dev db, so it can be safelly nuked.
+   */
   before(function(done) {
-    // populate the database (the dev. one, this is only for development purposes!)
     var exec = require('child_process').exec;
 
     this.timeout(10000);
