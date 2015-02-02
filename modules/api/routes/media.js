@@ -34,6 +34,7 @@ module.exports = function(router) {
       // set the media attributes
       model.name        = req.body.name;
       model.description = req.body.description;
+      model.url         = req.body.url;
       model.active      = req.body.active;
 
       // save the media and check for errors
@@ -89,6 +90,7 @@ module.exports = function(router) {
         // update the media info
         model.name        = req.body.name;
         model.description = req.body.description;
+        model.url         = req.body.url;
         model.active      = req.body.active;
 
         // save the model
