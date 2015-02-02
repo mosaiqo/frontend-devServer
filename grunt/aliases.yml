@@ -42,7 +42,7 @@ test:
 server:
   description: 'Starts a HTTP server on the dist directory'
   tasks:
-    - bgShell:mongod_start
+    - mongo
     - nodemon:mosaiqoFrontend_production
 
 
@@ -51,7 +51,7 @@ server:stop:
   tasks:
     - bgShell:nodemonDev_stop
     - bgShell:nodemonProd_stop
-    - bgShell:mongod_stop
+    - mongo:stop
 
 
 # some aliases for mongo
