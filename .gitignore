@@ -6,5 +6,10 @@ db/mongo/data
 db/mongo/log
 db/mongo/pid
 
+# IDE files
+mosaiqo-frontDevServer.sublime-project
+mosaiqo-frontDevServer.sublime-workspace
+.idea/
+
 # other
 TODO.md
