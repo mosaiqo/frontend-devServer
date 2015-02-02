@@ -15,12 +15,11 @@ var
 describe('api/media', function() {
 
   /**
-   * First Media object reference returned whn listing
-   *
-   * Used for the update/dlete tests
+   * References to some of the API models,
+   * reused on some tests
    * @type {Object}
    */
-  var firstRecord;
+  var firstRecord, createdModel, deletedModel;
 
 
   /**
@@ -133,17 +132,61 @@ describe('api/media', function() {
 
   describe('Create a new media object -> POST /api/media', function() {
 
-/*
+    var getModelObject = function() {
+      return {
+        name        : 'AAA',
+        description : 'bbb',
+        url         : 'http://foo.bar',
+        active      : false
+      };
+    };
+
+
     it('responds with json', function(done) {
       request(app)
-        .post('/api/media/'+firstRecord._id)
+        .post('/api/media/')
+        .send(getModelObject())
         .set('Accept', 'application/json')
         .expect('Content-Type', /application\/json/)
         .expect(200, done);
     });
-*/
 
 
+    it('returns the created object', function(done) {
+
+      var obj = getModelObject();
+
+      request(app)
+        .post('/api/media/')
+        .send(obj)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .end(function(err, res) {
+
+          expect(err).to.not.exist;
+
+          // save the reference for the next test
+          createdModel = res.body;
+
+          // check the node attributes
+          isValidMediaObject(createdModel);
+
+          expect(createdModel.name).to.equal(obj.name);
+          expect(createdModel.description).to.equal(obj.description);
+          expect(createdModel.url).to.equal(obj.url);
+          expect(createdModel.active).to.equal(obj.active);
+
+          done();
+        });
+    });
+
+
+    it('should persist the created object', function(done) {
+      request(app).get('/api/media/'+createdModel._id).end(function(err, res) {
+        expect(res.body._id).to.equal(createdModel._id);
+        done();
+      });
+    });
 
   });
 
@@ -169,6 +212,7 @@ describe('api/media', function() {
     });
 
 
+    
 
   });
 
@@ -176,8 +220,6 @@ describe('api/media', function() {
   // -- DELETE ----------------------------------
 
   describe('Delete a media object -> DELETE /api/media/:id', function() {
-
-    var deletedModel;
 
     it('responds with json', function(done) {
       request(app)
