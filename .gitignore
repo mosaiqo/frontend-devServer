@@ -1,0 +1,10 @@
+# 3rd party stuff managed by package managers like npm or bower
+node_modules
+
+# generated stuff
+db/mongo/data
+db/mongo/log
+db/mongo/pid
+
+# other
+TODO.md
