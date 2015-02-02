@@ -31,7 +31,6 @@ test:
   description: 'Execute ALL the tests'
   tasks:
     - mongo
-    #- mocha
     - mochaTest
     - mongo:stop
 
