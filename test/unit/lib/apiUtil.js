@@ -4,10 +4,10 @@
 'use strict';
 
 var
-  serverRootDir = __dirname + '/../../../',
+  appRootDir    = __dirname + '/../../../',
   mocha         = require('mocha'),
   expect        = require('chai').expect,
-  apiUtil       = require(serverRootDir + 'lib/apiUtil');
+  apiUtil       = require(appRootDir + 'lib/apiUtil');
 
 
 describe('lib/apiUtil', function() {

@@ -4,11 +4,11 @@
 'use strict';
 
 var
-  serverRootDir = __dirname + '/../../../',
+  appRootDir    = __dirname + '/../../../',
   mocha         = require('mocha'),
   expect        = require('chai').expect,
   request       = require('supertest'),
-  app           = require(serverRootDir + 'app').app;
+  app           = require(appRootDir + 'app').app;
 
 
 describe('Express rest api server', function() {

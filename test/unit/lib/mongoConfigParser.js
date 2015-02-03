@@ -4,7 +4,7 @@
 'use strict';
 
 var
-  serverRootDir = __dirname + '/../../../',
+  appRootDir    = __dirname + '/../../../',
   mocha         = require('mocha'),
   expect        = require('chai').expect,
   sinon         = require('sinon'),
@@ -39,7 +39,7 @@ describe('lib/mongoConfigParser', function() {
     mockery.registerMock('os', osStub);
 
     // must be loaded after mocking os
-    parser = require(serverRootDir + 'lib/mongoConfigParser');
+    parser = require(appRootDir + 'lib/mongoConfigParser');
 
     done();
   });
