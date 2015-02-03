@@ -14,8 +14,7 @@ var
 var mongoConfigParser = require('../lib/mongoConfigParser');
 
 var mongoConn = new mongoConfigParser()
-  .setEnvDir( rootDir + 'db/mongo/env' )
-  .getConnectionString();
+  .setEnvDir( rootDir + 'db/mongo/env' );
 
 
 // DATA LOAD:
@@ -64,7 +63,7 @@ var mongoConn = new mongoConfigParser()
 //
 // =============================================================================
 var
-  loader = require('pow-mongodb-fixtures').connect(mongoConn),
+  loader = require('pow-mongodb-fixtures').connect(mongoConn.getConnectionString(), mongoConn.getConnectionOptions()),
   data   = {};
 
 // load the fixtures from the filesystem

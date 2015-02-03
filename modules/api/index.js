@@ -15,11 +15,10 @@ var
 var mongoConfigParser = require('../../lib/mongoConfigParser');
 
 var mongoConn = new mongoConfigParser()
-  .setEnvDir( rootDir + 'db/mongo/env' )
-  .getConnectionString();
+  .setEnvDir( rootDir + 'db/mongo/env' );
 
 // connect
-mongoose.connect(mongoConn);
+mongoose.connect(mongoConn.getConnectionString(), mongoConn.getConnectionOptions());
 
 
 // API ROUTES
