@@ -30,9 +30,7 @@ dev:
 test:
   description: 'Execute ALL the tests'
   tasks:
-    - mongo
     - mochaTest
-    - mongo:stop
 
 
 
