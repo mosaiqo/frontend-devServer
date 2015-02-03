@@ -1,4 +1,4 @@
-/* global require, module, process, console, describe, it, before, __dirname */
+/* global require, module, process, console, describe, it, before, after, afterEach, __dirname */
 /* jshint -W097 */
 /* jshint expr: true */
 'use strict';
@@ -34,7 +34,7 @@ describe('lib/mongoConfigParser', function() {
 
     osStub = {};
     osStub.hostname = sinon.stub();
-    osStub.hostname.returns('defaultHostName')
+    osStub.hostname.returns('defaultHostName');
 
     mockery.registerMock('os', osStub);
 
@@ -171,7 +171,7 @@ describe('lib/mongoConfigParser', function() {
     it('should return a valid mongo connection string', function(done) {
       var mongoConnStr = new parser().getConnectionString();
 
-      expect(mongoConnStr).to.match(/^mongodb:\/\/[A-Za-z0-9_\-]+\:\d{1,5}\/[A-Za-z]+/)
+      expect(mongoConnStr).to.match(/^mongodb:\/\/[A-Za-z0-9_\-]+\:\d{1,5}\/[A-Za-z]+/);
       done();
     });
 

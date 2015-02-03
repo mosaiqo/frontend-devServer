@@ -15,7 +15,7 @@ describe('lib/apiUtil', function() {
 
   describe('#getErrorResponse', function() {
 
-  	it('returns an object with a an error, error code and a message attributes', function(done) {
+  	it('should return an object with a an error, error code and a message attributes', function(done) {
 
   		var errorObj = apiUtil.getErrorResponse(404);
 
@@ -28,7 +28,7 @@ describe('lib/apiUtil', function() {
   	});
 
 
-  	it('returns an object with a numeric error code', function(done) {
+  	it('should return an object with a numeric error code', function(done) {
 
   		var errorObj = apiUtil.getErrorResponse(404);
 
@@ -38,7 +38,7 @@ describe('lib/apiUtil', function() {
   	});
 
 
-  	it('returns an object with a 404 errorCode if the code attribute is not supplied', function(done) {
+  	it('should return an object with a 404 errorCode if the code attribute is not supplied', function(done) {
 
   		var errorObj = apiUtil.getErrorResponse();
 
@@ -48,7 +48,7 @@ describe('lib/apiUtil', function() {
   	});
 
 
-  	it('returns an object with an error message equal to the supplied one', function(done) {
+  	it('should return an object with an error message equal to the supplied one', function(done) {
 
   		var 
   			errMsg   = 'holaquetal',
@@ -60,7 +60,7 @@ describe('lib/apiUtil', function() {
   	});
 
 
-  	it('returns an object with a errorObject attribute as a STRING if supplied', function(done) {
+  	it('should return an object with a errorObject attribute as a STRING if supplied', function(done) {
 
   		expect( apiUtil.getErrorResponse() ).not.to.have.property('errorObject');
 
