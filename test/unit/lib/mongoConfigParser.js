@@ -47,6 +47,7 @@ describe('lib/mongoConfigParser', function() {
 
   after(function(done) {
     mockery.deregisterAll();
+    mockery.disable();
     done();
   });
 
