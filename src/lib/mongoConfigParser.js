@@ -109,6 +109,9 @@ var MongoConfigParser = function() {
         envObj = getEnvObj(dir);
 
         setEnvObj(envObj);
+
+        console.log('-->'+dir+'<---------');
+        console.log(env);
       }
 
       // make the method chainable
@@ -134,9 +137,6 @@ var MongoConfigParser = function() {
 
       // set the database name
       ret += '/' + env.database;
-
-
-      console.log('----------->'+ret);
 
       return ret;
     },

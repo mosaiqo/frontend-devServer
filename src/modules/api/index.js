@@ -6,9 +6,11 @@ var
   fs         = require('fs'),
   express    = require('express'),
   mongoose   = require('mongoose'),
-  rootDir    = __dirname + '/../../',
+  rootDir    = __dirname + '/../../../',
   routesDir  = __dirname + '/routes/';
 
+
+console.log('======'+rootDir);
 
 // MONGO CONF.
 // =============================================================================
@@ -16,9 +18,6 @@ var mongoConfigParser = require('../../lib/mongoConfigParser');
 
 var mongoConn = new mongoConfigParser()
   .setEnvDir( rootDir + 'db/mongo/env' );
-
-
-console.log('-------->'+mongoConn.getConnectionString());
 
 // connect
 mongoose.connect(mongoConn.getConnectionString(), mongoConn.getConnectionOptions());
