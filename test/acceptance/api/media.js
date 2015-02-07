@@ -4,11 +4,16 @@
 'use strict';
 
 var
-  appRootDir    = __dirname + '/../../../',
+  // paths
+  appRootDir    = __dirname + '/../../../src/',
+
+  // test dependencies
   mocha         = require('mocha'),
   expect        = require('chai').expect,
   request       = require('supertest'),
   _             = require('underscore'),
+
+  // server
   app           = require(appRootDir + 'app').app;
 
 

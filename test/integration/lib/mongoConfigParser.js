@@ -4,11 +4,16 @@
 'use strict';
 
 var
-  appRootDir    = __dirname + '/../../../',
+  // paths
+  appRootDir    = __dirname + '/../../../src/',
+  envDir        = __dirname + '/../../../db/mongo/env',
+
+  // test dependencies
   mocha         = require('mocha'),
   expect        = require('chai').expect,
-  parser        = require(appRootDir + 'lib/mongoConfigParser'),
-  envDir        = appRootDir + 'db/mongo/env';
+
+  // file to test
+  parser        = require(appRootDir + 'lib/mongoConfigParser');
 
 
 describe('lib/mongoConfigParser', function() {
@@ -21,10 +26,10 @@ describe('lib/mongoConfigParser', function() {
 
 
   describe('#setEnvDir', function() {
-    
+
     it('should set the config to the appropiate env. configuration file', function(done) {
 
-      var 
+      var
         os = require('os'),
         fs = require('fs'),
 
@@ -44,7 +49,7 @@ describe('lib/mongoConfigParser', function() {
       if(expectedResult.user) {
         expect(mongoConn.user).to.be.equal(expectedResult.user);
       }
-      
+
       if(expectedResult.password) {
         expect(mongoConn.password).to.be.equal(expectedResult.password);
       }
