@@ -120,7 +120,7 @@ describe('lib/mongoConfigParser', function() {
       done();
     });
 
-    
+
     it('should set the config to the default config file content if there\'s no specific host config file', function(done) {
 
       mockFs({
@@ -171,7 +171,7 @@ describe('lib/mongoConfigParser', function() {
     it('should return a valid mongo connection string', function(done) {
       var mongoConnStr = new parser().getConnectionString();
 
-      expect(mongoConnStr).to.match(/^mongodb:\/\/[A-Za-z0-9_\-]+\:\d{1,5}\/[A-Za-z]+/);
+      expect(mongoConnStr).to.match(/^mongodb:\/\/[A-Za-z0-9_\-]+(\:\d{1,5})?\/[A-Za-z]+/);
       done();
     });
 
@@ -227,7 +227,7 @@ describe('lib/mongoConfigParser', function() {
       expect(opts.pass).to.be.equal('secret');
       done();
     });
-    
+
   });
 
 });
