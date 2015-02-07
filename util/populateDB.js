@@ -11,7 +11,7 @@ var
 // MONGO CONF:
 // Get the connection params for the mongo instance
 // =============================================================================
-var mongoConfigParser = require('../lib/mongoConfigParser');
+var mongoConfigParser = require('../src/lib/mongoConfigParser');
 
 var mongoConn = new mongoConfigParser()
   .setEnvDir( rootDir + 'db/mongo/env' );

@@ -32,6 +32,16 @@ test:
   tasks:
     - mochaTest
 
+coverage:
+  description: 'Execute te tests and generate a coverage report'
+  tasks:
+    - clean:coverage
+    - env:coverage
+    - instrument
+    - test
+    - storeCoverage
+    - makeReport
+
 
 
 # INFRASTRUCTURE

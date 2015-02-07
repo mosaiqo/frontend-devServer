@@ -4,13 +4,13 @@ module.exports =
     reporter: 'spec'
 
   unit:
-    src: ['<%= srcDir %>/test/unit/**/*.js']
+    src: ['test/unit/**/*.js']
 
   integration:
-    src: ['<%= srcDir %>/test/integration/**/*.js']
+    src: ['test/integration/**/*.js']
 
   functional:
-    src: ['<%= srcDir %>/test/functional/**/*.js']
+    src: ['test/functional/**/*.js']
 
   acceptance:
-    src: ['<%= srcDir %>/test/acceptance/**/*.js']
+    src: ['test/acceptance/**/*.js']
