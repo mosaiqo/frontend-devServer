@@ -1,6 +1,6 @@
 {
   "name": "MosaiqoCMS-Frontend-server",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "description": "Mosaiqo CMS Frontend dev/testing server",
   "author": "Mosaiqo Team <mosaiqo@mosaiqo.com>",
   "homepage": "http://www.mosaiqo.com",
@@ -37,6 +37,7 @@
     "grunt-nodemon": "~0.4.0",
     "grunt-notify": "^0.4.1",
     "jit-grunt": "^0.9.0",
+    "jshint-stylish": "^1.0.0",
     "load-grunt-config": "^0.16.0",
     "mocha": "^2.1.0",
     "mock-fs": "^2.3.2",
@@ -47,7 +48,7 @@
     "time-grunt": "^1.0.0"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt bgShell:nodemonDev && grunt test"
   },
   "private": true
 }

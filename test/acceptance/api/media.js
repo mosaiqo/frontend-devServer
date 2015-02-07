@@ -204,7 +204,7 @@ describe('api/media', function() {
           expect(model.description).to.equal(newAttrs.description);
           expect(model.url).to.equal(newAttrs.url);
           expect(model.active).to.equal(newAttrs.active);
-          
+
           done();
         });
     });
