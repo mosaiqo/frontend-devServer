@@ -6,7 +6,6 @@ node_js:
 services:
   - mongodb
 
-before_script: "grunt server --stack"
 
 script: "grunt coverage --stack"
 
