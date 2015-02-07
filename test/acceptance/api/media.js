@@ -16,8 +16,8 @@ var
   requireHelper  = require(projectRootDir + 'test/require_helper'),
 
   // server
-  //app            = requireHelper('app').app;
-  app            = require(appRootDir + 'app').app;
+  app            = requireHelper('app').app;
+
 
 
 
