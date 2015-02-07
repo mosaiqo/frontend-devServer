@@ -38,7 +38,7 @@ coverage:
     - clean:coverage
     - env:coverage
     - instrument
-    - mochaTest
+    - test
     - storeCoverage
     - makeReport
 
