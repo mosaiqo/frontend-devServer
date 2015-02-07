@@ -48,7 +48,7 @@
     "time-grunt": "^1.0.0"
   },
   "scripts": {
-    "test": "node util/populateDB.js"
+    "test": "grunt bgShell:nodemonDev && grunt test"
   },
   "private": true
 }
