@@ -6,8 +6,13 @@ var
   fs         = require('fs'),
   express    = require('express'),
   mongoose   = require('mongoose'),
-  rootDir    = __dirname + '/../../',
+  rootDir    = __dirname + '/../../../',
   routesDir  = __dirname + '/routes/';
+
+
+if(process.env.APP_DIR_FOR_CODE_COVERAGE) {
+ rootDir += '../../../';
+}
 
 
 // MONGO CONF.

@@ -6,11 +6,12 @@ node_js:
 services:
   - mongodb
 
-before_script: "grunt bgShell:nodemonDev"
-
 script: "grunt coverage"
 
 addons:
   code_climate:
     repo_token:
       secure: "hrUanDfyczomvyEYHJI9iQ39eVLyk1c4UjNHfa5Ea/gmaIhIUt94tUMDnU2fMQfNhXdNV+3WPeguMh5HGyLT5z7hPUPMDbXR+qELTPajTgxM+5e1BB199seMt9CIC/oa5L8a3wAKcZoX5N/Yo7rz9BoCFK1cbgoXhJzxSQunDGs="
+
+after_script:
+  - cat test/coverage/reports/lcov.info | codeclimate
