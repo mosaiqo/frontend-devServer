@@ -6,7 +6,7 @@ node_js:
 services:
   - mongodb
 
-before_script: "grunt mongo:populate && sleep(5) && grunt bgShell:nodemonDev"
+before_script: "grunt mongo:populate"
 
 script: "grunt coverage"
 
