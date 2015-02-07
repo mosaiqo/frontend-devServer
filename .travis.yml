@@ -6,6 +6,8 @@ node_js:
 services:
   - mongodb
 
+before_script: "npm install -g codeclimate-test-reporter"
+
 script: "grunt coverage"
 
 addons:
