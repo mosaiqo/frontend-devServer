@@ -25,7 +25,7 @@ var mongoConn = new mongoConfigParser()
 // connect
 mongoose.connect(mongoConn.getConnectionString(), mongoConn.getConnectionOptions());
 
-
+console.log('---->'+mongoConn.getConnectionString());
 // API ROUTES
 // =============================================================================
 var router = express.Router();
