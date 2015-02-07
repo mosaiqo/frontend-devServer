@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/mosaiqo/frontend-devServer.svg)](https://travis-ci.org/mosaiqo/frontend-devServer)
 [![Dependency Status](https://www.versioneye.com/user/projects/54d605933ca0840b19000677/badge.svg?style=flat)](https://www.versioneye.com/user/projects/54d605933ca0840b19000677)
+[![Code Climate](https://codeclimate.com/github/mosaiqo/frontend-devServer/badges/gpa.svg)](https://codeclimate.com/github/mosaiqo/frontend-devServer)
+[![Test Coverage](https://codeclimate.com/github/mosaiqo/frontend-devServer/badges/coverage.svg)](https://codeclimate.com/github/mosaiqo/frontend-devServer)
 
 ## Prerequisites:
 - node & npm
