@@ -171,7 +171,7 @@ describe('lib/mongoConfigParser', function() {
     it('should return a valid mongo connection string', function(done) {
       var mongoConnStr = new parser().getConnectionString();
 
-      expect(mongoConnStr).to.match(/^mongodb:\/\/[A-Za-z0-9_\-]+(\:\d{1,5})?\/[A-Za-z]+/);
+      expect(mongoConnStr).to.match(/^mongodb:\/\/[A-Za-z0-9_\-]+\:\d{1,5}\/[A-Za-z]+/);
       done();
     });
 
