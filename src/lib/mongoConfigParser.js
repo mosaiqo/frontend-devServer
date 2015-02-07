@@ -109,9 +109,6 @@ var MongoConfigParser = function() {
         envObj = getEnvObj(dir);
 
         setEnvObj(envObj);
-
-        console.log('-->'+dir+'<---------');
-        console.log(env);
       }
 
       // make the method chainable
