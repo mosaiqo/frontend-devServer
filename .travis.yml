@@ -6,8 +6,7 @@ node_js:
 services:
   - mongodb
 
-
-script: "grunt coverage --stack"
+script: "grunt coverage"
 
 addons:
   code_climate:
