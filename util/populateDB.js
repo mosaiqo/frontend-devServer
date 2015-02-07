@@ -66,10 +66,6 @@ var
   loader = require('pow-mongodb-fixtures').connect(mongoConn.getConnectionString(), mongoConn.getConnectionOptions()),
   data   = {};
 
-
-console.log(loader);
-
-
 // load the fixtures from the filesystem
 fs.readdirSync(fixturesDir).forEach(function(file) {
 
