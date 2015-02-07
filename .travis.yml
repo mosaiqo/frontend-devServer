@@ -6,8 +6,6 @@ node_js:
 services:
   - mongodb
 
-before_script: "grunt mongo:populate"
-
 script: "grunt coverage"
 
 addons:

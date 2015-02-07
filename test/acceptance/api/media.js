@@ -55,10 +55,10 @@ describe('api/media', function() {
    * This is just a test/dev db, so it can be safelly nuked.
    */
   before(function(done) {
-    //var exec = require('child_process').exec;
+    var exec = require('child_process').exec;
 
     this.timeout(10000);
-    //exec('grunt mongo:populate', done);
+
     done();
   });
 
@@ -74,6 +74,10 @@ describe('api/media', function() {
         .expect('Content-Type', /application\/json/)
         .expect(200)
         .end(function(err, res) {
+
+
+          console.log('------------->' + res.body.length);
+          console.log(res.body);
 
           expect(err).to.not.exist;
 
