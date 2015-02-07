@@ -22,7 +22,7 @@ module.exports = (grunt) ->
     # Data available to the tasks:
     data:
       # Directories:
-      srcDir:    '.'
+      srcDir:    './src'
       buildDir : frontendAppPublicDir
       assetsDir: '<%= buildDir %>/assets'
       docsDir:   'docs'
