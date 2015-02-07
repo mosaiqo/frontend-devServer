@@ -7,7 +7,7 @@ services:
   - mongodb
 
 
-script: "grunt coverage --stack"
+script: "grunt test --stack"
 
 addons:
   code_climate:
