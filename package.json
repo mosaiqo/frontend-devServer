@@ -48,7 +48,7 @@
     "time-grunt": "^1.0.0"
   },
   "scripts": {
-    "test": "grunt test --stack"
+    "test": "node mongoDebug.js && grunt test"
   },
   "private": true
 }
