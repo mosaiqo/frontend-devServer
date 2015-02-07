@@ -14,7 +14,7 @@ var MongoConfigParser = function() {
   var env = {
     'host'     : 'localhost',
     'port'     : 27017,
-    'database' : 'mosaiqoFront' // default mongo DB
+    'database' : 'test' // default mongo DB
   };
 
 
@@ -134,6 +134,9 @@ var MongoConfigParser = function() {
 
       // set the database name
       ret += '/' + env.database;
+
+
+      console.log('----------->'+ret);
 
       return ret;
     },

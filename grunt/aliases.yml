@@ -30,7 +30,7 @@ dev:
 test:
   description: 'Execute ALL the tests'
   tasks:
-    - mochaTest:acceptance
+    - mochaTest
 
 coverage:
   description: 'Execute te tests and generate a coverage report'
