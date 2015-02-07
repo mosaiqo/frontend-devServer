@@ -49,6 +49,9 @@ describe('api/media', function() {
   };
 
 
+  var server;
+
+
   /**
    * Reset the database before executing the tests
    * by emptying it and filling with the fixtures.
@@ -59,6 +62,8 @@ describe('api/media', function() {
 
     this.timeout(10000);
     exec('grunt mongo:populate', done);
+
+    server = request(app);
   });
 
 
@@ -67,7 +72,7 @@ describe('api/media', function() {
   describe('Get all media objects -> GET /api/media', function() {
 
     it('returns an array of media objects', function(done) {
-      request(app)
+      server
         .get('/api/media')
         .set('Accept', 'application/json')
         .expect('Content-Type', /application\/json/)
@@ -97,14 +102,14 @@ describe('api/media', function() {
   describe('Get one media object -> GET /api/media/:id', function() {
 
     it('retuns a 404 error if the model does not exist', function(done) {
-      request(app)
+      server
         .get('/api/media/a-non-existing-record-id')
         .expect(404, done);
     });
 
 
     it('returns a Media object', function(done) {
-      request(app)
+      server
         .get('/api/media/'+firstRecord._id)
         .set('Accept', 'application/json')
         .expect('Content-Type', /application\/json/)
@@ -141,7 +146,7 @@ describe('api/media', function() {
 
       var obj = getModelObject();
 
-      request(app)
+      server
         .post('/api/media/')
         .send(obj)
         .set('Accept', 'application/json')
@@ -168,7 +173,7 @@ describe('api/media', function() {
 
 
     it('should persist the created object', function(done) {
-      request(app).get('/api/media/'+createdModel._id).end(function(err, res) {
+      server.get('/api/media/'+createdModel._id).end(function(err, res) {
         expect(res.body._id).to.equal(createdModel._id);
         done();
       });
@@ -182,7 +187,7 @@ describe('api/media', function() {
   describe('Update a media object -> PUT /api/media/:id', function() {
 
     it('retuns a 404 error if the model does not exist', function(done) {
-      request(app)
+      server
         .put('/api/media/a-non-existing-record-id')
         .expect(404, done);
     });
@@ -196,7 +201,7 @@ describe('api/media', function() {
         active      : false
       };
 
-      request(app)
+      server
         .put('/api/media/'+createdModel._id)
         .send(newAttrs)
         .set('Accept', 'application/json')
@@ -226,14 +231,14 @@ describe('api/media', function() {
   describe('Delete a media object -> DELETE /api/media/:id', function() {
 
     it('retuns a 404 error if the model does not exist', function(done) {
-      request(app)
+      server
         .delete('/api/media/a-non-existing-record-id')
         .expect(404, done);
     });
 
 
     it('returns the deleted model', function(done) {
-      request(app)
+      server
         .delete('/api/media/'+firstRecord._id)
         .expect('Content-Type', /application\/json/)
         .expect(200)
@@ -252,7 +257,7 @@ describe('api/media', function() {
 
 
     it('deletes the requested model', function(done) {
-      request(app).get('/api/media/'+deletedModel._id).expect(404, done);
+      server.get('/api/media/'+deletedModel._id).expect(404, done);
     });
 
   });
