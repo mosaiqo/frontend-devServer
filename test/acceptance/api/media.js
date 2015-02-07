@@ -58,7 +58,7 @@ describe('api/media', function() {
     var exec = require('child_process').exec;
 
     this.timeout(10000);
-
+    exec('grunt mongo:populate --stack', done);
     done();
   });
 
