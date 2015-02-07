@@ -17,7 +17,7 @@ var
 
   // server
   //app            = requireHelper('app').app;
-  app            = require(appRootDir + app).app;
+  app            = require(appRootDir + 'app').app;
 
 
 
