@@ -1,6 +1,6 @@
 # MosaiqoApp frontend server for testing & developing
 
-[![Build Status](https://travis-ci.org/mosaiqo/frontend-devServer.svg?branch=master)](https://travis-ci.org/mosaiqo/frontend-devServer)
+[![Build Status](https://travis-ci.org/mosaiqo/frontend-devServer.svg)](https://travis-ci.org/mosaiqo/frontend-devServer)
 
 ## Prerequisites:
 - node & npm
