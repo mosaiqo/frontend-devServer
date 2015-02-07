@@ -11,10 +11,8 @@ var
 
 
 if(process.env.APP_DIR_FOR_CODE_COVERAGE) {
- rootDir += '../../../../';
+ rootDir += '../../../';
 }
-
-
 
 
 // MONGO CONF.
