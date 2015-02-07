@@ -48,7 +48,7 @@
     "time-grunt": "^1.0.0"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt bgShell:nodemonDev && grunt test"
   },
   "private": true
 }

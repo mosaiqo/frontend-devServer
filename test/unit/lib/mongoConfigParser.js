@@ -120,7 +120,7 @@ describe('lib/mongoConfigParser', function() {
       done();
     });
 
-    
+
     it('should set the config to the default config file content if there\'s no specific host config file', function(done) {
 
       mockFs({
@@ -227,7 +227,7 @@ describe('lib/mongoConfigParser', function() {
       expect(opts.pass).to.be.equal('secret');
       done();
     });
-    
+
   });
 
 });
