@@ -4,14 +4,22 @@
 'use strict';
 
 var
-  appRootDir    = __dirname + '/../../../',
-  mocha         = require('mocha'),
-  expect        = require('chai').expect,
-  apiUtil       = require(appRootDir + 'lib/apiUtil');
+  // paths
+  projectRootDir = '../../../',
+  appRootDir     = projectRootDir + 'src/',
+
+  // test dependencies
+  mocha          = require('mocha'),
+  expect         = require('chai').expect,
+  requireHelper  = require(projectRootDir + '/test/require_helper'),
+
+  // file to test
+  apiUtil  = requireHelper('lib/apiUtil');
+
+
 
 
 describe('lib/apiUtil', function() {
-
 
   describe('#getErrorResponse', function() {
 
@@ -50,7 +58,7 @@ describe('lib/apiUtil', function() {
 
   	it('should return an object with an error message equal to the supplied one', function(done) {
 
-  		var 
+  		var
   			errMsg   = 'holaquetal',
   			errorObj = apiUtil.getErrorResponse(404, errMsg);
 

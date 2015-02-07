@@ -22,7 +22,7 @@ module.exports = (grunt) ->
     # Data available to the tasks:
     data:
       # Directories:
-      srcDir:    '.'
+      srcDir:    './src'
       buildDir : frontendAppPublicDir
       assetsDir: '<%= buildDir %>/assets'
       docsDir:   'docs'
@@ -45,3 +45,8 @@ module.exports = (grunt) ->
   # Load explicitly the notify tasks,
   # otherwise, no notifications will be fired or errors
   grunt.loadNpmTasks('grunt-notify')
+
+  # Load explicitly the istanbul tasks,
+  # because istanbul exposes more tasks like 'instrument' and others
+  # that are not recognised otherwise by jitGrunt
+  grunt.loadNpmTasks('grunt-istanbul')

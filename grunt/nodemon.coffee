@@ -3,11 +3,11 @@
 module.exports =
 
   mosaiqoFrontend_dev:
-    script: './app.js'
+    script: './src/app.js'
     options:
       args: ['dev']
       nodeArgs: ['--debug']
-      watch: ['.']
+      watch: ['./src']
       callback: (nodemon) ->
         nodemon.on "log", (event) ->
           console.log event.colour
@@ -16,9 +16,9 @@ module.exports =
         PORT: '<%= proxiedServer_port %>'
 
   mosaiqoFrontend_production:
-    script: './app.js'
+    script: './src/app.js'
     options:
-      watch: ['.']
+      watch: ['./src']
       callback: (nodemon) ->
         nodemon.on "log", (event) ->
           console.log event.colour

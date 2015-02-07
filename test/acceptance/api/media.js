@@ -4,12 +4,21 @@
 'use strict';
 
 var
-  appRootDir    = __dirname + '/../../../',
-  mocha         = require('mocha'),
-  expect        = require('chai').expect,
-  request       = require('supertest'),
-  _             = require('underscore'),
-  app           = require(appRootDir + 'app').app;
+  // paths
+  projectRootDir = '../../../',
+  appRootDir     = projectRootDir + 'src/',
+
+  // test dependencies
+  mocha          = require('mocha'),
+  expect         = require('chai').expect,
+  request        = require('supertest'),
+  _              = require('underscore'),
+  requireHelper  = require(projectRootDir + 'test/require_helper'),
+
+  // server
+  app            = requireHelper('app').app;
+
+
 
 
 describe('api/media', function() {

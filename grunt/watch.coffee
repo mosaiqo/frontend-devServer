@@ -2,5 +2,5 @@
 # @see https://github.com/gruntjs/grunt-contrib-watch
 module.exports =
   server:
-    files: ['**/*.js','**/*.coffee', '!**/node_modules/**']
+    files: ['app/**/*.js','app/**/*.coffee']
     tasks: ['coffeelint', 'jshint', 'mochaTest:unit']
