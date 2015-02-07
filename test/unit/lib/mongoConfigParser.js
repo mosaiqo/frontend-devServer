@@ -5,17 +5,21 @@
 
 var
   // paths
-  appRootDir    = __dirname + '/../../../src/',
+  projectRootDir = '../../../',
+  appRootDir     = projectRootDir + 'src/',
 
   // test dependencies
-  mocha         = require('mocha'),
-  expect        = require('chai').expect,
-  sinon         = require('sinon'),
-  mockery       = require('mockery'),
-  mockFs        = require('mock-fs'),
+  mocha          = require('mocha'),
+  expect         = require('chai').expect,
+  sinon          = require('sinon'),
+  mockery        = require('mockery'),
+  mockFs         = require('mock-fs'),
+  requireHelper  = require(projectRootDir + 'test/require_helper'),
 
   // file to test
   parser;
+
+
 
 
 describe('lib/mongoConfigParser', function() {
@@ -44,7 +48,7 @@ describe('lib/mongoConfigParser', function() {
     mockery.registerMock('os', osStub);
 
     // must be loaded after mocking os
-    parser = require(appRootDir + 'lib/mongoConfigParser');
+    parser = requireHelper('lib/mongoConfigParser');
 
     done();
   });

@@ -5,15 +5,19 @@
 
 var
   // paths
-  appRootDir    = __dirname + '/../../../src/',
-  envDir        = __dirname + '/../../../db/mongo/env',
+  projectRootDir = '../../../',
+  appRootDir     = projectRootDir + 'src/',
+  envDir         = __dirname + '/../../../db/mongo/env',
 
   // test dependencies
   mocha         = require('mocha'),
   expect        = require('chai').expect,
+  requireHelper = require(projectRootDir + 'test/require_helper'),
 
   // file to test
-  parser        = require(appRootDir + 'lib/mongoConfigParser');
+  parser        = requireHelper('lib/mongoConfigParser');
+
+
 
 
 describe('lib/mongoConfigParser', function() {

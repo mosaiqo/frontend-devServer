@@ -5,15 +5,19 @@
 
 var
   // paths
-  appRootDir    = __dirname + '/../../../src/',
+  projectRootDir = '../../../',
+  appRootDir     = projectRootDir + 'src/',
 
   // test dependencies
-  mocha         = require('mocha'),
-  expect        = require('chai').expect,
-  request       = require('supertest'),
+  mocha          = require('mocha'),
+  expect         = require('chai').expect,
+  request        = require('supertest'),
+  requireHelper  = require(projectRootDir + 'test/require_helper'),
 
   // server
-  app           = require(appRootDir + 'app').app;
+  app            = requireHelper('app').app;
+
+
 
 
 describe('Express rest api server', function() {

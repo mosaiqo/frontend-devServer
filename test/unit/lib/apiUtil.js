@@ -5,18 +5,21 @@
 
 var
   // paths
-  appRootDir    = __dirname + '/../../../src/',
+  projectRootDir = '../../../',
+  appRootDir     = projectRootDir + 'src/',
 
   // test dependencies
-  mocha         = require('mocha'),
-  expect        = require('chai').expect,
+  mocha          = require('mocha'),
+  expect         = require('chai').expect,
+  requireHelper  = require(projectRootDir + '/test/require_helper'),
 
   // file to test
-  apiUtil       = require(appRootDir + 'lib/apiUtil');
+  apiUtil  = requireHelper('lib/apiUtil');
+
+
 
 
 describe('lib/apiUtil', function() {
-
 
   describe('#getErrorResponse', function() {
 

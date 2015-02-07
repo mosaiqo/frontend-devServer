@@ -5,16 +5,20 @@
 
 var
   // paths
-  appRootDir    = __dirname + '/../../../src/',
+  projectRootDir = '../../../',
+  appRootDir     = projectRootDir + 'src/',
 
   // test dependencies
-  mocha         = require('mocha'),
-  expect        = require('chai').expect,
-  request       = require('supertest'),
-  _             = require('underscore'),
+  mocha          = require('mocha'),
+  expect         = require('chai').expect,
+  request        = require('supertest'),
+  _              = require('underscore'),
+  requireHelper  = require(projectRootDir + 'test/require_helper'),
 
   // server
-  app           = require(appRootDir + 'app').app;
+  app            = requireHelper('app').app;
+
+
 
 
 describe('api/media', function() {
