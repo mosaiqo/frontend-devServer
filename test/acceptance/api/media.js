@@ -75,10 +75,6 @@ describe('api/media', function() {
         .expect(200)
         .end(function(err, res) {
 
-
-          console.log('------------->' + res.body.length);
-          console.log(res.body);
-
           expect(err).to.not.exist;
 
           expect(_.isArray(res.body)).to.be.true;
