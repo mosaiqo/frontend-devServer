@@ -13,6 +13,8 @@ console.log('-----------------router-media')
 
     // get all the media (accessed at GET http://localhost:port/api/media)
     .get(function(req, res) {
+      console.log('---->get');
+      console.log(Media)
       Media.find(function(err, models) {
 
         if (err) {
