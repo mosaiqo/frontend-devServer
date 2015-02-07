@@ -6,7 +6,7 @@ node_js:
 services:
   - mongodb
 
-script: "grunt mongo:populate"
+script: "grunt coverage --stack"
 
 addons:
   code_climate:

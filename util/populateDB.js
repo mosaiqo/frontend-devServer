@@ -82,8 +82,5 @@ loader.clearAndLoad(data, function(err) {
     console.log(err);
   }
 
-  loader.close(function() {
-
-    console.log(data);
-  });
+  loader.close(function() {});
 });
