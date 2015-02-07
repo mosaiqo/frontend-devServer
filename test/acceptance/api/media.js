@@ -59,7 +59,6 @@ describe('api/media', function() {
 
     this.timeout(10000);
     exec('grunt mongo:populate', done);
-    done();
   });
 
 

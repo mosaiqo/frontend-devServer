@@ -7,16 +7,13 @@ module.exports = function(router) {
   var
     Media   = require('../models/Media'),
     apiUtil = require('../../../lib/apiUtil');
-console.log('-----------------router-media')
+
 
   router.route('/media')
 
     // get all the media (accessed at GET http://localhost:port/api/media)
     .get(function(req, res) {
       Media.find(function(err, models) {
-
-        console.log('err', err)
-        console.log('models', models)
 
         if (err) {
           res.status(500).json(apiUtil.getErrorResponse(500, null, err));
