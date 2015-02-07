@@ -7,7 +7,7 @@ module.exports = function(router) {
   var
     Media   = require('../models/Media'),
     apiUtil = require('../../../lib/apiUtil');
-
+console.log('-----------------router-media')
 
   router.route('/media')
 
