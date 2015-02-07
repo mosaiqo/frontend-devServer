@@ -6,9 +6,9 @@ node_js:
 services:
   - mongodb
 
-before_script: "grunt bgShell:nodemonDev"
+before_script: "grunt bgShell:nodemonDev && grunt mongo:populate"
 
-script: "grunt test"
+script: "grunt coverage"
 
 addons:
   code_climate:
