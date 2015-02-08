@@ -43,7 +43,7 @@ describe('lib/mongoConfigParser', function() {
 
     osStub = {};
     osStub.hostname = sinon.stub();
-    osStub.hostname.returns('defaultHostName');
+    osStub.hostname.returns('defaulthostname');
 
     mockery.registerMock('os', osStub);
 
@@ -155,7 +155,7 @@ describe('lib/mongoConfigParser', function() {
       mockFs({
         'envDir' : {
           'default.json' : '{ "host" : "localhost", "port" : 27017, "user" : null, "password" : null, "database" : "mosaiqoFront" }',
-          'defaultHostName.json' : '{ "host" : "defaultHostName", "port" : 1234, "user" : "userName", "password" : "secret", "database" : "whatever" }',
+          'defaulthostname.json' : '{ "host" : "defaultHostName", "port" : 1234, "user" : "userName", "password" : "secret", "database" : "whatever" }',
         }
       });
 
@@ -163,11 +163,11 @@ describe('lib/mongoConfigParser', function() {
 
       expect(osStub.hostname.called).to.be.true;
 
-      expect(mongoConn.host).to.be.equal('localhost');
-      expect(mongoConn.port).to.be.equal(27017);
-      expect(mongoConn.database).to.be.equal('mosaiqoFront');
-      expect(mongoConn.user).to.be.null;
-      expect(mongoConn.password).to.be.null;
+      expect(mongoConn.host).to.be.equal('defaultHostName');
+      expect(mongoConn.port).to.be.equal(1234);
+      expect(mongoConn.database).to.be.equal('whatever');
+      expect(mongoConn.user).to.be.equal('userName');
+      expect(mongoConn.password).to.be.equal('secret');
 
       done();
     });
