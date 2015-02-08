@@ -6,6 +6,6 @@ var publicDir = process.env.appPublicDir;
 
 module.exports = {
   root: function(req, res) {
-    res.sendfile(publicDir + '/index.html');
+    res.sendFile(publicDir + '/index.html');
   }
 };
