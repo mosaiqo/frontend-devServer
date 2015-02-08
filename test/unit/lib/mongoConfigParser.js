@@ -173,6 +173,51 @@ describe('lib/mongoConfigParser', function() {
     });
 
 
+    it('should set the config to the contents of the default env. file if there\'s no file matching the host name', function(done) {
+
+      mockFs({
+        'envDir' : {
+          'default.json' : '{ "host" : "localhost", "port" : 27017, "user" : null, "password" : null, "database" : "mosaiqoFront" }',
+          'nonMatchingRandomName.json' : '{ "host" : "defaultHostName", "port" : 1234, "user" : "userName", "password" : "secret", "database" : "whatever" }',
+        }
+      });
+
+      var mongoConn = new parser().setEnvDir('envDir').getEnv();
+
+      expect(osStub.hostname.called).to.be.true;
+
+      expect(mongoConn.host).to.be.equal('localhost');
+      expect(mongoConn.port).to.be.equal(27017);
+      expect(mongoConn.database).to.be.equal('mosaiqoFront');
+      expect(mongoConn.user).to.be.null;
+      expect(mongoConn.password).to.be.null;
+
+      done();
+    });
+
+
+    it('should do nothing and keep the default environment if file matching the hostName is empty', function(done) {
+
+      mockFs({
+        'envDir' : {
+          'defaulthostname.json' : ''
+        }
+      });
+
+      var mongoConn = new parser().setEnvDir('envDir').getEnv();
+
+      expect(osStub.hostname.called).to.be.true;
+
+      expect(mongoConn.host).to.be.equal(parserDefaultResponse.host);
+      expect(mongoConn.port).to.be.equal(parserDefaultResponse.port);
+      expect(mongoConn.database).to.be.equal(parserDefaultResponse.database);
+      expect(mongoConn.user).to.be.undefined;
+      expect(mongoConn.password).to.be.undefined;
+
+      done();
+    });
+
+
     it('should do nothing and keep the default environment if the env. dir supplied does not exist', function(done) {
 
       mockFs({
