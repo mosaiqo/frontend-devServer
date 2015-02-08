@@ -23,10 +23,9 @@ app.use(bodyParser.json());
 // configure app to serve static files from the dist directory
 app.use(express.static(publicDir));
 
-// root
-app.get('/', function(req, res) {
-    res.sendfile(publicDir + '/index.html');
-});
+// setup the routes
+var routeHandlers = require('./routeHandlers');
+app.get('/', routeHandlers.root);
 
 
 // FAKE API (the real on will be implemented using Laravel)
