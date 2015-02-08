@@ -172,6 +172,48 @@ describe('lib/mongoConfigParser', function() {
       done();
     });
 
+
+    it('should do nothing and keep the default environment if the env. dir supplied does not exist', function(done) {
+
+      mockFs({
+        'foo' : {}
+      });
+
+      var
+        mongoConn = new parser(),
+        defaults  = mongoConn.getEnv(),
+        env;
+
+      mongoConn.setEnvDir('bar');
+
+      env = mongoConn.getEnv();
+
+      expect(env.host).to.be.equal(defaults.host);
+      expect(env.port).to.be.equal(defaults.port);
+      expect(env.database).to.be.equal(defaults.database);
+
+      done();
+    });
+
+
+    it('should do nothing and keep the default environment if no env. dir supplied', function(done) {
+
+      var
+        mongoConn = new parser(),
+        defaults  = mongoConn.getEnv(),
+        env;
+
+      mongoConn.setEnvDir();
+
+      env = mongoConn.getEnv();
+
+      expect(env.host).to.be.equal(defaults.host);
+      expect(env.port).to.be.equal(defaults.port);
+      expect(env.database).to.be.equal(defaults.database);
+
+      done();
+    });
+
   });
 
 
