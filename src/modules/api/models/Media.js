@@ -1,3 +1,5 @@
+/* global require, module, process, console, __dirname */
+/* jshint -W097 */
 var
   mongoose = require('mongoose'),
   Schema   = mongoose.Schema;

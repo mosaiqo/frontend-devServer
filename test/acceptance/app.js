@@ -5,7 +5,7 @@
 
 var
   // paths
-  projectRootDir = '../../../',
+  projectRootDir = '../../',
   appRootDir     = projectRootDir + 'src/',
 
   // test dependencies
@@ -20,18 +20,18 @@ var
 
 
 
-describe('Express rest api server', function() {
+describe('App', function() {
 
-  describe('GET /api', function() {
-    it('should respond with json', function(done) {
+  describe('GET /', function() {
+
+    it('should respond with an html', function(done) {
       request(app)
-        .get('/api')
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /application\/json/)
+        .get('/')
+        .expect('Content-Type', /text\/html/)
         .expect(200, done);
-      });
-  });
+    });
 
-  // TODO: auth (when implemented)
+
+  });
 
 });

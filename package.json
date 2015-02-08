@@ -1,6 +1,6 @@
 {
   "name": "MosaiqoCMS-Frontend-server",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Mosaiqo CMS Frontend dev/testing server",
   "author": "Mosaiqo Team <mosaiqo@mosaiqo.com>",
   "homepage": "http://www.mosaiqo.com",
@@ -45,6 +45,7 @@
     "mocha": "^2.1.0",
     "mock-fs": "^2.3.2",
     "mockery": "^1.4.0",
+    "node-mocks-http": "^1.2.4",
     "pow-mongodb-fixtures": "^0.10.0",
     "sinon": "^1.12.2",
     "supertest": "^0.15.0",
