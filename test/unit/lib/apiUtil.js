@@ -32,6 +32,14 @@ describe('lib/apiUtil', function() {
   		expect(errorObj).to.have.to.have.property('message');
   		expect(errorObj.error).to.be.true;
 
+
+      errorObj = apiUtil.getErrorResponse(500);
+
+      expect(errorObj).to.have.to.have.property('error');
+      expect(errorObj).to.have.to.have.property('errorCode');
+      expect(errorObj).to.have.to.have.property('message');
+      expect(errorObj.error).to.be.true;
+
   		done();
   	});
 
@@ -41,6 +49,10 @@ describe('lib/apiUtil', function() {
   		var errorObj = apiUtil.getErrorResponse(404);
 
   		expect(errorObj.errorCode).to.be.a('number');
+
+      apiUtil.getErrorResponse(500);
+
+      expect(errorObj.errorCode).to.be.a('number');
 
   		done();
   	});
