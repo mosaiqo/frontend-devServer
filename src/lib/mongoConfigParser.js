@@ -36,7 +36,7 @@ var MongoConfigParser = function() {
     }
 
     var
-      base = envDir ? envDir + '/' : '',
+      base = envDir + '/',
       ext  = '.json',
       customEnvFilePath  = base + os.hostname().toLowerCase() + ext,
       defaultEnvFilePath = base + 'default' + ext,
@@ -103,13 +103,7 @@ var MongoConfigParser = function() {
      * @param {string} dir environment directory path
      */
     setEnvDir : function(dir) {
-      var envObj;
-
-      if (fs.existsSync(dir)) {
-        envObj = getEnvObj(dir);
-
-        setEnvObj(envObj);
-      }
+      setEnvObj( getEnvObj(dir) );
 
       // make the method chainable
       return this;
