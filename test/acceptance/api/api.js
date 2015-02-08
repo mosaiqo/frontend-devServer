@@ -23,7 +23,7 @@ var
 describe('Express rest api server', function() {
 
   describe('GET /api', function() {
-    it('responds with json', function(done) {
+    it('should respond with json', function(done) {
       request(app)
         .get('/api')
         .set('Accept', 'application/json')
