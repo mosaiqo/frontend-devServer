@@ -2,10 +2,14 @@
 /* jshint -W097 */
 'use strict';
 
-var publicDir = process.env.appPublicDir;
+var
+  fs        = require('fs'),
+  express   = require('express'),
+  publicDir = process.env.appPublicDir,
+  rootDir   = process.env.appRoot;
 
 module.exports = {
   root: function(req, res) {
-    res.sendfile(publicDir + '/index.html');
+    res.sendFile(publicDir + '/index.html', {root: rootDir});
   }
 };

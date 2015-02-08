@@ -33,11 +33,11 @@ describe('RouteHandlers', function() {
       });
 
       var response = {};
-      response.sendfile = sinon.spy();
+      response.sendFile = sinon.spy();
 
       routeHandlers.root(request, response);
 
-      expect(response.sendfile.calledOnce).to.be.true;
+      expect(response.sendFile.calledOnce).to.be.true;
 
       done();
     });
