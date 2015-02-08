@@ -12,6 +12,17 @@ module.exports = (grunt) ->
   #
   if grunt.file.exists('env.json')
     frontendAppPublicDir = grunt.file.readJSON('env.json').appPublicDir
+
+  # travis fixup: on travis, the previous path obviously does not exist
+  # so some tests will make explode the app. So:
+  unless grunt.file.exists
+    runt.file.mkdir 'tmpPublic'
+    grunt.file.write 'tmpPublic/index.html', '...'
+
+    frontendAppPublicDir = './tmpPublic'
+
+  # set some environment vars
+  process.env.appRoot      = __dirname
   process.env.appPublicDir = frontendAppPublicDir
 
 

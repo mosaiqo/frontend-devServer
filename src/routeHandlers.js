@@ -5,10 +5,11 @@
 var
   fs        = require('fs'),
   express   = require('express'),
-  publicDir = process.env.appPublicDir;
+  publicDir = process.env.appPublicDir,
+  rootDir   = process.env.appRoot;
 
 module.exports = {
   root: function(req, res) {
-    res.sendFile(publicDir + '/index.html');
+    res.sendFile(publicDir + '/index.html', {root: rootDir});
   }
 };

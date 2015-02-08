@@ -19,7 +19,7 @@ var
 
 
 
-/*
+
 describe('App', function() {
 
   describe('GET /', function() {
@@ -35,4 +35,3 @@ describe('App', function() {
   });
 
 });
-*/
