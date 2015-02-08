@@ -66,7 +66,7 @@ describe('api/media', function() {
 
   describe('Get all media objects -> GET /api/media', function() {
 
-    it('returns an array of media objects', function(done) {
+    it('should return an array of media objects', function(done) {
       request(app)
         .get('/api/media')
         .set('Accept', 'application/json')
@@ -96,7 +96,7 @@ describe('api/media', function() {
 
   describe('Get one media object -> GET /api/media/:id', function() {
 
-    it('retuns a 404 error if the model does not exist', function(done) {
+    it('should return a 404 error if the model does not exist', function(done) {
       request(app)
         .get('/api/media/a-non-existing-record-id')
         .expect(404, done);
@@ -137,7 +137,7 @@ describe('api/media', function() {
     };
 
 
-    it('returns the created object', function(done) {
+    it('should return the created object', function(done) {
 
       var obj = getModelObject();
 
@@ -181,14 +181,14 @@ describe('api/media', function() {
 
   describe('Update a media object -> PUT /api/media/:id', function() {
 
-    it('retuns a 404 error if the model does not exist', function(done) {
+    it('should retun a 404 error if the model does not exist', function(done) {
       request(app)
         .put('/api/media/a-non-existing-record-id')
         .expect(404, done);
     });
 
 
-    it('returns the modified model', function(done) {
+    it('should return the modified model', function(done) {
       var newAttrs = {
         name        : 'CCC',
         description : 'DDD',
@@ -225,14 +225,14 @@ describe('api/media', function() {
 
   describe('Delete a media object -> DELETE /api/media/:id', function() {
 
-    it('retuns a 404 error if the model does not exist', function(done) {
+    it('should retun a 404 error if the model does not exist', function(done) {
       request(app)
         .delete('/api/media/a-non-existing-record-id')
         .expect(404, done);
     });
 
 
-    it('returns the deleted model', function(done) {
+    it('should return the deleted model', function(done) {
       request(app)
         .delete('/api/media/'+firstRecord._id)
         .expect('Content-Type', /application\/json/)
@@ -251,7 +251,7 @@ describe('api/media', function() {
     });
 
 
-    it('deletes the requested model', function(done) {
+    it('should delete the requested model', function(done) {
       request(app).get('/api/media/'+deletedModel._id).expect(404, done);
     });
 
