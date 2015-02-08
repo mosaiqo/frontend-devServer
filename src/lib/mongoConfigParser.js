@@ -42,6 +42,7 @@ var MongoConfigParser = function() {
       defaultEnvFilePath = base + 'default' + ext,
       data;
 
+    /* istanbul ignore else  */
     if(fs.existsSync(customEnvFilePath)) {
       data = fs.readFileSync(customEnvFilePath, 'utf8');
     } else if(fs.existsSync(defaultEnvFilePath)) {
