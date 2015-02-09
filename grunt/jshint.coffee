@@ -1,4 +1,4 @@
 module.exports =
   options:
     reporter: require('jshint-stylish')
-  all: ['**/*.js', '!node_modules/**/*.js']
+  all: ['src/**/*.js', 'util/**/*.js', 'test/**/*.js', '!test/coverage/**/*.js']
