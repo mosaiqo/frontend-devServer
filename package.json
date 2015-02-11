@@ -43,7 +43,7 @@
     "jshint-stylish": "^1.0.0",
     "load-grunt-config": "^0.16.0",
     "mocha": "^2.1.0",
-    "mock-fs": "^2.3.2",
+    "mock-fs": "^2.5.0",
     "mockery": "^1.4.0",
     "node-mocks-http": "^1.2.4",
     "pow-mongodb-fixtures": "^0.10.0",
