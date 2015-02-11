@@ -26,7 +26,10 @@ The gruntfile has 2 primary tasks, the default one and one called *dev*.
 The default one starts a simple HTTP server to serve the frontend app files and also a fake API to test and develop independently from the backend app (developed using Laravel). It also starts the mongo server used by the API.
 
 The *dev* task does the same as the default one, and does some additional things:
+
 - It monitors the frontendApp files, so when they change, the browser gets reloaded.
-- It offers a syncronized browsing on any device, using *browserSync*, so when the app navigates to some section on one browser, it also navigates to that section on any one browser/device. Very nice for testing, by the way.
 - It monitors the server files, so whenever changed, the files are linted, tested and the server is restarted.
+- It offers a syncronized browsing on any device, using *browserSync*, so when the app navigates to some section on one browser, it also navigates to that section on any one browser/device. Very nice for testing, by the way:
+    + [browserSync](http://www.browsersync.io/docs) UI: BrowserSync includes a UI that allows to controls all devices, push sync updates and much more. It can be accessed at [http://localhost:9002](http://localhost:9002).
+    + [weinre](http://people.apache.org/~pmuellr/weinre-docs/latest/): BrowserSync includes a remote inspector that lets tweaking and debuging web pages that are running on connected devices. It can be accessed at [http://localhost:9003](http://localhost:9003).
 
