@@ -40,8 +40,11 @@ module.exports = (grunt) ->
 
 
       # Dev. server settings:
-      serverPort: 9000
+      serverPort:         9000
       proxiedServer_port: 9001
+      browserSyncUIPort:  9002
+      weinrePort:         9003
+
 
       # Banner, appended to the built scripts/css:
       banner: '/*! <%= package.name %> <%= package.version %> |
