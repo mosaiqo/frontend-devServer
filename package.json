@@ -19,9 +19,10 @@
     }
   ],
   "dependencies": {
-    "express": "~4.11.2",
     "body-parser": "~1.11.0",
+    "express": "~4.11.2",
     "mongoose": "~3.8.23",
+    "newrelic": "^1.16.2",
     "underscore": "~1.7.0"
   },
   "devDependencies": {

@@ -2,6 +2,13 @@
 /* jshint -W097 */
 'use strict';
 
+// New Relic
+/* istanbul ignore next */
+if (process.env.NEW_RELIC_ENABLED) {
+  require('newrelic');
+  console.log('Starting New Relic monitoring');
+}
+
 var
   fs         = require('fs'),
   express    = require('express'),

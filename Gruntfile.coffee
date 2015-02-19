@@ -10,18 +10,43 @@ module.exports = (grunt) ->
   #   "appPublicDir" : "path_to_the_frontEndApp_public_dir"
   # }
   #
-  if grunt.file.exists 'env.json'
-    frontendAppPublicDir = grunt.file.readJSON('env.json').appPublicDir
+  envConfigFile = 'env.json'
 
-  # travis fixup: on travis, the previous path obviously does not exist
+  if grunt.file.exists envConfigFile
+    envConfig = grunt.file.readJSON(envConfigFile)
+
+    # overwrite the frontendAppPublicDir
+    frontendAppPublicDir = envConfig.appPublicDir
+
+
+    # New Relic:
+    # to enable New Relic APM monitoring add this to the 'env.json' file:
+    #
+    # #
+    # {
+    #   "appPublicDir" : "path_to_the_frontEndApp_public_dir"
+    #   "newRelic" : {
+    #     "app_name"    : "name_of_the_app",
+    #     "license_key" : "your_new_relic_license_key"
+    #   }
+    # }
+    #
+    if envConfig.newRelic
+      process.env.NEW_RELIC_ENABLED        = true
+      process.env.NEW_RELIC_NO_CONFIG_FILE = true
+      process.env.NEW_RELIC_APP_NAME       = envConfig.newRelic.app_name
+      process.env.NEW_RELIC_LICENSE_KEY    = envConfig.newRelic.license_key
+
+
+  # Travis fixup: on travis, the previous path obviously does not exist
   # so some tests will make explode the app. So:
   unless grunt.file.exists frontendAppPublicDir
     grunt.file.mkdir 'tmpPublic'
     grunt.file.write 'tmpPublic/index.html', '...'
-
     frontendAppPublicDir = './tmpPublic'
 
-  # set some environment vars
+
+  # Set some environment vars
   process.env.appRoot      = __dirname
   process.env.appPublicDir = frontendAppPublicDir
 
