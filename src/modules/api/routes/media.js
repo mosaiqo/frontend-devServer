@@ -6,19 +6,18 @@ module.exports = function(router) {
 
   var
     Media   = require('../models/Media'),
-    apiUtil = require('../../../lib/apiUtil');
+    Errors  = require('../../../lib/errors');
 
 
   router.route('/media')
 
     // get all the media (accessed at GET http://localhost:port/api/media)
-    .get(function(req, res) {
+    .get(function(req, res, next) {
       Media.find(function(err, models) {
 
-        /* TODO: don't know how to trigger this from the tests */
         /* istanbul ignore next */
         if (err) {
-          res.status(500).json(apiUtil.getErrorResponse(500, null, err));
+          next( new Errors.App(err) );
           return;
         }
 
@@ -28,7 +27,7 @@ module.exports = function(router) {
 
 
     // create a media (accessed at POST http://localhost:port/api/media)
-    .post(function(req, res) {
+    .post(function(req, res, next) {
 
       // create a new instance of the Media model
       var model = new Media();
@@ -42,12 +41,8 @@ module.exports = function(router) {
       // save the media and check for errors
       model.save(function(err) {
 
-        /* TODO: don't know how to trigger this from the tests */
         /* istanbul ignore next */
-        if (err) {
-          res.status(500).json(apiUtil.getErrorResponse(500, null, err));
-          return;
-        }
+        if (err) return next( new Errors.App(err) );
 
         res.json(model);
       });
@@ -58,20 +53,12 @@ module.exports = function(router) {
   router.route('/media/:media_id')
 
     // get the media with that id (accessed at GET http://localhost:port/api/media/:media_id)
-    .get(function(req, res) {
+    .get(function(req, res, next) {
       Media.findById(req.params.media_id, function(err, model) {
 
-        /* TODO: don't know how to trigger this from the tests */
         /* istanbul ignore next */
-        if (err) {
-          res.status(500).json(apiUtil.getErrorResponse(500, null, err));
-          return;
-        }
-
-        if (!model) {
-          res.status(404).json(apiUtil.getErrorResponse(404));
-          return;
-        }
+        if (err) return next( new Errors.App(err) );
+        if (!model) return next( new Errors.NotFound() );
 
         res.json(model);
       });
@@ -79,22 +66,14 @@ module.exports = function(router) {
 
 
     // update the media with this id (accessed at PUT http://localhost:port/api/media/:media_id)
-    .put(function(req, res) {
+    .put(function(req, res, next) {
 
       // use our media model to find the media we want
       Media.findById(req.params.media_id, function(err, model) {
 
-        /* TODO: don't know how to trigger this from the tests */
         /* istanbul ignore next */
-        if (err) {
-          res.status(500).json(apiUtil.getErrorResponse(500, null, err));
-          return;
-        }
-
-        if (!model) {
-          res.status(404).json(apiUtil.getErrorResponse(404));
-          return;
-        }
+        if (err) return next( new Errors.App(err) );
+        if (!model) return next( new Errors.NotFound() );
 
         // update the media info
         model.name        = req.body.name;
@@ -105,12 +84,8 @@ module.exports = function(router) {
         // save the model
         model.save(function(err) {
 
-          /* TODO: don't know how to trigger this from the tests */
           /* istanbul ignore next */
-          if (err) {
-            res.send(err);
-            return;
-          }
+          if (err) return next(err);
 
           res.json(model);
         });
@@ -119,24 +94,16 @@ module.exports = function(router) {
 
 
     // delete the media with this id (accessed at DELETE http://localhost:port/api/media/:media_id)
-    .delete(function(req, res) {
+    .delete(function(req, res, next) {
       var model = Media.findOne({
         _id: req.params.media_id
       });
 
       Media.findById(req.params.media_id, function(err, model) {
 
-        /* TODO: don't know how to trigger this from the tests */
         /* istanbul ignore next */
-        if (err) {
-          res.status(500).json(apiUtil.getErrorResponse(500, null, err));
-          return;
-        }
-
-        if (!model) {
-          res.status(404).json(apiUtil.getErrorResponse(404));
-          return;
-        }
+        if (err) return next( new Errors.App(err) );
+        if (!model) return next( new Errors.NotFound() );
 
         model.remove(function() {
           res.json(model);
