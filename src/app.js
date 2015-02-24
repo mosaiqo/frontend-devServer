@@ -32,6 +32,10 @@ var
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+// configure app to use response-time to detect possibl bottlenecks or other issues
+app.use(require('response-time')());
+app.use(require('compression')());
+
 // configure app to serve static files from the dist directory
 app.use(express.static(publicDir));
 

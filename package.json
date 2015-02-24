@@ -20,11 +20,13 @@
   ],
   "dependencies": {
     "body-parser": "~1.11.0",
+    "compression": "^1.4.1",
     "debug": "^2.1.1",
     "express": "~4.11.2",
     "extend-error": "0.0.2",
     "mongoose": "~3.8.23",
     "newrelic": "^1.16.2",
+    "response-time": "^2.3.0",
     "underscore": "~1.7.0"
   },
   "devDependencies": {
