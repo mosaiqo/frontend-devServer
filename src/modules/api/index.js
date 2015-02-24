@@ -50,4 +50,40 @@ fs.readdirSync(routesDir).forEach(function(file) {
 });
 
 
+/*
+ * Generic error handler
+ */
+router.use(function (err, req, res, next) {
+
+  var code, message;
+
+  switch (err.name) {
+    case 'UnauthorizedError':
+      code    = err.code;
+      message = undefined;
+      break;
+    case 'HttpNotFoundError':
+      code    = err.code;
+      message = 'Not found';
+      break;
+    case 'BadRequestError':
+    case 'HttpUnauthorized':
+      code    = err.code;
+      message = err.message;
+      break;
+    default:
+      code    = 500;
+      message = 'Internal Server Error';
+      break;
+  }
+
+  return res.status(code).json({
+    error     : true,
+    errorCode : code,
+    message   : message
+  });
+
+});
+
+
 module.exports = router;
