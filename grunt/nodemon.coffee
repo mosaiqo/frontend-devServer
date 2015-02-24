@@ -14,6 +14,7 @@ module.exports =
           return
       env:
         PORT: '<%= proxiedServer_port %>'
+        DEBUG: 'MosaiqoApp, API'
 
   mosaiqoFrontend_production:
     script: './src/app.js'

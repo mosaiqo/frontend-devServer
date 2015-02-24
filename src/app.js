@@ -2,15 +2,20 @@
 /* jshint -W097 */
 'use strict';
 
+var
+  debug      = require('debug')('MosaiqoApp'),
+  fs         = require('fs');
+
+
 // New Relic
 /* istanbul ignore next */
 if (process.env.NEW_RELIC_ENABLED) {
   require('newrelic');
-  console.log('Starting New Relic monitoring');
+  debug('Starting New Relic monitoring');
 }
 
+
 var
-  fs         = require('fs'),
   express    = require('express'),
   bodyParser = require('body-parser'),
 
@@ -47,4 +52,4 @@ app.use('/api', API);
 // START THE SERVER
 // =============================================================================
 app.listen(port);
-console.log('Server running on port ' + port);
+debug('Server running on port ' + port);

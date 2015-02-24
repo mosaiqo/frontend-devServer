@@ -6,6 +6,7 @@ var
   fs         = require('fs'),
   express    = require('express'),
   mongoose   = require('mongoose'),
+  debug      = require('debug')('API'),
   rootDir    = __dirname + '/../../../',
   routesDir  = __dirname + '/routes/';
 
@@ -37,7 +38,7 @@ router.use(function(req, res, next) {
 });
 
 // test route to make sure everything is working (accessed at GET http://localhost:PORT/api)
-router.get('/', function(req, res) {
+router.get('/', function(req, res, next) {
   res.json({ message: 'hooray! welcome to our api!' });
 });
 
@@ -45,7 +46,7 @@ router.get('/', function(req, res) {
 // load the routes
 fs.readdirSync(routesDir).forEach(function(file) {
   var route = routesDir + file.substr(0, file.indexOf('.'));
-  console.log('Adding route:' + route);
+  debug('Adding route:' + route);
   require(route)(router);
 });
 
