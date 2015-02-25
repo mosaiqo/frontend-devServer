@@ -62,14 +62,57 @@ describe('api/media', function() {
   });
 
 
+  /**
+   * All the methods in /api/media are restricted by JWT
+   * so create a default user (demo/demo)
+   */
+  before(function(done) {
+    var exec = require('child_process').exec;
+
+    this.timeout(10000);
+    exec('grunt util:createUser --default', done);
+  });
+
+
+  /*
+   * Get the token before the tests
+   */
+  var authHeader = null;
+
+  before(function(done) {
+    request(app)
+      .post('/api/login')
+      .set('Accept', 'application/json')
+      .send({ username: 'demo', password: 'demo' })
+      .end(function(err, res) {
+        authHeader = 'Bearer ' + res.body.token;
+        done();
+      });
+  });
+
+
   // -- GET ALL ---------------------------------
 
   describe('Get all media objects -> GET /api/media', function() {
 
+    it('should reject the request if there\'s no valid authorization header', function(done) {
+      request(app)
+        .get('/api/media')
+        .expect('Content-Type', /application\/json/)
+        .expect(401)
+        .end(function(err, res) {
+          expect(res.body.error).to.be.true;
+          expect(res.body.errorCode).to.equal(401);
+          expect(res.body).to.have.property('message');
+          done()
+        });
+    });
+
+
     it('should return an array of media objects', function(done) {
       request(app)
         .get('/api/media')
-        .set('Accept', 'application/json')
+        .set('Authorization', authHeader)
         .expect('Content-Type', /application\/json/)
         .expect(200)
         .end(function(err, res) {
@@ -96,9 +139,18 @@ describe('api/media', function() {
 
   describe('Get one media object -> GET /api/media/:id', function() {
 
+    it('should reject the request if there\'s no valid authorization header', function(done) {
+      request(app)
+        .get('/api/media/'+firstRecord._id)
+        .expect('Content-Type', /application\/json/)
+        .expect(401, done);
+    });
+
+
     it('should return a 404 error if the model does not exist', function(done) {
       request(app)
         .get('/api/media/a-non-existing-record-id')
+        .set('Authorization', authHeader)
         .expect(404, done);
     });
 
@@ -106,7 +158,7 @@ describe('api/media', function() {
     it('returns a Media object', function(done) {
       request(app)
         .get('/api/media/'+firstRecord._id)
-        .set('Accept', 'application/json')
+        .set('Authorization', authHeader)
         .expect('Content-Type', /application\/json/)
         .expect(200)
         .end(function(err, res) {
@@ -137,14 +189,25 @@ describe('api/media', function() {
     };
 
 
+    it('should reject the request if there\'s no valid authorization header', function(done) {
+      var obj = getModelObject();
+
+      request(app)
+        .post('/api/media/')
+        .send(obj)
+        .expect('Content-Type', /application\/json/)
+        .expect(401, done);
+    });
+
+
     it('should return the created object', function(done) {
 
       var obj = getModelObject();
 
       request(app)
         .post('/api/media/')
+        .set('Authorization', authHeader)
         .send(obj)
-        .set('Accept', 'application/json')
         .expect('Content-Type', /application\/json/)
         .expect(200)
         .end(function(err, res) {
@@ -168,10 +231,13 @@ describe('api/media', function() {
 
 
     it('should persist the created object', function(done) {
-      request(app).get('/api/media/'+createdModel._id).end(function(err, res) {
-        expect(res.body._id).to.equal(createdModel._id);
-        done();
-      });
+      request(app)
+        .get('/api/media/'+createdModel._id)
+        .set('Authorization', authHeader)
+        .end(function(err, res) {
+          expect(res.body._id).to.equal(createdModel._id);
+          done();
+        });
     });
 
   });
@@ -181,23 +247,35 @@ describe('api/media', function() {
 
   describe('Update a media object -> PUT /api/media/:id', function() {
 
+    var newAttrs = {
+      name        : 'CCC',
+      description : 'DDD',
+      url         : 'http://qux.baz',
+      active      : false
+    };
+
+
+    it('should reject the request if there\'s no valid authorization header', function(done) {
+      request(app)
+        .put('/api/media/'+createdModel._id)
+        .send(newAttrs)
+        .expect('Content-Type', /application\/json/)
+        .expect(401, done);
+    });
+
+
     it('should retun a 404 error if the model does not exist', function(done) {
       request(app)
         .put('/api/media/a-non-existing-record-id')
+        .set('Authorization', authHeader)
         .expect(404, done);
     });
 
 
     it('should return the modified model', function(done) {
-      var newAttrs = {
-        name        : 'CCC',
-        description : 'DDD',
-        url         : 'http://qux.baz',
-        active      : false
-      };
-
       request(app)
         .put('/api/media/'+createdModel._id)
+        .set('Authorization', authHeader)
         .send(newAttrs)
         .set('Accept', 'application/json')
         .expect('Content-Type', /application\/json/)
@@ -225,9 +303,18 @@ describe('api/media', function() {
 
   describe('Delete a media object -> DELETE /api/media/:id', function() {
 
+    it('should reject the request if there\'s no valid authorization header', function(done) {
+      request(app)
+        .delete('/api/media/'+firstRecord._id)
+        .expect('Content-Type', /application\/json/)
+        .expect(401, done);
+    });
+
+
     it('should retun a 404 error if the model does not exist', function(done) {
       request(app)
         .delete('/api/media/a-non-existing-record-id')
+        .set('Authorization', authHeader)
         .expect(404, done);
     });
 
@@ -235,6 +322,7 @@ describe('api/media', function() {
     it('should return the deleted model', function(done) {
       request(app)
         .delete('/api/media/'+firstRecord._id)
+        .set('Authorization', authHeader)
         .expect('Content-Type', /application\/json/)
         .expect(200)
         .end(function(err, res) {
@@ -252,7 +340,10 @@ describe('api/media', function() {
 
 
     it('should delete the requested model', function(done) {
-      request(app).get('/api/media/'+deletedModel._id).expect(404, done);
+      request(app)
+        .get('/api/media/'+deletedModel._id)
+        .set('Authorization', authHeader)
+        .expect(404, done);
     });
 
   });

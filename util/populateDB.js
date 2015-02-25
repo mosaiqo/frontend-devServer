@@ -13,9 +13,13 @@ var
 // =============================================================================
 var mongoConfigParser = require('../src/lib/mongoConfigParser');
 
-var mongoConn = new mongoConfigParser()
-  .setEnvDir( rootDir + 'db/mongo/env' );
-
+var mongoConn = new mongoConfigParser().setEnv({
+  host     : process.env.MONGO_HOST,
+  port     : process.env.MONGO_PORT,
+  user     : process.env.MONGO_USER,
+  password : process.env.MONGO_PASSWORD,
+  database : process.env.MONGO_DATABASE
+});
 
 // DATA LOAD:
 // The collections must be defined inside the fixtures directory, one file

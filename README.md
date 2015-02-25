@@ -8,6 +8,7 @@
 ## Prerequisites:
 - node & npm
 - mongo
+- redis
 
 ## Setup:
 - Install dependencies executing: `npm install`
@@ -23,10 +24,11 @@
 
 The gruntfile has 2 primary tasks, the default one and one called *dev*.
 
-The default one starts a simple HTTP server to serve the frontend app files and also a fake API to test and develop independently from the backend app (developed using Laravel). It also starts the mongo server used by the API.
+The default one starts a simple HTTP server to serve the frontend app files and also a fake API to test and develop independently from the backend app (developed using Laravel).
 
 The *dev* task does the same as the default one, and does some additional things:
 
+- It starts the mongo server used by the API and redis used to cache stuff (like the JWT).
 - It monitors the frontendApp files, so when they change, the browser gets reloaded.
 - It monitors the server files, so whenever changed, the files are linted, tested and the server is restarted.
 - It offers a syncronized browsing on any device, using *browserSync*, so when the app navigates to some section on one browser, it also navigates to that section on any one browser/device. Very nice for testing, by the way:
