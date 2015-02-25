@@ -45,3 +45,9 @@ module.exports = (grunt) ->
   redis_stop:
     cmd: 'cat db/redis/pid | xargs kill'
     bg: false
+
+
+  # utils
+  createUser:
+    bg: false
+    cmd: 'node ./util/createUser.js ' + ( if grunt.option('default') then '--default' else '')

@@ -30,7 +30,7 @@ util:createUser:
   description: 'Create an application user'
   tasks:
     - env:app
-    - bgShell:test
+    - bgShell:createUser
 
 
 
