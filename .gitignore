@@ -6,6 +6,7 @@ db/mongo/data
 db/mongo/log
 db/mongo/pid
 db/redis/pid
+db/redis/dump.rdb
 test/coverage
 
 # IDE files
@@ -17,4 +18,3 @@ mosaiqo-frontDevServer.sublime-workspace
 TODO.md
 env.json
 newrelic_agent.log
-dump.rdb
