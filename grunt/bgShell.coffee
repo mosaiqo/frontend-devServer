@@ -1,17 +1,15 @@
 # https://www.npmjs.org/package/grunt-bg-shell
-module.exports =
+module.exports = (grunt) ->
   _defaults:
     bg: true
 
-
+  # nodemon
   nodemonDev:
     cmd: 'grunt nodemon:mosaiqoFrontend_dev'
 
   nodemonDev_stop:
     cmd: 'ps aux | grep "nodemon:mosaiqoFrontend_dev" | grep -v grep | awk \'{print $2}\' | xargs kill'
     bg: false
-
-
 
   nodemonProd:
     cmd: 'grunt nodemon:mosaiqoFrontend_production'
@@ -21,7 +19,7 @@ module.exports =
     bg: false
 
 
-
+  # mongo
   mongod_start:
     cmd: 'mongod --config ./db/mongo/conf/mongodb.conf'
 
@@ -37,4 +35,13 @@ module.exports =
 
   mongod_populate:
     cmd: 'node ./util/populateDB.js'
+    bg: false
+
+
+  # redis
+  redis_start:
+    cmd: 'redis-server db/redis/redis.conf'
+
+  redis_stop:
+    cmd: 'cat db/redis/pid | xargs kill'
     bg: false

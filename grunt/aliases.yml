@@ -1,23 +1,23 @@
 # PRIMARY TASKS
 # =========================================
 default:
-  description: 'Default task, starts mongo and a server'
+  description: 'Default task, starts an express server'
   tasks:
-    - server # start the local mongod and the express server
-
+    - server # start the local express server
 
 dev:
-  description: 'Dev task, starts mongo and a server and watches for code changes'
+  description: 'Dev task, starts mongo, redis and a server and watches for code changes'
   tasks:
+    - redis               # start the local redis
     - mongo               # start the local mongod
+    - env:app
     - bgShell:nodemonDev  # start an express server that will be restarted on any server code change
     - browserSync         # reload the browsers when anything changes
     - watch               # lint & unit test the server code when changed
 
 
 
-
-# AUX TASKS (docs, test, metrics, etc)
+# AUX TASKS (docs, metrics, etc)
 # =========================================
 
 #docs:
@@ -26,10 +26,20 @@ dev:
 #    - clean:docs
 #    - codo
 
+util:createUser:
+  description: 'Create an application user'
+  tasks:
+    - env:app
+    - bgShell:test
 
+
+
+# TEST RELATED TASKS
+# =========================================
 test:
   description: 'Execute ALL the tests'
   tasks:
+    - env:app
     - mochaTest
 
 test:coverage:
@@ -49,16 +59,13 @@ test:coverage:
 server:
   description: 'Starts a HTTP server on the dist directory'
   tasks:
-    - mongo
+    - env:app
     - nodemon:mosaiqoFrontend_production
-
 
 server:stop:
   description: 'Stops the HTTP server'
   tasks:
-    - bgShell:nodemonDev_stop
     - bgShell:nodemonProd_stop
-    - mongo:stop
 
 
 # some aliases for mongo
@@ -67,12 +74,10 @@ mongo:
   tasks:
     - bgShell:mongod_start
 
-
 mongo:stop:
   description: 'Stop mongodb dev. instance'
   tasks:
     - bgShell:mongod_stop
-
 
 mongo:setup:
   description: 'Initial mongodb server setup (create dirs, logs, etc)'
@@ -82,4 +87,17 @@ mongo:setup:
 mongo:populate:
   description: 'Fill the database with the fixtures data'
   tasks:
+    - env:app
     - bgShell:mongod_populate
+
+
+# some aliases for redis
+redis:
+  description: 'Start Redis'
+  tasks:
+    - bgShell:redis_start
+
+redis:stop:
+  description: 'Stop Redis'
+  tasks:
+    - bgShell:redis_stop
