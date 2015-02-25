@@ -6,7 +6,7 @@ var
   fs         = require('fs'),
   express    = require('express'),
   mongoose   = require('mongoose'),
-  debug      = require('debug')('API'),
+  debug      = require('debug')('MosaiqoApp:API:' + process.pid),
   rootDir    = __dirname + '/../../../',
   routesDir  = __dirname + '/routes/';
 
@@ -21,9 +21,15 @@ if(process.env.APP_DIR_FOR_CODE_COVERAGE) {
 // =============================================================================
 var mongoConfigParser = require('../../lib/mongoConfigParser');
 
-var mongoConn = new mongoConfigParser()
-  .setEnvDir( rootDir + 'db/mongo/env' );
+var mongoConn = new mongoConfigParser().setEnv({
+  host     : process.env.MONGO_HOST,
+  port     : process.env.MONGO_PORT,
+  user     : process.env.MONGO_USER,
+  password : process.env.MONGO_PASSWORD,
+  database : process.env.MONGO_DATABASE
+});
 
+/* istanbul ignore next */
 mongoose.connection.on('error', function () {
     debug('Mongoose connection error');
 });

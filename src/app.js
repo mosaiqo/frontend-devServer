@@ -3,8 +3,9 @@
 'use strict';
 
 var
-  debug      = require('debug')('MosaiqoApp'),
-  fs         = require('fs');
+  debug      = require('debug')('MosaiqoApp:' + process.pid),
+  fs         = require('fs'),
+  errors     = require('./lib/errors');
 
 
 // New Relic
@@ -19,7 +20,7 @@ var
   express    = require('express'),
   bodyParser = require('body-parser'),
 
-  publicDir  = process.env.appPublicDir,
+  publicDir  = process.env.APP_PUBLIC_DIR,
   port       = process.env.PORT || 5000,
   app        = exports.app = express();
 
