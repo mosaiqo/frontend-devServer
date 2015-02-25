@@ -7,6 +7,9 @@ var
   express    = require('express'),
   mongoose   = require('mongoose'),
   debug      = require('debug')('MosaiqoApp:API:' + process.pid),
+  jwt        = require('express-jwt'),
+  jwtAuth    = require('./../../lib/jwtAuth'),
+  errors     = require('./../../lib/errors'),
   rootDir    = __dirname + '/../../../',
   routesDir  = __dirname + '/routes/';
 
@@ -41,20 +44,27 @@ mongoose.connection.once('open', function callback() {
 mongoose.connect(mongoConn.getConnectionString(), mongoConn.getConnectionOptions());
 
 
-// API ROUTES
+// SETUP THE MODULE ROUTES
 // =============================================================================
 var router = express.Router();
 
-// middleware to use for all requests
-router.use(function(req, res, next) {
-  next(); // make sure we go to the next routes and don't stop here
-});
+// auth free routes
+var excluded = {path: [
+  /api\/?$/i,
+  /api\/login\/?$/i
+]};
+
+// Setup the authentication using JWT
+router.use( jwt({ secret: process.env.JWT_SECRET }).unless(excluded) );
+router.use( jwtAuth.middleware().unless(excluded) );
+
+
+// -- API ROUTES --
 
 // test route to make sure everything is working (accessed at GET http://localhost:PORT/api)
 router.get('/', function(req, res, next) {
   res.json({ message: 'hooray! welcome to our api!' });
 });
-
 
 // load the routes
 fs.readdirSync(routesDir).forEach(function(file) {
@@ -62,42 +72,5 @@ fs.readdirSync(routesDir).forEach(function(file) {
   debug('Adding route:' + route);
   require(route)(router);
 });
-
-
-/*
- * Generic error handler
- */
-router.use(function (err, req, res, next) {
-
-  var code, message;
-
-  switch (err.name) {
-    case 'UnauthorizedError':
-      code    = err.code;
-      message = undefined;
-      break;
-    case 'HttpNotFoundError':
-      code    = err.code;
-      message = 'Not found';
-      break;
-    case 'BadRequestError':
-    case 'HttpUnauthorized':
-      code    = err.code;
-      message = err.message;
-      break;
-    default:
-      code    = 500;
-      message = 'Internal Server Error';
-      break;
-  }
-
-  return res.status(code).json({
-    error     : true,
-    errorCode : code,
-    message   : message
-  });
-
-});
-
 
 module.exports = router;

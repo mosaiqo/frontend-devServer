@@ -54,6 +54,48 @@ var API = require('./modules/api');
 app.use('/api', API);
 
 
+// ERROR HANDLING
+// =============================================================================
+
+// throw a 404 error if the route does not match anything
+app.all('*', function (req, res, next) {
+    next(new errors.NotFound());
+});
+
+// generic error handler
+app.use(function(err, req, res, next) {
+
+  var code, message;
+
+  /* istanbul ignore next */
+  switch (err.name) {
+    case 'UnauthorizedError':
+      code    = err.status;
+      message = err.message;
+      break;
+    case 'HttpNotFoundError':
+      code    = err.code;
+      message = 'Not found';
+      break;
+    case 'BadRequestError':
+    case 'HttpUnauthorized':
+      code    = err.code;
+      message = err.message;
+      break;
+    default:
+      code    = 500;
+      message = 'Internal Server Error';
+      break;
+  }
+
+  return res.status(code).json({
+    error     : true,
+    errorCode : code,
+    message   : message
+  });
+
+});
+
 // START THE SERVER
 // =============================================================================
 app.listen(port);
