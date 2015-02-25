@@ -32,6 +32,13 @@ describe('App', function() {
     });
 
 
+    it('should throw a 404 when requesting a non existing resource', function(done) {
+      request(app)
+        .get('/non-existing-resource')
+        .expect(404, done);
+    });
+
+
   });
 
 });

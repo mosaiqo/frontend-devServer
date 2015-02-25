@@ -1,6 +1,6 @@
 {
   "name": "MosaiqoCMS-Frontend-server",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Mosaiqo CMS Frontend dev/testing server",
   "author": "Mosaiqo Team <mosaiqo@mosaiqo.com>",
   "homepage": "http://www.mosaiqo.com",
@@ -19,9 +19,21 @@
     }
   ],
   "dependencies": {
-    "express": "~4.11.2",
+    "bcryptjs": "^2.1.0",
     "body-parser": "~1.11.0",
+    "compression": "^1.4.1",
+    "debug": "^2.1.1",
+    "express": "~4.11.2",
+    "express-jwt": "^1.0.0",
+    "express-unless": "^0.1.0",
+    "extend-error": "0.0.2",
+    "jsonwebtoken": "^3.2.2",
+    "lodash": "^3.3.1",
     "mongoose": "~3.8.23",
+    "newrelic": "^1.16.2",
+    "prompt": "^0.2.14",
+    "redis": "^0.12.1",
+    "response-time": "^2.3.0",
     "underscore": "~1.7.0"
   },
   "devDependencies": {
@@ -45,6 +57,7 @@
     "mocha": "^2.1.0",
     "mock-fs": "^2.5.0",
     "mockery": "^1.4.0",
+    "mongodb": "^1.4.31",
     "node-mocks-http": "^1.2.4",
     "pow-mongodb-fixtures": "^0.10.0",
     "sinon": "^1.12.2",

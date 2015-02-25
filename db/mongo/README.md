@@ -5,4 +5,4 @@ The task starts a mongod instance using the directory *db/mongo/data* as a data 
 
 To setup the mongodb instance just run `grunt mongo:setup` (you need to install mongo first with brew or whatever). This will create the required directories and log files.
 
-You can also use a mongo instance with the data stored somewhere (like the default *data/db*). In that case, comment the ´mongod_start´ subtask and define the connection params in a json file named as your hostname (for example *iMac.local.json*) and place it in *db/mongo/env*.
+You can also use a mongo instance with the data stored somewhere (like the default *data/db*). In that case, comment the ´mongod_start´ subtask and define the connection params in the *env* file (see the gruntfile, it's explained there).

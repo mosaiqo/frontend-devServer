@@ -1,55 +1,92 @@
 module.exports = (grunt) ->
 
-  # Default path to the frontend public dir (called 'dist')
-  frontendAppPublicDir = '../frontend'
+  _ = require('lodash')
 
-  # The path can be overrided so you can place the frontendApp wherever you want
-  # Just create a file called 'env.json' at the project root with this contents:
-  #
-  # {
-  #   "appPublicDir" : "path_to_the_frontEndApp_public_dir"
-  # }
-  #
-  if grunt.file.exists 'env.json'
-    frontendAppPublicDir = grunt.file.readJSON('env.json').appPublicDir
 
-  # travis fixup: on travis, the previous path obviously does not exist
-  # so some tests will make explode the app. So:
-  unless grunt.file.exists frontendAppPublicDir
+  # Defaults:
+  # ================================================================
+  defaults =
+    # 'secret' used to sign the JWT
+    jwtSecret: 'my_random_and_uber_secret_string_to_sign_the_json_web_tokens'
+
+    # Path to the frontend public dir (called 'dist')
+    frontendAppPublicDir: '../frontend'
+
+    # Redis settings
+    redis:
+      host: 'localhost'
+      port: 6379
+
+    # Mongo settings
+    mongo:
+      host:     'localhost'
+      port:     27017
+      user:     null
+      password: null
+      database: 'mosaiqoFront'
+
+    # New Relic settings
+    newRelic:
+      enabled:    false
+      appName:    ''
+      licenceKey: ''
+
+
+  # The defaults can be overrided so you can place the frontendApp wherever you
+  # want, or to use a redis or mongo running on another machine.
+  #
+  # Just create a file called 'env.json' at the project root and overwrite any
+  # default settings you want
+  #
+  envConfigFile = 'env.json'
+
+  if grunt.file.exists envConfigFile
+    envConfig = grunt.file.readJSON(envConfigFile)
+  else
+    envConfig = {}
+
+  config = _.defaults envConfig, defaults
+
+
+
+  # Travis fixup
+  # ================================================================
+  # on travis, the frontendAppPublicDir path obviously does not
+  # exist so some tests will make explode the app. So:
+  unless grunt.file.exists config.frontendAppPublicDir
     grunt.file.mkdir 'tmpPublic'
     grunt.file.write 'tmpPublic/index.html', '...'
+    config.frontendAppPublicDir = './tmpPublic'
 
-    frontendAppPublicDir = './tmpPublic'
 
-  # set some environment vars
-  process.env.appRoot      = __dirname
-  process.env.appPublicDir = frontendAppPublicDir
+  # Actual tasks config...
+  # ================================================================
+
+  # Data available to the tasks:
+  # The previous config plus some aditional params.
+   config = _.extend config,
+
+    # Directories:
+    rootDir:      __dirname
+    srcDir:       './src'
+    assetsDir:    '<%= config.frontendAppPublicDir %>/assets'
+    docsDir:      'docs'
+
+    # Dev. server settings:
+    serverPort:         9000
+    proxiedServer_port: 9001
+    browserSyncUIPort:  9002
+    weinrePort:         9003
+
+    banner: '/*! <%= package.name %> <%= package.version %> |
+ © <%= package.author %> - All rights reserved |
+ <%= package.homepage %> */\n'
 
 
   # Autoloading for the grunt tasks, jitGrunt enables loading them on demand
   require('load-grunt-config') grunt,
     jitGrunt: true
-
-    # Data available to the tasks:
-    data:
-      # Directories:
-      srcDir:    './src'
-      buildDir : frontendAppPublicDir
-      assetsDir: '<%= buildDir %>/assets'
-      docsDir:   'docs'
-
-
-      # Dev. server settings:
-      serverPort:         9000
-      proxiedServer_port: 9001
-      browserSyncUIPort:  9002
-      weinrePort:         9003
-
-
-      # Banner, appended to the built scripts/css:
-      banner: '/*! <%= package.name %> <%= package.version %> |
- © <%= package.author %> - All rights reserved |
- <%= package.homepage %> */\n'
+    data: config
 
 
   # Display the elapsed execution time of grunt tasks
