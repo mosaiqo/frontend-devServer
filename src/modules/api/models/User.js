@@ -46,11 +46,15 @@ UserSchema.pre('save', function (next) {
   if (this.isModified('password') || this.isNew) {
     bcrypt.genSalt(10, function (err, salt) {
       /* istanbul ignore next */
-      if (err) return next(err);
+      if (err) {
+        return next(err);
+      }
 
       bcrypt.hash(user.password, salt, function (err, hash) {
         /* istanbul ignore next */
-        if (err) return next(err);
+        if (err) {
+          return next(err);
+        }
 
         user.password = hash;
         next();
@@ -65,7 +69,9 @@ UserSchema.pre('save', function (next) {
 UserSchema.methods.comparePassword = function (passw, cb) {
   bcrypt.compare(passw, this.password, function (err, isMatch) {
     /* istanbul ignore next */
-    if (err) return cb(err);
+    if (err) {
+      return cb(err);
+    }
     cb(null, isMatch);
   });
 };

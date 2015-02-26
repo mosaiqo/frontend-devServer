@@ -27,7 +27,7 @@ var
 
 /**
  * Retrieve the authorization token from the request headers
- * @param  {String} headers Request headers
+ * @param  {Object} headers Request headers
  * @return {String}         The authorization token
  */
 var fetch = function (headers) {
@@ -37,7 +37,7 @@ var fetch = function (headers) {
     authorization = headers.authorization;
 
     // the header should be something like 'Bearer {{token}}'
-    // so get only the last part, the actual tokeb
+    // so get only the last part, the actual token
     part = authorization.split(' ');
 
     if (part.length === 2) {
@@ -93,12 +93,20 @@ var create = function (user, req, res, next) {
   debug('Token generated for user: %s, token: %s', data.username, data.token);
 
   client.set(data.token, JSON.stringify(data), function (err, reply) {
-    if (err) return next(new Error(err));
+    /* istanbul ignore next */
+    if (err) {
+      return next(new Error(err));
+    }
 
+    /* istanbul ignore else */
     if (reply) {
       client.expire(data.token, TOKEN_EXPIRATION_SEC, function (err, reply) {
-        if (err) return next(new Error('Can not set the expire value for the token key'));
+        /* istanbul ignore next */
+        if (err) {
+          return next(new Error('Can not set the expire value for the token key'));
+        }
 
+        /* istanbul ignore else */
         if (reply) {
           req.user = data;
           next(); // we have succeeded
@@ -132,7 +140,10 @@ var retrieve = function (id, done) {
   }
 
   client.get(id, function (err, reply) {
-    if (err) return done(err, { 'message': err });
+    /* istanbul ignore next */
+    if (err) {
+      return done(err, { 'message': err });
+    }
 
     if (_.isNull(reply)) {
       return done(new Error('token_invalid'), {
@@ -142,6 +153,7 @@ var retrieve = function (id, done) {
       var data = JSON.parse(reply);
       debug('User data fetched from redis store for user: %s', data.username);
 
+      /* istanbul ignore else */
       if (_.isEqual(data.token, id)) {
         return done(null, data);
       } else {
@@ -170,6 +182,7 @@ var verify = function (req, res, next) {
   var token = fetch(req.headers);
 
   jsonwebtoken.verify(token, JWT_SECRET, function (err, decode) {
+    /* istanbul ignore next */
     if (err) {
       req.user = undefined;
       return next(new errors.Unauthorized('invalid_token'));

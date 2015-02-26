@@ -1,4 +1,4 @@
-/* global require, module, process, console, describe, it, before, __dirname */
+/* global require, module, process, console, describe, it, before, after, __dirname */
 /* jshint -W097 */
 /* jshint expr: true */
 'use strict';
@@ -23,6 +23,8 @@ var
 
 
 describe('User model', function() {
+
+  this.timeout(10000);
 
   before(function(done) {
     var mongoConn = new mongoConfigParser().setEnv({
@@ -76,7 +78,7 @@ describe('User model', function() {
       expect(user.password).to.not.equal(userdata.password);
       user.comparePassword(userdata.password, function(err, match) {
         expect(match).to.true;
-      })
+      });
 
       // editing an existing user, assign a new password
       var newPassword = faker.internet.password() + '1234';
@@ -88,7 +90,7 @@ describe('User model', function() {
 
         user.comparePassword(newPassword, function(err, match) {
           expect(match).to.true;
-        })
+        });
 
         done();
       });

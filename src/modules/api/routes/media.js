@@ -42,7 +42,9 @@ module.exports = function(router) {
       model.save(function(err) {
 
         /* istanbul ignore next */
-        if (err) return next( new errors.App(err) );
+        if (err) {
+          return next( new errors.App(err) );
+        }
 
         res.json(model);
       });
@@ -57,8 +59,12 @@ module.exports = function(router) {
       Media.findById(req.params.media_id, function(err, model) {
 
         /* istanbul ignore next */
-        if (err) return next( new errors.App(err) );
-        if (!model) return next( new errors.NotFound() );
+        if (err) {
+          return next( new errors.App(err) );
+        }
+        if (!model) {
+          return next( new errors.NotFound() );
+        }
 
         res.json(model);
       });
@@ -72,8 +78,12 @@ module.exports = function(router) {
       Media.findById(req.params.media_id, function(err, model) {
 
         /* istanbul ignore next */
-        if (err) return next( new errors.App(err) );
-        if (!model) return next( new errors.NotFound() );
+        if (err) {
+          return next( new errors.App(err) );
+        }
+        if (!model) {
+          return next( new errors.NotFound() );
+        }
 
         // update the media info
         model.name        = req.body.name;
@@ -85,7 +95,9 @@ module.exports = function(router) {
         model.save(function(err) {
 
           /* istanbul ignore next */
-          if (err) return next(err);
+          if (err) {
+            return next(err);
+          }
 
           res.json(model);
         });
@@ -102,8 +114,12 @@ module.exports = function(router) {
       Media.findById(req.params.media_id, function(err, model) {
 
         /* istanbul ignore next */
-        if (err) return next( new errors.App(err) );
-        if (!model) return next( new errors.NotFound() );
+        if (err) {
+          return next( new errors.App(err) );
+        }
+        if (!model) {
+          return next( new errors.NotFound() );
+        }
 
         model.remove(function() {
           res.json(model);

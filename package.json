@@ -60,6 +60,7 @@
     "mongodb": "^1.4.31",
     "node-mocks-http": "^1.2.4",
     "pow-mongodb-fixtures": "^0.10.0",
+    "redis-mock": "^0.4.5",
     "sinon": "^1.12.2",
     "supertest": "^0.15.0",
     "time-grunt": "^1.0.0"

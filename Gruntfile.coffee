@@ -69,7 +69,7 @@ module.exports = (grunt) ->
     # Directories:
     rootDir:      __dirname
     srcDir:       './src'
-    assetsDir:    '<%= config.frontendAppPublicDir %>/assets'
+    assetsDir:    config.frontendAppPublicDir + '/assets'
     docsDir:      'docs'
 
     # Dev. server settings:
