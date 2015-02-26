@@ -24,6 +24,8 @@ var
 
 describe('User model', function() {
 
+  this.timeout(10000);
+
   before(function(done) {
     var mongoConn = new mongoConfigParser().setEnv({
       host     : process.env.MONGO_HOST,
