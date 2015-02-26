@@ -93,11 +93,15 @@ var create = function (user, req, res, next) {
   debug('Token generated for user: %s, token: %s', data.username, data.token);
 
   client.set(data.token, JSON.stringify(data), function (err, reply) {
-    if (err) return next(new Error(err));
+    if (err) {
+      return next(new Error(err));
+    }
 
     if (reply) {
       client.expire(data.token, TOKEN_EXPIRATION_SEC, function (err, reply) {
-        if (err) return next(new Error('Can not set the expire value for the token key'));
+        if (err) {
+          return next(new Error('Can not set the expire value for the token key'));
+        }
 
         if (reply) {
           req.user = data;
@@ -132,7 +136,9 @@ var retrieve = function (id, done) {
   }
 
   client.get(id, function (err, reply) {
-    if (err) return done(err, { 'message': err });
+    if (err) {
+      return done(err, { 'message': err });
+    }
 
     if (_.isNull(reply)) {
       return done(new Error('token_invalid'), {
