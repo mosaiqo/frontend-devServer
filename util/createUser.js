@@ -39,16 +39,18 @@ var createUser = function(userData) {
     var user = new User(userData);
 
     user.save(function (err) {
-      if (err) console.log(err);
+      if (err) {
+        console.log(err);
+      }
       process.exit();
     });
   });
-}
+};
 
 
 var args = process.argv.slice(2);
 
-if(args.length && args[0] == '--default') {
+if(args.length && args[0] === '--default') {
   createUser({
     username: 'demo',
     password: 'demo',
