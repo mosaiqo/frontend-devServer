@@ -104,7 +104,7 @@ describe('api/media', function() {
           expect(res.body.error).to.be.true;
           expect(res.body.errorCode).to.equal(401);
           expect(res.body).to.have.property('message');
-          done()
+          done();
         });
     });
 

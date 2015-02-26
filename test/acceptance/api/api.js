@@ -192,7 +192,7 @@ describe('Express rest api server', function() {
             .end(done);
 
         });
-    })
+    });
 
 
     it('Should return a 401 if a non valid JWT is supplied', function(done) {
