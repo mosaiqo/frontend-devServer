@@ -27,7 +27,7 @@ var
 
 /**
  * Retrieve the authorization token from the request headers
- * @param  {String} headers Request headers
+ * @param  {Object} headers Request headers
  * @return {String}         The authorization token
  */
 var fetch = function (headers) {
@@ -37,7 +37,7 @@ var fetch = function (headers) {
     authorization = headers.authorization;
 
     // the header should be something like 'Bearer {{token}}'
-    // so get only the last part, the actual tokeb
+    // so get only the last part, the actual token
     part = authorization.split(' ');
 
     if (part.length === 2) {
