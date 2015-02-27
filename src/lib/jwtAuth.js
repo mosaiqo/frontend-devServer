@@ -85,7 +85,7 @@ var create = function (user, req, res, next) {
 
   var decoded = jsonwebtoken.decode(data.token);
 
-  // attach the expiration date and the iat (tokeb issue date)
+  // attach the expiration date and the iat (token issue date)
   // so the client can decide when to renew the token
   data.token_exp = decoded.exp;
   data.token_iat = decoded.iat;
