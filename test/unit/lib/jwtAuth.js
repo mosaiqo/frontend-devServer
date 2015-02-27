@@ -176,7 +176,7 @@ describe('lib/jwtAuth', function() {
           expect(data._id).to.equal(user._id);
           expect(data.username).to.equal(user.username);
           done();
-        })
+        });
       });
     });
 
@@ -287,7 +287,7 @@ describe('lib/jwtAuth', function() {
       jwtAuth.verify(req, res, function(err) {
         expect(err).to.be.undefined;
         done();
-      })
+      });
     });
 
 
@@ -305,7 +305,7 @@ describe('lib/jwtAuth', function() {
       jwtAuth.verify(req, res, function(err) {
         expect(err).to.be.instanceOf(Error);
         done();
-      })
+      });
     });
 
   });
@@ -342,7 +342,7 @@ describe('lib/jwtAuth', function() {
     after(function(done) {
       mockRedis();
       done();
-    })
+    });
 
 
     it('should destroy a saved token', function(done) {
