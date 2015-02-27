@@ -23,4 +23,3 @@ notifications:
   slack:
     rooms:
       - mosaiqo:4VdHFaCyZ8Sbwp3R1Iof1uaa#general
-      - mosaiqo:4VdHFaCyZ8Sbwp3R1Iof1uaa#random
