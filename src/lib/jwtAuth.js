@@ -78,14 +78,14 @@ var create = function (user, req, res, next) {
     access: user.access, // currently empty
     name: user.name,     // currently empty
     email: user.email,
-    token: jsonwebtoken.sign({ _id: user._id }, JWT_SECRET, {
+    token: jsonwebtoken.sign({ _id: user._id, foo: Math.random() }, JWT_SECRET, {
       expiresInMinutes: TOKEN_EXPIRATION
     })
   };
 
   var decoded = jsonwebtoken.decode(data.token);
 
-  // attach the expiration date and the iat (tokeb issue date)
+  // attach the expiration date and the iat (token issue date)
   // so the client can decide when to renew the token
   data.token_exp = decoded.exp;
   data.token_iat = decoded.iat;

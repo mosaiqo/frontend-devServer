@@ -54,6 +54,7 @@ module.exports = function(router) {
     return res.status(200).json(req.user);
   });
 
+
   router.route('/logout').get(function(req, res, next) {
     /* istanbul ignore else */
     if (jwtAuth.expire(req.headers)) {
@@ -65,6 +66,27 @@ module.exports = function(router) {
       return next(new errors.Unauthorized());
     }
   });
+
+
+  router.route('/token-renew').get(function(req, res, next) {
+
+    User.findOne({
+      username: req.user.username
+    }, function (err, user) {
+
+      /* istanbul ignore next */
+      if (err || !user) {
+        return next( new errors.Unauthorized('User not found') );
+      }
+
+      jwtAuth.create(user, req, res, function() {
+        jwtAuth.expire(req.headers);
+        return res.status(200).json(req.user);
+      });
+
+    });
+  });
+
 
   router.route('/verify').get(function(req, res, next) {
     return res.status(200).json({'message': 'Token is valid'});
