@@ -78,7 +78,7 @@ var create = function (user, req, res, next) {
     access: user.access, // currently empty
     name: user.name,     // currently empty
     email: user.email,
-    token: jsonwebtoken.sign({ _id: user._id, foo: Math.random() }, JWT_SECRET, {
+    token: jsonwebtoken.sign({ _id: user._id}, JWT_SECRET, {
       expiresInMinutes: TOKEN_EXPIRATION
     })
   };
