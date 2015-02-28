@@ -239,7 +239,11 @@ describe('Express rest api server', function() {
 
 
     it('Should issue a new token with a new expiry date', function(done) {
-      request(app)
+      this.timeout(50000);
+
+      setTimeout(function () {
+
+        request(app)
         .get('/api/token-renew')
         .set('Authorization', 'Bearer ' + tokenAboutToExpire.token)
         .expect(200)
@@ -260,6 +264,8 @@ describe('Express rest api server', function() {
             .expect(200)
             .end(done);
         });
+
+      }, 2000);
     });
 
 
