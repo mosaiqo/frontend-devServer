@@ -8,6 +8,7 @@ db/mongo/pid
 db/redis/pid
 db/redis/dump.rdb
 test/coverage
+doc
 
 # IDE files
 mosaiqo-frontDevServer.sublime-project
