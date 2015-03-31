@@ -20,11 +20,12 @@ dev:
 # AUX TASKS (docs, metrics, etc)
 # =========================================
 
-#docs:
-#  description: 'Generate the project documentation'
-#  tasks:
-#    - clean:docs
-#    - codo
+docs:
+ description: 'Generate the project documentation'
+ tasks:
+   - clean:docs
+   # - codo
+   - apidoc
 
 util:createUser:
   description: 'Create an application user'
