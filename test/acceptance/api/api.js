@@ -1,4 +1,4 @@
-/* global require, module, process, console, describe, it, before, __dirname */
+/* global require, module, process, console, describe, it, before, __dirname, setTimeout */
 /* jshint -W097 */
 /* jshint expr: true */
 'use strict';
@@ -199,6 +199,80 @@ describe('Express rest api server', function() {
       request(app)
         .get('/api/verify')
         .set('Authorization', 'Bearer randomStringTotallyFakeToken')
+        .expect(401)
+        .end(done);
+    });
+  });
+
+
+  describe('Token-refresh', function() {
+
+    var tokenAboutToExpire = { token: null, exp: null };
+
+    before(function(done) {
+      request(app)
+        .post('/api/login')
+        .send({ username: defaultUser.username, password: defaultUser.password })
+        .end(function(err, res) {
+          tokenAboutToExpire.token = res.body.token;
+          tokenAboutToExpire.exp   = res.body.token_exp;
+          done();
+        });
+    });
+
+
+    it('Should return a 401 if thre\'s no auth header', function(done) {
+      request(app)
+        .get('/api/token-renew')
+        .expect(401)
+        .end(done);
+    });
+
+
+    it('Should return a 401 if the supplied token is not valid or has expired', function(done) {
+      request(app)
+        .get('/api/token-renew')
+        .set('Authorization', 'Bearer randomStringTotallyFakeToken')
+        .expect(401)
+        .end(done);
+    });
+
+
+    it('Should issue a new token with a new expiry date', function(done) {
+      this.timeout(50000);
+
+      setTimeout(function () {
+
+        request(app)
+        .get('/api/token-renew')
+        .set('Authorization', 'Bearer ' + tokenAboutToExpire.token)
+        .expect(200)
+        .end(function(err, res) {
+          expect(objectid.isValid(res.body._id)).to.be.true;
+          expect(res.body.username).to.equal(defaultUser.username);
+          expect(res.body.email).to.equal(defaultUser.email);
+          expect(res.body.token_exp).to.be.a('number');
+          expect(res.body.token_iat).to.be.a('number');
+          expect(res.body.token).to.be.a('string');
+
+          expect(res.body.token).to.not.equal(tokenAboutToExpire.token);
+          expect(res.body.token_exp).to.be.at.least(tokenAboutToExpire.exp);
+
+          request(app)
+            .get('/api/verify')
+            .set('Authorization', 'Bearer ' + res.body.token)
+            .expect(200)
+            .end(done);
+        });
+
+      }, 2000);
+    });
+
+
+    it('Should expire the old token when renewing it', function(done) {
+      request(app)
+        .get('/api/verify')
+        .set('Authorization', 'Bearer ' + tokenAboutToExpire.token)
         .expect(401)
         .end(done);
     });

@@ -61,7 +61,23 @@ router.use( jwtAuth.middleware().unless(excluded) );
 
 // -- API ROUTES --
 
-// test route to make sure everything is working (accessed at GET http://localhost:PORT/api)
+/**
+ * @api {get} /api/ API entry point
+ * @apiName Index
+ * @apiGroup ROOT
+ * @apiDescription Test route to make sure everything is working
+ *
+ * @apiExample Example usage:
+ * curl -4 -i http://localhost:9000/api
+ *
+ * @apiSuccess {String} message Success message.
+ *
+ * @apiSuccessExample {json} Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "message": "hooray! welcome to our api!"
+ *     }
+ */
 router.get('/', function(req, res, next) {
   res.json({ message: 'hooray! welcome to our api!' });
 });

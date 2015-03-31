@@ -1,6 +1,6 @@
 {
   "name": "MosaiqoCMS-Frontend-server",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Mosaiqo CMS Frontend dev/testing server",
   "author": "Mosaiqo Team <mosaiqo@mosaiqo.com>",
   "homepage": "http://www.mosaiqo.com",
@@ -40,6 +40,7 @@
     "chai": "^1.10.0",
     "faker": "^2.1.2",
     "grunt": "~0.4.5",
+    "grunt-apidoc": "^0.10.0",
     "grunt-bg-shell": "~2.3.1",
     "grunt-browser-sync": "~2.0.0",
     "grunt-coffeelint": "0.0.13",

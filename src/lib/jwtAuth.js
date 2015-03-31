@@ -78,14 +78,14 @@ var create = function (user, req, res, next) {
     access: user.access, // currently empty
     name: user.name,     // currently empty
     email: user.email,
-    token: jsonwebtoken.sign({ _id: user._id }, JWT_SECRET, {
+    token: jsonwebtoken.sign({ _id: user._id}, JWT_SECRET, {
       expiresInMinutes: TOKEN_EXPIRATION
     })
   };
 
   var decoded = jsonwebtoken.decode(data.token);
 
-  // attach the expiration date and the iat (tokeb issue date)
+  // attach the expiration date and the iat (token issue date)
   // so the client can decide when to renew the token
   data.token_exp = decoded.exp;
   data.token_iat = decoded.iat;
@@ -218,23 +218,8 @@ var expire = function (headers) {
 
 
 var middleware = function () {
-
-  var func = function (req, res, next) {
-    var token = fetch(req.headers);
-
-    retrieve(token, function (err, data) {
-      if (err) {
-        req.user = undefined;
-        return next(new errors.Unauthorized('invalid_token', data));
-      } else {
-        req.user = _.merge(req.user, data);
-        next();
-      }
-    });
-  };
-
+  var func = verify;
   func.unless = unless;
-
   return func;
 
 };

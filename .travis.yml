@@ -7,7 +7,7 @@ services:
   - mongodb
   - redis-server
 
-before_script: "npm install -g codeclimate-test-reporter"
+before_script: "npm install -g codeclimate-test-reporter grunt-cli"
 
 script: "grunt test:coverage"
 
@@ -23,4 +23,3 @@ notifications:
   slack:
     rooms:
       - mosaiqo:4VdHFaCyZ8Sbwp3R1Iof1uaa#general
-      - mosaiqo:4VdHFaCyZ8Sbwp3R1Iof1uaa#random

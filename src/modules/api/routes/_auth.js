@@ -50,10 +50,85 @@ var authenticate = function (req, res, next) {
 // =============================================================================
 module.exports = function(router) {
 
+  /**
+   * @api {post} /api/login Login
+   * @apiName Login
+   * @apiGroup Auth
+   * @apiDescription Authenticates the user and returns the auth token. The token
+   *                 is also saved to a Redis store so it can be revoked at any time.
+   *
+   * @apiExample Example usage:
+   * curl -4 -i http://localhost:9000/api/login --data "username=demo&password=demo"
+   *
+   * @apiParam {String} username User name.
+   * @apiParam {String} password User password.
+   *
+   * @apiSuccess {String} _id User id.
+   * @apiSuccess {String} username Username.
+   * @apiSuccess {String} email User email.
+   * @apiSuccess {String} token JWT.
+   * @apiSuccess {Number} token_exp Token expiry date (Unix time).
+   * @apiSuccess {Number} token_iat Token issue date (Unix time).
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "_id": "54ee6175465eaee35cd237ed",
+   *       "username": "demo",
+   *       "email": "demo@demo.demo",
+   *       "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTQ0ODYsImV4cCI6MTQyNzgxODA4Nn0.pZVBE_GKvJUr4BI7BDeTmIIy9gQ2p3tlrG2pcMcjm3U",
+   *       "token_exp": 1427818086,
+   *       "token_iat": 1427814486
+   *     }
+   *
+   * @apiError (401) {Boolean} error Error.
+   * @apiError (401) {Number} errorCode Error code.
+   * @apiError (401) {String} message Error description.
+   *
+   * @apiErrorExample Error-Response:
+   *     HTTP/1.1 401 Unauthorized
+   *     {
+   *       "error": true,
+   *       "errorCode": 401,
+   *       "message": "Invalid username or password"
+   *     }
+   */
   router.route('/login').post(authenticate, function(req, res, next) {
     return res.status(200).json(req.user);
   });
 
+
+  /**
+   * @api {get} /api/logout Logout
+   * @apiName Logout
+   * @apiGroup Auth
+   * @apiDescription Deauthenticates the user by invalidating the token.
+   *
+   * @apiExample Example usage:
+   * curl -4 -i http://localhost:9000/api/logout --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTczNTksImV4cCI6MTQyNzgyMDk1OX0.M3BboY6U9RJlX1ulVG7e9xRVrVdY3qVhvp3jmZaOCJ8"
+   *
+   * @apiHeader {String} Authorization Auth. header containing the token.
+   *
+   * @apiSuccess {String} message Logout success message.
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "message": "User has been successfully logged out"
+   *     }
+   *
+   * @apiError (401) {Boolean} error Error.
+   * @apiError (401) {Number} errorCode Error code.
+   * @apiError (401) {String} message Error description.
+   *
+   * @apiErrorExample Error-Response:
+   *     HTTP/1.1 401 Unauthorized
+   *     {
+   *       "error": true,
+   *       "errorCode": 401,
+   *       "message": "invalid_token"
+   *     }
+   */
   router.route('/logout').get(function(req, res, next) {
     /* istanbul ignore else */
     if (jwtAuth.expire(req.headers)) {
@@ -66,6 +141,99 @@ module.exports = function(router) {
     }
   });
 
+
+  /**
+   * @api {get} /api/token-renew Token renewal
+   * @apiName TokenRenew
+   * @apiGroup Auth
+   * @apiDescription Creates a new token with a new expiry date without requiring the user to send again its credentials.
+   *
+   * @apiExample Example usage:
+   * curl -4 -i http://localhost:9000/api/token-renew --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTczNTksImV4cCI6MTQyNzgyMDk1OX0.M3BboY6U9RJlX1ulVG7e9xRVrVdY3qVhvp3jmZaOCJ8"
+   *
+   * @apiHeader {String} Authorization Auth. header containing the token.
+   *
+   * @apiSuccess {String} _id User id.
+   * @apiSuccess {String} username Username.
+   * @apiSuccess {String} email User email.
+   * @apiSuccess {String} token JWT.
+   * @apiSuccess {Number} token_exp Token expiry date (Unix time).
+   * @apiSuccess {Number} token_iat Token issue date (Unix time).
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "_id": "54ee6175465eaee35cd237ed",
+   *       "username": "demo",
+   *       "email": "demo@demo.demo",
+   *       "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTQ0ODYsImV4cCI6MTQyNzgxODA4Nn0.pZVBE_GKvJUr4BI7BDeTmIIy9gQ2p3tlrG2pcMcjm3U",
+   *       "token_exp": 1427818086,
+   *       "token_iat": 1427814486
+   *     }
+   *
+   * @apiError (401) {Boolean} error Error.
+   * @apiError (401) {Number} errorCode Error code.
+   * @apiError (401) {String} message Error description.
+   *
+   * @apiErrorExample Error-Response:
+   *     HTTP/1.1 401 Unauthorized
+   *     {
+   *       "error": true,
+   *       "errorCode": 401,
+   *       "message": "invalid_token"
+   *     }
+   */
+  router.route('/token-renew').get(function(req, res, next) {
+
+    User.findOne({
+      username: req.user.username
+    }, function (err, user) {
+
+      /* istanbul ignore next */
+      if (err || !user) {
+        return next( new errors.Unauthorized('User not found') );
+      }
+
+      jwtAuth.create(user, req, res, function() {
+        jwtAuth.expire(req.headers);
+        return res.status(200).json(req.user);
+      });
+
+    });
+  });
+
+
+  /**
+   * @api {get} /api/verify Token verification
+   * @apiName Verify
+   * @apiGroup Auth
+   * @apiDescription Verifies if the token is valid and has not expired.
+   *
+   * @apiExample Example usage:
+   * curl -4 -i http://localhost:9000/api/verify --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTczNTksImV4cCI6MTQyNzgyMDk1OX0.M3BboY6U9RJlX1ulVG7e9xRVrVdY3qVhvp3jmZaOCJ8"
+   *
+   * @apiHeader {String} Authorization Auth. header containing the token.
+   *
+   * @apiSuccess {String} message Auth. verification result.
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *     HTTP/1.1 200 OK
+   *     {
+   *       "message": "Token is valid"
+   *     }
+   *
+   * @apiError (401) {Boolean} error Error.
+   * @apiError (401) {Number} errorCode Error code.
+   * @apiError (401) {String} message Error description.
+   *
+   * @apiErrorExample Error-Response:
+   *     HTTP/1.1 401 Unauthorized
+   *     {
+   *       "error": true,
+   *       "errorCode": 401,
+   *       "message": "invalid_token"
+   *     }
+   */
   router.route('/verify').get(function(req, res, next) {
     return res.status(200).json({'message': 'Token is valid'});
   });
