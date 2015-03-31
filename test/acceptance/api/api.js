@@ -269,7 +269,7 @@ describe('Express rest api server', function() {
     });
 
 
-    it('Should issue a expire the old token', function(done) {
+    it('Should expire the old token when renewing it', function(done) {
       request(app)
         .get('/api/verify')
         .set('Authorization', 'Bearer ' + tokenAboutToExpire.token)
