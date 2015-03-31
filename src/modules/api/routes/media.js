@@ -11,7 +11,31 @@ module.exports = function(router) {
 
   router.route('/media')
 
-    // get all the media (accessed at GET http://localhost:port/api/media)
+    /**
+     * @api {get} /media List all media objects
+     * @apiName List
+     * @apiGroup Media
+     *
+     * @apiExample Example usage:
+     * curl -4 -i http://localhost:9000/api/media --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTczNTksImV4cCI6MTQyNzgyMDk1OX0.M3BboY6U9RJlX1ulVG7e9xRVrVdY3qVhvp3jmZaOCJ8"
+     *
+     * @apiSuccessExample {json} Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+     *       "_id": "54f1a3dc2d4714c77f4d8bce",
+     *       "name": "corporis incidunt est labore",
+     *       "description": "necessitatibus enim cupiditate ex ullam autem hic natus nihil nostrum",
+     *       "url": "http://lorempixel.com/640/480/cats",
+     *       "active": true
+     *     },
+     *     {
+     *       "_id": "54f1a3dc2d4714c77f4d8bcf",
+     *       "name": "ex nisi",
+     *       "description": "tenetur at et hic alias id iusto et repudiandae soluta",
+     *       "url": "http://lorempixel.com/640/480/cats",
+     *       "active": true
+     *     }
+     */
     .get(function(req, res, next) {
       Media.find(function(err, models) {
 
