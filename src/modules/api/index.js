@@ -51,7 +51,7 @@ var router = express.Router();
 // auth free routes
 var excluded = {path: [
   /api\/?$/i,
-  /api\/login\/?$/i
+  /api\/auth\/?$/i
 ]};
 
 // Setup the authentication using JWT

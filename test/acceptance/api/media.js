@@ -81,7 +81,7 @@ describe('api/media', function() {
 
   before(function(done) {
     request(app)
-      .post('/api/login')
+      .post('/api/auth')
       .set('Accept', 'application/json')
       .send({ username: 'demo', password: 'demo' })
       .end(function(err, res) {
