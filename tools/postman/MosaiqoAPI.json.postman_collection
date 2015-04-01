@@ -195,7 +195,7 @@
 		{
 			"id": "dd65d886-ea7c-e4d9-ebc0-0b752b22d7c3",
 			"headers": "Authorization: Bearer {{TOKEN}}\n",
-			"url": "http://localhost:9000/api/logout",
+			"url": "http://localhost:9000/api/auth/{{TOKEN}}",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "GET",
@@ -205,7 +205,7 @@
 			"tests": "",
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1424862147385,
+			"time": 1427906390406,
 			"name": "Logout",
 			"description": "Logout demo user",
 			"collectionId": "1b99de18-05e7-f05c-7127-8ae2983d3e6b",

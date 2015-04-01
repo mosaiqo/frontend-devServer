@@ -99,13 +99,13 @@ module.exports = function(router) {
 
 
   /**
-   * @api {get} /api/logout Logout
+   * @api {delete} /api/auth/{token} Logout
    * @apiName Logout
    * @apiGroup Auth
    * @apiDescription Deauthenticates the user by invalidating the token.
    *
    * @apiExample Example usage:
-   * curl -4 -i http://localhost:9000/api/logout --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTczNTksImV4cCI6MTQyNzgyMDk1OX0.M3BboY6U9RJlX1ulVG7e9xRVrVdY3qVhvp3jmZaOCJ8"
+   * curl -4 -i -X DELETE http://localhost:9000/api/auth/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTczNTksImV4cCI6MTQyNzgyMDk1OX0.M3BboY6U9RJlX1ulVG7e9xRVrVdY3qVhvp3jmZaOCJ8 --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTczNTksImV4cCI6MTQyNzgyMDk1OX0.M3BboY6U9RJlX1ulVG7e9xRVrVdY3qVhvp3jmZaOCJ8"
    *
    * @apiHeader {String} Authorization Auth. header containing the token.
    *
@@ -129,16 +129,24 @@ module.exports = function(router) {
    *       "message": "invalid_token"
    *     }
    */
-  router.route('/logout').get(function(req, res, next) {
-    /* istanbul ignore else */
-    if (jwtAuth.expire(req.headers)) {
-      delete req.user;
-      return res.status(200).json({
-        'message': 'User has been successfully logged out'
-      });
-    } else {
-      return next(new errors.Unauthorized());
-    }
+  router.route('/auth/:token').delete(function(req, res, next) {
+
+    jwtAuth.retrieve(req.params.token, function(err, data) {
+      /* istanbul ignore next */
+      if (err) {
+        return next( new errors.Unauthorized('User not found') );
+      }
+
+      /* istanbul ignore else */
+      if (jwtAuth.expire(req.headers)) {
+        delete req.user;
+        return res.status(200).json({
+          'message': 'User has been successfully logged out'
+        });
+      } else {
+        return next(new errors.Unauthorized());
+      }
+    });
   });
 
 

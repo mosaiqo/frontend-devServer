@@ -101,7 +101,7 @@ describe('API authentication', function() {
   describe('Logout', function() {
     it('Should return a 401 error if no valid auth token is supplied', function(done) {
       request(app)
-        .get('/api/logout')
+        .delete('/api/auth/randomStringTotallyFakeToken')
         .set('Authorization', 'Bearer randomStringTotallyFakeToken')
         .expect(401)
         .end(done);
@@ -120,7 +120,7 @@ describe('API authentication', function() {
 
           // logout
           request(app)
-            .get('/api/logout')
+            .delete('/api/auth/' + token)
             .set('Authorization', 'Bearer ' + token)
             .expect(200)
             .end(function(err, res) {
@@ -148,13 +148,13 @@ describe('API authentication', function() {
 
           // logout
           request(app)
-            .get('/api/logout')
+            .delete('/api/auth/' + token)
             .set('Authorization', 'Bearer ' + token)
             .expect(200)
             .end(function(err, res) {
               // logout again
               request(app)
-                .get('/api/logout')
+                .delete('/api/auth/' + token)
                 .set('Authorization', 'Bearer ' + token)
                 .expect(401)
                 .end(done);
