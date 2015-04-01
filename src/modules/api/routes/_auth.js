@@ -212,13 +212,13 @@ module.exports = function(router) {
 
 
   /**
-   * @api {get} /api/verify Token verification
+   * @api {get} /api/auth/:token Token verification
    * @apiName Verify
    * @apiGroup Auth
    * @apiDescription Verifies if the token is valid and has not expired.
    *
    * @apiExample Example usage:
-   * curl -4 -i http://localhost:9000/api/verify --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTczNTksImV4cCI6MTQyNzgyMDk1OX0.M3BboY6U9RJlX1ulVG7e9xRVrVdY3qVhvp3jmZaOCJ8"
+   * curl -4 -i http://localhost:9000/api/auth/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTczNTksImV4cCI6MTQyNzgyMDk1OX0.M3BboY6U9RJlX1ulVG7e9xRVrVdY3qVhvp3jmZaOCJ8 --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTczNTksImV4cCI6MTQyNzgyMDk1OX0.M3BboY6U9RJlX1ulVG7e9xRVrVdY3qVhvp3jmZaOCJ8"
    *
    * @apiHeader {String} Authorization Auth. header containing the token.
    *
@@ -242,8 +242,15 @@ module.exports = function(router) {
    *       "message": "invalid_token"
    *     }
    */
-  router.route('/verify').get(function(req, res, next) {
-    return res.status(200).json({'message': 'Token is valid'});
+  router.route('/auth/:token').get(function(req, res, next) {
+    jwtAuth.retrieve(req.params.token, function(err, data) {
+      /* istanbul ignore next */
+      if (err) {
+        return next( new errors.Unauthorized('Token not found') );
+      }
+
+      return res.status(200).json({'message': 'Token is valid'});
+    });
   });
 
 };

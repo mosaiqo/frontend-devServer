@@ -126,7 +126,7 @@ describe('API authentication', function() {
             .end(function(err, res) {
               // verify
               request(app)
-                .get('/api/verify')
+                .get('/api/auth/' + token)
                 .set('Authorization', 'Bearer ' + token)
                 .expect(401)
                 .end(done);
@@ -174,10 +174,12 @@ describe('API authentication', function() {
         .expect(200)
         .end(function(err, res) {
 
+          var token = res.body.token;
+
           // verify
           request(app)
-            .get('/api/verify')
-            .set('Authorization', 'Bearer ' + res.body.token)
+            .get('/api/auth/' + token)
+            .set('Authorization', 'Bearer ' + token)
             .expect(200)
             .end(done);
 
@@ -187,7 +189,7 @@ describe('API authentication', function() {
 
     it('Should return a 401 if a non valid JWT is supplied', function(done) {
       request(app)
-        .get('/api/verify')
+        .get('/api/auth/randomStringTotallyFakeToken')
         .set('Authorization', 'Bearer randomStringTotallyFakeToken')
         .expect(401)
         .end(done);
@@ -238,19 +240,21 @@ describe('API authentication', function() {
         .set('Authorization', 'Bearer ' + tokenAboutToExpire.token)
         .expect(200)
         .end(function(err, res) {
+          var token = res.body.token;
+
           expect(objectid.isValid(res.body.userId)).to.be.true;
           expect(res.body.username).to.equal(defaultUser.username);
           expect(res.body.email).to.equal(defaultUser.email);
           expect(res.body.token_exp).to.be.a('number');
           expect(res.body.token_iat).to.be.a('number');
-          expect(res.body.token).to.be.a('string');
+          expect(token).to.be.a('string');
 
-          expect(res.body.token).to.not.equal(tokenAboutToExpire.token);
+          expect(token).to.not.equal(tokenAboutToExpire.token);
           expect(res.body.token_exp).to.be.at.least(tokenAboutToExpire.exp);
 
           request(app)
-            .get('/api/verify')
-            .set('Authorization', 'Bearer ' + res.body.token)
+            .get('/api/auth/' + token)
+            .set('Authorization', 'Bearer ' + token)
             .expect(200)
             .end(done);
         });
@@ -261,7 +265,7 @@ describe('API authentication', function() {
 
     it('Should expire the old token when renewing it', function(done) {
       request(app)
-        .get('/api/verify')
+        .get('/api/auth/' + tokenAboutToExpire.token)
         .set('Authorization', 'Bearer ' + tokenAboutToExpire.token)
         .expect(401)
         .end(done);
