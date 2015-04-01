@@ -58,7 +58,7 @@ module.exports = function(router) {
    *                 is also saved to a Redis store so it can be revoked at any time.
    *
    * @apiExample Example usage:
-   * curl -4 -i http://localhost:9000/api/auth --data "username=demo&password=demo"
+   * curl -4 -i -X POST http://localhost:9000/api/auth --data "username=demo&password=demo"
    *
    * @apiParam {String} username User name.
    * @apiParam {String} password User password.
