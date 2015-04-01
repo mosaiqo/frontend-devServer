@@ -151,13 +151,13 @@ module.exports = function(router) {
 
 
   /**
-   * @api {get} /api/token-renew Token renewal
+   * @api {put} /api/auth/:token Token renewal
    * @apiName TokenRenew
    * @apiGroup Auth
    * @apiDescription Creates a new token with a new expiry date without requiring the user to send again its credentials.
    *
    * @apiExample Example usage:
-   * curl -4 -i http://localhost:9000/api/token-renew --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTczNTksImV4cCI6MTQyNzgyMDk1OX0.M3BboY6U9RJlX1ulVG7e9xRVrVdY3qVhvp3jmZaOCJ8"
+   * curl -4 -i -X PUT http://localhost:9000/api/auth/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTczNTksImV4cCI6MTQyNzgyMDk1OX0.M3BboY6U9RJlX1ulVG7e9xRVrVdY3qVhvp3jmZaOCJ8 --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTczNTksImV4cCI6MTQyNzgyMDk1OX0.M3BboY6U9RJlX1ulVG7e9xRVrVdY3qVhvp3jmZaOCJ8"
    *
    * @apiHeader {String} Authorization Auth. header containing the token.
    *
@@ -191,7 +191,12 @@ module.exports = function(router) {
    *       "message": "invalid_token"
    *     }
    */
-  router.route('/token-renew').get(function(req, res, next) {
+  router.route('/auth/:token').put(function(req, res, next) {
+
+    /* istanbul ignore next */
+    if(req.params.token !== req.user.token) {
+      return next(new errors.Unauthorized());
+    }
 
     User.findOne({
       username: req.user.username
@@ -208,6 +213,7 @@ module.exports = function(router) {
       });
 
     });
+
   });
 
 
@@ -243,14 +249,12 @@ module.exports = function(router) {
    *     }
    */
   router.route('/auth/:token').get(function(req, res, next) {
-    jwtAuth.retrieve(req.params.token, function(err, data) {
-      /* istanbul ignore next */
-      if (err) {
-        return next( new errors.Unauthorized('Token not found') );
-      }
+    /* istanbul ignore next */
+    if(req.params.token !== req.user.token) {
+      return next(new errors.Unauthorized());
+    }
 
-      return res.status(200).json({'message': 'Token is valid'});
-    });
+    return res.status(200).json({'message': 'Token is valid'});
   });
 
 };

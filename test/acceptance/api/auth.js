@@ -215,7 +215,7 @@ describe('API authentication', function() {
 
     it('Should return a 401 if thre\'s no auth header', function(done) {
       request(app)
-        .get('/api/token-renew')
+        .put('/api/auth/randomStringTotallyFakeToken')
         .expect(401)
         .end(done);
     });
@@ -223,7 +223,7 @@ describe('API authentication', function() {
 
     it('Should return a 401 if the supplied token is not valid or has expired', function(done) {
       request(app)
-        .get('/api/token-renew')
+        .put('/api/auth/randomStringTotallyFakeToken')
         .set('Authorization', 'Bearer randomStringTotallyFakeToken')
         .expect(401)
         .end(done);
@@ -236,7 +236,7 @@ describe('API authentication', function() {
       setTimeout(function () {
 
         request(app)
-        .get('/api/token-renew')
+        .put('/api/auth/' + tokenAboutToExpire.token)
         .set('Authorization', 'Bearer ' + tokenAboutToExpire.token)
         .expect(200)
         .end(function(err, res) {
