@@ -121,9 +121,9 @@
 		{
 			"id": "a5e7a6b3-c08e-bee0-7939-e10115c70369",
 			"headers": "",
-			"url": "http://localhost:9000/api/login",
-			"pathVariables": {},
+			"url": "http://localhost:9000/api/auth",
 			"preRequestScript": "",
+			"pathVariables": {},
 			"method": "POST",
 			"data": [
 				{
@@ -140,16 +140,15 @@
 				}
 			],
 			"dataMode": "urlencoded",
-			"name": "Login",
-			"description": "Login with demo user",
-			"descriptionFormat": "html",
-			"time": 1424861337894,
 			"version": 2,
-			"responses": [],
 			"tests": "",
 			"currentHelper": "normal",
 			"helperAttributes": {},
+			"time": 1427895452610,
+			"name": "Login",
+			"description": "Login with demo user",
 			"collectionId": "1b99de18-05e7-f05c-7127-8ae2983d3e6b",
+			"responses": [],
 			"synced": false
 		},
 		{

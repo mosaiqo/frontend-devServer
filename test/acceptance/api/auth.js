@@ -46,7 +46,7 @@ describe('API authentication', function() {
   describe('Login', function() {
     it('Should return a JWT when supplying valid user credentials', function(done) {
       request(app)
-        .post('/api/login')
+        .post('/api/auth')
         .send({ username: defaultUser.username, password: defaultUser.password })
         .expect(200)
         .end(function(err, res) {
@@ -63,7 +63,7 @@ describe('API authentication', function() {
 
     it('Should return a 401 error when supplying a valid username with a wrong password', function(done) {
       request(app)
-        .post('/api/login')
+        .post('/api/auth')
         .send({ username: defaultUser.username, password: 'whatever' })
         .expect(401)
         .end(done);
@@ -72,7 +72,7 @@ describe('API authentication', function() {
 
     it('Should return a 401 error when supplying a non existing user credentials', function(done) {
       request(app)
-        .post('/api/login')
+        .post('/api/auth')
         .send({ username: 'nonExistingUsername', password: 'whatever' })
         .expect(401)
         .end(done);
@@ -81,7 +81,7 @@ describe('API authentication', function() {
 
     it('Should return a 401 error if the username is not supplied', function(done) {
       request(app)
-        .post('/api/login')
+        .post('/api/auth')
         .send({ password: 'whatever' })
         .expect(401)
         .end(done);
@@ -90,7 +90,7 @@ describe('API authentication', function() {
 
     it('Should return a 401 error if the password is not supplied', function(done) {
       request(app)
-        .post('/api/login')
+        .post('/api/auth')
         .send({ username: defaultUser.username })
         .expect(401)
         .end(done);
@@ -111,7 +111,7 @@ describe('API authentication', function() {
     it('Should expire the JWT', function(done) {
       // 'login' first
       request(app)
-        .post('/api/login')
+        .post('/api/auth')
         .send({ username: defaultUser.username, password: defaultUser.password })
         .expect(200)
         .end(function(err, res) {
@@ -139,7 +139,7 @@ describe('API authentication', function() {
     it('Should return a 401 error the JWT is already expired', function(done) {
       // 'login' first
       request(app)
-        .post('/api/login')
+        .post('/api/auth')
         .send({ username: defaultUser.username, password: defaultUser.password })
         .expect(200)
         .end(function(err, res) {
@@ -169,7 +169,7 @@ describe('API authentication', function() {
     it('Should return a success message if a valid JWT is supplied', function(done) {
       // 'login' first
       request(app)
-        .post('/api/login')
+        .post('/api/auth')
         .send({ username: defaultUser.username, password: defaultUser.password })
         .expect(200)
         .end(function(err, res) {
@@ -201,7 +201,7 @@ describe('API authentication', function() {
 
     before(function(done) {
       request(app)
-        .post('/api/login')
+        .post('/api/auth')
         .send({ username: defaultUser.username, password: defaultUser.password })
         .end(function(err, res) {
           tokenAboutToExpire.token = res.body.token;

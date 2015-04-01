@@ -51,14 +51,14 @@ var authenticate = function (req, res, next) {
 module.exports = function(router) {
 
   /**
-   * @api {post} /api/login Login
+   * @api {post} /api/auth Login
    * @apiName Login
    * @apiGroup Auth
    * @apiDescription Authenticates the user and returns the auth token. The token
    *                 is also saved to a Redis store so it can be revoked at any time.
    *
    * @apiExample Example usage:
-   * curl -4 -i http://localhost:9000/api/login --data "username=demo&password=demo"
+   * curl -4 -i http://localhost:9000/api/auth --data "username=demo&password=demo"
    *
    * @apiParam {String} username User name.
    * @apiParam {String} password User password.
@@ -93,7 +93,7 @@ module.exports = function(router) {
    *       "message": "Invalid username or password"
    *     }
    */
-  router.route('/login').post(authenticate, function(req, res, next) {
+  router.route('/auth').post(authenticate, function(req, res, next) {
     return res.status(200).json(req.user);
   });
 
