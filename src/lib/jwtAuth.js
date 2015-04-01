@@ -73,7 +73,7 @@ var create = function (user, req, res, next) {
   }
 
   var data = {
-    _id: user._id,
+    userId: user._id,
     username: user.username,
     access: user.access, // currently empty
     name: user.name,     // currently empty

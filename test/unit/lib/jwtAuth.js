@@ -143,7 +143,7 @@ describe('lib/jwtAuth', function() {
         expect(err).to.be.undefined;
         expect(req).to.have.property('user');
 
-        expect(req.user._id).to.equal(user._id);
+        expect(req.user.userId).to.equal(user._id);
         expect(req.user.username).to.equal(user.username);
         expect(req.user.name).to.equal(user.name);
         expect(req.user.email).to.equal(user.email);
@@ -173,7 +173,7 @@ describe('lib/jwtAuth', function() {
         jwtAuth.retrieve(req.user.token, function(err, data) {
           expect(err).to.be.null;
           expect(data).to.be.an('object');
-          expect(data._id).to.equal(user._id);
+          expect(data.userId).to.equal(user._id);
           expect(data.username).to.equal(user.username);
           done();
         });
@@ -227,7 +227,7 @@ describe('lib/jwtAuth', function() {
       jwtAuth.retrieve(reqUser.token, function(err, data) {
         expect(err).to.be.null;
         expect(data).to.be.an('object');
-        expect(data).to.have.property('_id');
+        expect(data).to.have.property('userId');
         expect(data).to.have.property('username');
         expect(data).to.have.property('token');
         done();

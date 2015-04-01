@@ -50,7 +50,7 @@ describe('API authentication', function() {
         .send({ username: defaultUser.username, password: defaultUser.password })
         .expect(200)
         .end(function(err, res) {
-          expect(objectid.isValid(res.body._id)).to.be.true;
+          expect(objectid.isValid(res.body.userId)).to.be.true;
           expect(res.body.username).to.equal(defaultUser.username);
           expect(res.body.email).to.equal(defaultUser.email);
           expect(res.body.token_exp).to.be.a('number');
@@ -238,7 +238,7 @@ describe('API authentication', function() {
         .set('Authorization', 'Bearer ' + tokenAboutToExpire.token)
         .expect(200)
         .end(function(err, res) {
-          expect(objectid.isValid(res.body._id)).to.be.true;
+          expect(objectid.isValid(res.body.userId)).to.be.true;
           expect(res.body.username).to.equal(defaultUser.username);
           expect(res.body.email).to.equal(defaultUser.email);
           expect(res.body.token_exp).to.be.a('number');
