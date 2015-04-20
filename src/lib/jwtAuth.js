@@ -73,12 +73,12 @@ var create = function (user, req, res, next) {
   }
 
   var data = {
-    userId: user._id,
+    userId: user.id,
     username: user.username,
     access: user.access, // currently empty
     name: user.name,     // currently empty
     email: user.email,
-    token: jsonwebtoken.sign({ _id: user._id}, JWT_SECRET, {
+    token: jsonwebtoken.sign({ id: user.id}, JWT_SECRET, {
       expiresInMinutes: TOKEN_EXPIRATION
     })
   };

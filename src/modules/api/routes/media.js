@@ -23,14 +23,14 @@ module.exports = function(router) {
      *     HTTP/1.1 200 OK
      *     [
      *       {
-     *         "_id": "54f1a3dc2d4714c77f4d8bce",
+     *         "id": "54f1a3dc2d4714c77f4d8bce",
      *         "name": "corporis incidunt est labore",
      *         "description": "necessitatibus enim cupiditate ex ullam autem hic natus nihil nostrum",
      *         "url": "http://lorempixel.com/640/480/cats",
      *         "active": true
      *       },
      *       {
-     *         "_id": "54f1a3dc2d4714c77f4d8bcf",
+     *         "id": "54f1a3dc2d4714c77f4d8bcf",
      *         "name": "ex nisi",
      *         "description": "tenetur at et hic alias id iusto et repudiandae soluta",
      *         "url": "http://lorempixel.com/640/480/cats",
@@ -67,7 +67,7 @@ module.exports = function(router) {
      *       "url": "http://lorempixel.com/640/480/cats",
      *       "description": "ItemDescription",
      *       "name": "ItemName",
-     *       "_id": "551c31d0430d78991f5931e1"
+     *       "id": "551c31d0430d78991f5931e1"
      *     }
      */
     .post(function(req, res, next) {
@@ -112,7 +112,7 @@ module.exports = function(router) {
      *       "url": "http://lorempixel.com/640/480/cats",
      *       "description": "ItemDescription",
      *       "name": "ItemName",
-     *       "_id": "551c31d0430d78991f5931e1"
+     *       "id": "551c31d0430d78991f5931e1"
      *     }
      */
     .get(function(req, res, next) {
@@ -146,7 +146,7 @@ module.exports = function(router) {
      *       "url": "http://lorempixel.com/640/480/cats",
      *       "description": "ItemDescription2",
      *       "name": "ItemName2",
-     *       "_id": "551c31d0430d78991f5931e1"
+     *       "id": "551c31d0430d78991f5931e1"
      *     }
      */
     .put(function(req, res, next) {
@@ -197,7 +197,7 @@ module.exports = function(router) {
      *       "url": "http://lorempixel.com/640/480/cats",
      *       "description": "ItemDescription",
      *       "name": "ItemName",
-     *       "_id": "551c31d0430d78991f5931e1"
+     *       "id": "551c31d0430d78991f5931e1"
      *     }
      */
     .delete(function(req, res, next) {

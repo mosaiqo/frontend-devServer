@@ -130,7 +130,7 @@ describe('lib/jwtAuth', function() {
 
       var
         user = {
-          _id      : '0123456789',
+          id      : '0123456789',
           username : 'username',
           name     : 'name',
           email    : 'user@domain.tld'
@@ -143,7 +143,7 @@ describe('lib/jwtAuth', function() {
         expect(err).to.be.undefined;
         expect(req).to.have.property('user');
 
-        expect(req.user.userId).to.equal(user._id);
+        expect(req.user.userId).to.equal(user.id);
         expect(req.user.username).to.equal(user.username);
         expect(req.user.name).to.equal(user.name);
         expect(req.user.email).to.equal(user.email);
@@ -160,7 +160,7 @@ describe('lib/jwtAuth', function() {
 
       var
         user = {
-          _id      : '0123456789',
+          id      : '0123456789',
           username : 'username',
           name     : 'name',
           email    : 'user@domain.tld'
@@ -173,7 +173,7 @@ describe('lib/jwtAuth', function() {
         jwtAuth.retrieve(req.user.token, function(err, data) {
           expect(err).to.be.null;
           expect(data).to.be.an('object');
-          expect(data.userId).to.equal(user._id);
+          expect(data.userId).to.equal(user.id);
           expect(data.username).to.equal(user.username);
           done();
         });
@@ -192,7 +192,7 @@ describe('lib/jwtAuth', function() {
       // so this happens on memory)
       var
         user = {
-          _id      : '0123456789',
+          id      : '0123456789',
           username : 'username',
           name     : 'name',
           email    : 'user@domain.tld'
@@ -254,7 +254,7 @@ describe('lib/jwtAuth', function() {
 
       var
         user = {
-          _id      : '0123456789',
+          id      : '0123456789',
           username : 'username',
           name     : 'name',
           email    : 'user@domain.tld'
@@ -324,7 +324,7 @@ describe('lib/jwtAuth', function() {
 
       var
         user = {
-          _id      : '0123456789',
+          id      : '0123456789',
           username : 'username',
           name     : 'name',
           email    : 'user@domain.tld'
