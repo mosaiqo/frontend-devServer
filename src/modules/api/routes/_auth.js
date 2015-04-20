@@ -63,7 +63,7 @@ module.exports = function(router) {
    * @apiParam {String} username User name.
    * @apiParam {String} password User password.
    *
-   * @apiSuccess {String} _id User id.
+   * @apiSuccess {String} id User id.
    * @apiSuccess {String} username Username.
    * @apiSuccess {String} email User email.
    * @apiSuccess {String} token JWT.
@@ -73,7 +73,7 @@ module.exports = function(router) {
    * @apiSuccessExample {json} Success-Response:
    *     HTTP/1.1 200 OK
    *     {
-   *       "_id": "54ee6175465eaee35cd237ed",
+   *       "id": "54ee6175465eaee35cd237ed",
    *       "username": "demo",
    *       "email": "demo@demo.demo",
    *       "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTQ0ODYsImV4cCI6MTQyNzgxODA4Nn0.pZVBE_GKvJUr4BI7BDeTmIIy9gQ2p3tlrG2pcMcjm3U",
@@ -161,7 +161,7 @@ module.exports = function(router) {
    *
    * @apiHeader {String} Authorization Auth. header containing the token.
    *
-   * @apiSuccess {String} _id User id.
+   * @apiSuccess {String} id User id.
    * @apiSuccess {String} username Username.
    * @apiSuccess {String} email User email.
    * @apiSuccess {String} token JWT.
@@ -171,7 +171,7 @@ module.exports = function(router) {
    * @apiSuccessExample {json} Success-Response:
    *     HTTP/1.1 200 OK
    *     {
-   *       "_id": "54ee6175465eaee35cd237ed",
+   *       "id": "54ee6175465eaee35cd237ed",
    *       "username": "demo",
    *       "email": "demo@demo.demo",
    *       "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTQ0ODYsImV4cCI6MTQyNzgxODA4Nn0.pZVBE_GKvJUr4BI7BDeTmIIy9gQ2p3tlrG2pcMcjm3U",

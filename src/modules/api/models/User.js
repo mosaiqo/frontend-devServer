@@ -29,13 +29,24 @@ var UserSchema = new Schema({
 
 }, {
 
+  toJSON: {
+    virtuals: true,
+    transform: function(doc, ret) {
+      ret.id = ret._id;
+      delete ret._id;
+    }
+  },
   toObject: {
-    virtuals: true
-  }, toJSON: {
-    virtuals: true
+    virtuals: true,
+    transform: function(doc, ret) {
+      ret._id = ret.id;
+      delete ret.id;
+    }
   }
 
 });
+
+
 
 // Bcrypt middleware on UserSchema
 // Hashes the password before saving the model to the database

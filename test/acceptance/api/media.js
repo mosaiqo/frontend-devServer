@@ -39,13 +39,13 @@ describe('api/media', function() {
 
     expect(obj).to.be.an('object');
 
-    expect(obj).to.have.property('_id');
+    expect(obj).to.have.property('id');
     expect(obj).to.have.property('name');
     expect(obj).to.have.property('description');
     expect(obj).to.have.property('url');
     expect(obj).to.have.property('active');
 
-    expect(obj._id).not.to.be.null;
+    expect(obj.id).not.to.be.null;
   };
 
 
@@ -141,7 +141,7 @@ describe('api/media', function() {
 
     it('should reject the request if there\'s no valid authorization header', function(done) {
       request(app)
-        .get('/api/media/'+firstRecord._id)
+        .get('/api/media/'+firstRecord.id)
         .expect('Content-Type', /application\/json/)
         .expect(401, done);
     });
@@ -157,7 +157,7 @@ describe('api/media', function() {
 
     it('returns a Media object', function(done) {
       request(app)
-        .get('/api/media/'+firstRecord._id)
+        .get('/api/media/'+firstRecord.id)
         .set('Authorization', authHeader)
         .expect('Content-Type', /application\/json/)
         .expect(200)
@@ -232,10 +232,10 @@ describe('api/media', function() {
 
     it('should persist the created object', function(done) {
       request(app)
-        .get('/api/media/'+createdModel._id)
+        .get('/api/media/'+createdModel.id)
         .set('Authorization', authHeader)
         .end(function(err, res) {
-          expect(res.body._id).to.equal(createdModel._id);
+          expect(res.body.id).to.equal(createdModel.id);
           done();
         });
     });
@@ -257,7 +257,7 @@ describe('api/media', function() {
 
     it('should reject the request if there\'s no valid authorization header', function(done) {
       request(app)
-        .put('/api/media/'+createdModel._id)
+        .put('/api/media/'+createdModel.id)
         .send(newAttrs)
         .expect('Content-Type', /application\/json/)
         .expect(401, done);
@@ -274,7 +274,7 @@ describe('api/media', function() {
 
     it('should return the modified model', function(done) {
       request(app)
-        .put('/api/media/'+createdModel._id)
+        .put('/api/media/'+createdModel.id)
         .set('Authorization', authHeader)
         .send(newAttrs)
         .set('Accept', 'application/json')
@@ -305,7 +305,7 @@ describe('api/media', function() {
 
     it('should reject the request if there\'s no valid authorization header', function(done) {
       request(app)
-        .delete('/api/media/'+firstRecord._id)
+        .delete('/api/media/'+firstRecord.id)
         .expect('Content-Type', /application\/json/)
         .expect(401, done);
     });
@@ -321,7 +321,7 @@ describe('api/media', function() {
 
     it('should return the deleted model', function(done) {
       request(app)
-        .delete('/api/media/'+firstRecord._id)
+        .delete('/api/media/'+firstRecord.id)
         .set('Authorization', authHeader)
         .expect('Content-Type', /application\/json/)
         .expect(200)
@@ -341,7 +341,7 @@ describe('api/media', function() {
 
     it('should delete the requested model', function(done) {
       request(app)
-        .get('/api/media/'+deletedModel._id)
+        .get('/api/media/'+deletedModel.id)
         .set('Authorization', authHeader)
         .expect(404, done);
     });
