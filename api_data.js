@@ -40,7 +40,7 @@ define({ "api": [
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "_id",
+            "field": "id",
             "description": "<p>User id.</p> "
           },
           {
@@ -83,7 +83,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"_id\": \"54ee6175465eaee35cd237ed\",\n  \"username\": \"demo\",\n  \"email\": \"demo@demo.demo\",\n  \"token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTQ0ODYsImV4cCI6MTQyNzgxODA4Nn0.pZVBE_GKvJUr4BI7BDeTmIIy9gQ2p3tlrG2pcMcjm3U\",\n  \"token_exp\": 1427818086,\n  \"token_iat\": 1427814486\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"id\": \"54ee6175465eaee35cd237ed\",\n  \"username\": \"demo\",\n  \"email\": \"demo@demo.demo\",\n  \"token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTQ0ODYsImV4cCI6MTQyNzgxODA4Nn0.pZVBE_GKvJUr4BI7BDeTmIIy9gQ2p3tlrG2pcMcjm3U\",\n  \"token_exp\": 1427818086,\n  \"token_iat\": 1427814486\n}",
           "type": "json"
         }
       ]
@@ -245,7 +245,7 @@ define({ "api": [
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "_id",
+            "field": "id",
             "description": "<p>User id.</p> "
           },
           {
@@ -288,7 +288,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"_id\": \"54ee6175465eaee35cd237ed\",\n  \"username\": \"demo\",\n  \"email\": \"demo@demo.demo\",\n  \"token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTQ0ODYsImV4cCI6MTQyNzgxODA4Nn0.pZVBE_GKvJUr4BI7BDeTmIIy9gQ2p3tlrG2pcMcjm3U\",\n  \"token_exp\": 1427818086,\n  \"token_iat\": 1427814486\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"id\": \"54ee6175465eaee35cd237ed\",\n  \"username\": \"demo\",\n  \"email\": \"demo@demo.demo\",\n  \"token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTQ0ODYsImV4cCI6MTQyNzgxODA4Nn0.pZVBE_GKvJUr4BI7BDeTmIIy9gQ2p3tlrG2pcMcjm3U\",\n  \"token_exp\": 1427818086,\n  \"token_iat\": 1427814486\n}",
           "type": "json"
         }
       ]
@@ -433,7 +433,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"active\": true,\n  \"url\": \"http://lorempixel.com/640/480/cats\",\n  \"description\": \"ItemDescription\",\n  \"name\": \"ItemName\",\n  \"_id\": \"551c31d0430d78991f5931e1\"\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"active\": true,\n  \"url\": \"http://lorempixel.com/640/480/cats\",\n  \"description\": \"ItemDescription\",\n  \"name\": \"ItemName\",\n  \"id\": \"551c31d0430d78991f5931e1\"\n}",
           "type": "json"
         }
       ]
@@ -459,7 +459,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"active\": true,\n  \"url\": \"http://lorempixel.com/640/480/cats\",\n  \"description\": \"ItemDescription\",\n  \"name\": \"ItemName\",\n  \"_id\": \"551c31d0430d78991f5931e1\"\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"active\": true,\n  \"url\": \"http://lorempixel.com/640/480/cats\",\n  \"description\": \"ItemDescription\",\n  \"name\": \"ItemName\",\n  \"id\": \"551c31d0430d78991f5931e1\"\n}",
           "type": "json"
         }
       ]
@@ -485,7 +485,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"active\": true,\n  \"url\": \"http://lorempixel.com/640/480/cats\",\n  \"description\": \"ItemDescription\",\n  \"name\": \"ItemName\",\n  \"_id\": \"551c31d0430d78991f5931e1\"\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"active\": true,\n  \"url\": \"http://lorempixel.com/640/480/cats\",\n  \"description\": \"ItemDescription\",\n  \"name\": \"ItemName\",\n  \"id\": \"551c31d0430d78991f5931e1\"\n}",
           "type": "json"
         }
       ]
@@ -511,7 +511,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "HTTP/1.1 200 OK\n[\n  {\n    \"_id\": \"54f1a3dc2d4714c77f4d8bce\",\n    \"name\": \"corporis incidunt est labore\",\n    \"description\": \"necessitatibus enim cupiditate ex ullam autem hic natus nihil nostrum\",\n    \"url\": \"http://lorempixel.com/640/480/cats\",\n    \"active\": true\n  },\n  {\n    \"_id\": \"54f1a3dc2d4714c77f4d8bcf\",\n    \"name\": \"ex nisi\",\n    \"description\": \"tenetur at et hic alias id iusto et repudiandae soluta\",\n    \"url\": \"http://lorempixel.com/640/480/cats\",\n    \"active\": true\n  }\n]",
+          "content": "HTTP/1.1 200 OK\n[\n  {\n    \"id\": \"54f1a3dc2d4714c77f4d8bce\",\n    \"name\": \"corporis incidunt est labore\",\n    \"description\": \"necessitatibus enim cupiditate ex ullam autem hic natus nihil nostrum\",\n    \"url\": \"http://lorempixel.com/640/480/cats\",\n    \"active\": true\n  },\n  {\n    \"id\": \"54f1a3dc2d4714c77f4d8bcf\",\n    \"name\": \"ex nisi\",\n    \"description\": \"tenetur at et hic alias id iusto et repudiandae soluta\",\n    \"url\": \"http://lorempixel.com/640/480/cats\",\n    \"active\": true\n  }\n]",
           "type": "json"
         }
       ]
@@ -537,7 +537,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"active\": false,\n  \"url\": \"http://lorempixel.com/640/480/cats\",\n  \"description\": \"ItemDescription2\",\n  \"name\": \"ItemName2\",\n  \"_id\": \"551c31d0430d78991f5931e1\"\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"active\": false,\n  \"url\": \"http://lorempixel.com/640/480/cats\",\n  \"description\": \"ItemDescription2\",\n  \"name\": \"ItemName2\",\n  \"id\": \"551c31d0430d78991f5931e1\"\n}",
           "type": "json"
         }
       ]
