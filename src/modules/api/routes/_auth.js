@@ -74,12 +74,15 @@ module.exports = function(router) {
    * @apiSuccessExample {json} Success-Response:
    *     HTTP/1.1 200 OK
    *     {
-   *       "id": "54ee6175465eaee35cd237ed",
-   *       "username": "demo",
-   *       "email": "demo@demo.demo",
-   *       "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTQ0ODYsImV4cCI6MTQyNzgxODA4Nn0.pZVBE_GKvJUr4BI7BDeTmIIy9gQ2p3tlrG2pcMcjm3U",
-   *       "token_exp": 1427818086,
-   *       "token_iat": 1427814486
+   *       "meta" : {},
+   *       "data" : {
+   *         "id": "54ee6175465eaee35cd237ed",
+   *         "username": "demo",
+   *         "email": "demo@demo.demo",
+   *         "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTQ0ODYsImV4cCI6MTQyNzgxODA4Nn0.pZVBE_GKvJUr4BI7BDeTmIIy9gQ2p3tlrG2pcMcjm3U",
+   *         "token_exp": 1427818086,
+   *         "token_iat": 1427814486
+   *       }
    *     }
    *
    * @apiError (401) {Boolean} error Error.
@@ -115,7 +118,10 @@ module.exports = function(router) {
    * @apiSuccessExample {json} Success-Response:
    *     HTTP/1.1 200 OK
    *     {
-   *       "message": "User has been successfully logged out"
+   *       "meta" : {},
+   *       "data" : {
+   *         "message": "User has been successfully logged out"
+   *       }
    *     }
    *
    * @apiError (401) {Boolean} error Error.
@@ -172,12 +178,15 @@ module.exports = function(router) {
    * @apiSuccessExample {json} Success-Response:
    *     HTTP/1.1 200 OK
    *     {
-   *       "id": "54ee6175465eaee35cd237ed",
-   *       "username": "demo",
-   *       "email": "demo@demo.demo",
-   *       "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTQ0ODYsImV4cCI6MTQyNzgxODA4Nn0.pZVBE_GKvJUr4BI7BDeTmIIy9gQ2p3tlrG2pcMcjm3U",
-   *       "token_exp": 1427818086,
-   *       "token_iat": 1427814486
+   *       "meta" : {},
+   *       "data" : {
+   *         "id": "54ee6175465eaee35cd237ed",
+   *         "username": "demo",
+   *         "email": "demo@demo.demo",
+   *         "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTQ0ODYsImV4cCI6MTQyNzgxODA4Nn0.pZVBE_GKvJUr4BI7BDeTmIIy9gQ2p3tlrG2pcMcjm3U",
+   *         "token_exp": 1427818086,
+   *         "token_iat": 1427814486
+   *       }
    *     }
    *
    * @apiError (401) {Boolean} error Error.
@@ -234,7 +243,10 @@ module.exports = function(router) {
    * @apiSuccessExample {json} Success-Response:
    *     HTTP/1.1 200 OK
    *     {
-   *       "message": "Token is valid"
+   *       "meta" : {},
+   *       "data" : {
+   *         "message": "Token is valid"
+   *       }
    *     }
    *
    * @apiError (401) {Boolean} error Error.
