@@ -5,8 +5,9 @@
 module.exports = function(router) {
 
   var
-    Media   = require('../models/Media'),
-    errors  = require('../../../lib/errors');
+    respFormatter = require('../../../lib/responseFormatter'),
+    Media         = require('../models/Media'),
+    errors        = require('../../../lib/errors');
 
 
   router.route('/media')
@@ -21,22 +22,25 @@ module.exports = function(router) {
      *
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
-     *     [
-     *       {
-     *         "id": "54f1a3dc2d4714c77f4d8bce",
-     *         "name": "corporis incidunt est labore",
-     *         "description": "necessitatibus enim cupiditate ex ullam autem hic natus nihil nostrum",
-     *         "url": "http://lorempixel.com/640/480/cats",
-     *         "active": true
-     *       },
-     *       {
-     *         "id": "54f1a3dc2d4714c77f4d8bcf",
-     *         "name": "ex nisi",
-     *         "description": "tenetur at et hic alias id iusto et repudiandae soluta",
-     *         "url": "http://lorempixel.com/640/480/cats",
-     *         "active": true
-     *       }
-     *     ]
+     *     {
+     *       "meta" : {},
+     *       "data": [
+     *         {
+     *           "id": "54f1a3dc2d4714c77f4d8bce",
+     *           "name": "corporis incidunt est labore",
+     *           "description": "necessitatibus enim cupiditate ex ullam autem hic natus nihil nostrum",
+     *           "url": "http://lorempixel.com/640/480/cats",
+     *           "active": true
+     *         },
+     *         {
+     *           "id": "54f1a3dc2d4714c77f4d8bcf",
+     *           "name": "ex nisi",
+     *           "description": "tenetur at et hic alias id iusto et repudiandae soluta",
+     *           "url": "http://lorempixel.com/640/480/cats",
+     *           "active": true
+     *         }
+     *       ]
+     *     }
      */
     .get(function(req, res, next) {
       Media.find(function(err, models) {
@@ -47,7 +51,7 @@ module.exports = function(router) {
           return;
         }
 
-        res.json(models);
+        res.json( respFormatter(models) );
       });
     })
 
@@ -63,11 +67,14 @@ module.exports = function(router) {
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
      *     {
-     *       "active": true,
-     *       "url": "http://lorempixel.com/640/480/cats",
-     *       "description": "ItemDescription",
-     *       "name": "ItemName",
-     *       "id": "551c31d0430d78991f5931e1"
+     *       "meta" : {},
+     *       "data" : {
+     *         "active": true,
+     *         "url": "http://lorempixel.com/640/480/cats",
+     *         "description": "ItemDescription",
+     *         "name": "ItemName",
+     *         "id": "551c31d0430d78991f5931e1"
+     *       }
      *     }
      */
     .post(function(req, res, next) {
@@ -89,7 +96,7 @@ module.exports = function(router) {
           return next( new errors.App(err) );
         }
 
-        res.json(model);
+        res.json( respFormatter(model) );
       });
 
     });
@@ -108,11 +115,14 @@ module.exports = function(router) {
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
      *     {
-     *       "active": true,
-     *       "url": "http://lorempixel.com/640/480/cats",
-     *       "description": "ItemDescription",
-     *       "name": "ItemName",
-     *       "id": "551c31d0430d78991f5931e1"
+     *       "meta" : {},
+     *       "data" : {
+     *         "active": true,
+     *         "url": "http://lorempixel.com/640/480/cats",
+     *         "description": "ItemDescription",
+     *         "name": "ItemName",
+     *         "id": "551c31d0430d78991f5931e1"
+     *       }
      *     }
      */
     .get(function(req, res, next) {
@@ -126,7 +136,7 @@ module.exports = function(router) {
           return next( new errors.NotFound() );
         }
 
-        res.json(model);
+        res.json( respFormatter(model) );
       });
     })
 
@@ -142,11 +152,14 @@ module.exports = function(router) {
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
      *     {
-     *       "active": false,
-     *       "url": "http://lorempixel.com/640/480/cats",
-     *       "description": "ItemDescription2",
-     *       "name": "ItemName2",
-     *       "id": "551c31d0430d78991f5931e1"
+     *       "meta" : {},
+     *       "data" : {
+     *         "active": false,
+     *         "url": "http://lorempixel.com/640/480/cats",
+     *         "description": "ItemDescription2",
+     *         "name": "ItemName2",
+     *         "id": "551c31d0430d78991f5931e1"
+     *       }
      *     }
      */
     .put(function(req, res, next) {
@@ -176,7 +189,7 @@ module.exports = function(router) {
             return next(err);
           }
 
-          res.json(model);
+          res.json( respFormatter(model) );
         });
       });
     })
@@ -193,11 +206,14 @@ module.exports = function(router) {
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
      *     {
-     *       "active": true,
-     *       "url": "http://lorempixel.com/640/480/cats",
-     *       "description": "ItemDescription",
-     *       "name": "ItemName",
-     *       "id": "551c31d0430d78991f5931e1"
+     *       "meta" : {},
+     *       "data" : {
+     *         "active": true,
+     *         "url": "http://lorempixel.com/640/480/cats",
+     *         "description": "ItemDescription",
+     *         "name": "ItemName",
+     *         "id": "551c31d0430d78991f5931e1"
+     *       }
      *     }
      */
     .delete(function(req, res, next) {
@@ -216,7 +232,7 @@ module.exports = function(router) {
         }
 
         model.remove(function() {
-          res.json(model);
+          res.json( respFormatter(model) );
         });
       });
     });

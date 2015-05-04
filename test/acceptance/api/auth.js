@@ -50,12 +50,14 @@ describe('API authentication', function() {
         .send({ username: defaultUser.username, password: defaultUser.password })
         .expect(200)
         .end(function(err, res) {
-          expect(objectid.isValid(res.body.userId)).to.be.true;
-          expect(res.body.username).to.equal(defaultUser.username);
-          expect(res.body.email).to.equal(defaultUser.email);
-          expect(res.body.token_exp).to.be.a('number');
-          expect(res.body.token_iat).to.be.a('number');
-          expect(res.body.token).to.be.a('string');
+          var responseData = res.body.data;
+
+          expect(objectid.isValid(responseData.userId)).to.be.true;
+          expect(responseData.username).to.equal(defaultUser.username);
+          expect(responseData.email).to.equal(defaultUser.email);
+          expect(responseData.token_exp).to.be.a('number');
+          expect(responseData.token_iat).to.be.a('number');
+          expect(responseData.token).to.be.a('string');
           done();
         });
     });
@@ -116,7 +118,7 @@ describe('API authentication', function() {
         .expect(200)
         .end(function(err, res) {
 
-          var token = res.body.token;
+          var token = res.body.data.token;
 
           // logout
           request(app)
@@ -144,7 +146,7 @@ describe('API authentication', function() {
         .expect(200)
         .end(function(err, res) {
 
-          var token = res.body.token;
+          var token = res.body.data.token;
 
           // logout
           request(app)
@@ -174,7 +176,7 @@ describe('API authentication', function() {
         .expect(200)
         .end(function(err, res) {
 
-          var token = res.body.token;
+          var token = res.body.data.token;
 
           // verify
           request(app)
@@ -206,8 +208,8 @@ describe('API authentication', function() {
         .post('/api/auth')
         .send({ username: defaultUser.username, password: defaultUser.password })
         .end(function(err, res) {
-          tokenAboutToExpire.token = res.body.token;
-          tokenAboutToExpire.exp   = res.body.token_exp;
+          tokenAboutToExpire.token = res.body.data.token;
+          tokenAboutToExpire.exp   = res.body.data.token_exp;
           done();
         });
     });
@@ -240,17 +242,19 @@ describe('API authentication', function() {
         .set('Authorization', 'Bearer ' + tokenAboutToExpire.token)
         .expect(200)
         .end(function(err, res) {
-          var token = res.body.token;
+          var
+            responseData = res.body.data,
+            token        = responseData.token;
 
-          expect(objectid.isValid(res.body.userId)).to.be.true;
-          expect(res.body.username).to.equal(defaultUser.username);
-          expect(res.body.email).to.equal(defaultUser.email);
-          expect(res.body.token_exp).to.be.a('number');
-          expect(res.body.token_iat).to.be.a('number');
+          expect(objectid.isValid(responseData.userId)).to.be.true;
+          expect(responseData.username).to.equal(defaultUser.username);
+          expect(responseData.email).to.equal(defaultUser.email);
+          expect(responseData.token_exp).to.be.a('number');
+          expect(responseData.token_iat).to.be.a('number');
           expect(token).to.be.a('string');
 
           expect(token).to.not.equal(tokenAboutToExpire.token);
-          expect(res.body.token_exp).to.be.at.least(tokenAboutToExpire.exp);
+          expect(responseData.token_exp).to.be.at.least(tokenAboutToExpire.exp);
 
           request(app)
             .get('/api/auth/' + token)
