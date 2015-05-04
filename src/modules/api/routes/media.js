@@ -5,8 +5,9 @@
 module.exports = function(router) {
 
   var
-    Media   = require('../models/Media'),
-    errors  = require('../../../lib/errors');
+    respFormatter = require('../../../lib/responseFormatter'),
+    Media         = require('../models/Media'),
+    errors        = require('../../../lib/errors');
 
 
   router.route('/media')
@@ -47,7 +48,7 @@ module.exports = function(router) {
           return;
         }
 
-        res.json(models);
+        res.json( respFormatter(models) );
       });
     })
 
@@ -89,7 +90,7 @@ module.exports = function(router) {
           return next( new errors.App(err) );
         }
 
-        res.json(model);
+        res.json( respFormatter(model) );
       });
 
     });
@@ -126,7 +127,7 @@ module.exports = function(router) {
           return next( new errors.NotFound() );
         }
 
-        res.json(model);
+        res.json( respFormatter(model) );
       });
     })
 
@@ -176,7 +177,7 @@ module.exports = function(router) {
             return next(err);
           }
 
-          res.json(model);
+          res.json( respFormatter(model) );
         });
       });
     })
@@ -216,7 +217,7 @@ module.exports = function(router) {
         }
 
         model.remove(function() {
-          res.json(model);
+          res.json( respFormatter(model) );
         });
       });
     });

@@ -3,11 +3,12 @@
 'use strict';
 
 var
-  _          = require('lodash'),
-  errors     = require('../../../lib/errors'),
-  User       = require('../models/User'),
-  jwtAuth    = require('./../../../lib/jwtAuth'),
-  debug      = require('debug')('MosaiqoApp:routes:auth:' + process.pid);
+  _             = require('lodash'),
+  errors        = require('../../../lib/errors'),
+  respFormatter = require('../../../lib/responseFormatter'),
+  User          = require('../models/User'),
+  jwtAuth       = require('./../../../lib/jwtAuth'),
+  debug         = require('debug')('MosaiqoApp:routes:auth:' + process.pid);
 
 
 // AUTHENTICATION MIDDLEWARE
@@ -94,7 +95,7 @@ module.exports = function(router) {
    *     }
    */
   router.route('/auth').post(authenticate, function(req, res, next) {
-    return res.status(200).json(req.user);
+    return res.status(200).json( respFormatter(req.user) );
   });
 
 
@@ -140,9 +141,9 @@ module.exports = function(router) {
       /* istanbul ignore else */
       if (jwtAuth.expire(req.headers)) {
         delete req.user;
-        return res.status(200).json({
+        return res.status(200).json(respFormatter({
           'message': 'User has been successfully logged out'
-        });
+        }));
       } else {
         return next(new errors.Unauthorized());
       }
@@ -209,7 +210,7 @@ module.exports = function(router) {
 
       jwtAuth.create(user, req, res, function() {
         jwtAuth.expire(req.headers);
-        return res.status(200).json(req.user);
+        return res.status(200).json( respFormatter(req.user) );
       });
 
     });
@@ -254,7 +255,7 @@ module.exports = function(router) {
       return next(new errors.Unauthorized());
     }
 
-    return res.status(200).json({'message': 'Token is valid'});
+    return res.status(200).json( respFormatter({'message': 'Token is valid'}) );
   });
 
 };

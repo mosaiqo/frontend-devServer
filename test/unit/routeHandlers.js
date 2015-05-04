@@ -15,7 +15,7 @@ var
   httpMocks      = require('node-mocks-http'),
   requireHelper  = require(projectRootDir + 'test/require_helper'),
 
-  // filebeing tested
+  // file being tested
   routeHandlers  = requireHelper('routeHandlers');
 
 
