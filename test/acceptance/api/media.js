@@ -85,7 +85,7 @@ describe('api/media', function() {
       .set('Accept', 'application/json')
       .send({ username: 'demo', password: 'demo' })
       .end(function(err, res) {
-        authHeader = 'Bearer ' + res.body.token;
+        authHeader = 'Bearer ' + res.body.data.token;
         done();
       });
   });
@@ -116,15 +116,16 @@ describe('api/media', function() {
         .expect('Content-Type', /application\/json/)
         .expect(200)
         .end(function(err, res) {
+          var responseData = res.body.data;
 
           expect(err).to.not.exist;
 
-          expect(_.isArray(res.body)).to.be.true;
+          expect(_.isArray(responseData)).to.be.true;
 
-          expect(res.body).to.have.length.of.at.least(2);
+          expect(responseData).to.have.length.of.at.least(2);
 
           // save a reference for later usage
-          firstRecord = res.body[0];
+          firstRecord = responseData[0];
 
           // check the node attributes
           isValidMediaObject(firstRecord);
@@ -166,7 +167,7 @@ describe('api/media', function() {
           expect(err).to.not.exist;
 
           // check the node attributes
-          isValidMediaObject(res.body);
+          isValidMediaObject(res.body.data);
 
           done();
         });
@@ -215,7 +216,7 @@ describe('api/media', function() {
           expect(err).to.not.exist;
 
           // save the reference for the next test
-          createdModel = res.body;
+          createdModel = res.body.data;
 
           // check the node attributes
           isValidMediaObject(createdModel);
@@ -235,7 +236,7 @@ describe('api/media', function() {
         .get('/api/media/'+createdModel.id)
         .set('Authorization', authHeader)
         .end(function(err, res) {
-          expect(res.body.id).to.equal(createdModel.id);
+          expect(res.body.data.id).to.equal(createdModel.id);
           done();
         });
     });
@@ -282,7 +283,7 @@ describe('api/media', function() {
         .expect(200)
         .end(function(err, res) {
 
-          var model = res.body;
+          var model = res.body.data;
 
           // check the node attributes
           isValidMediaObject(model);
@@ -329,7 +330,7 @@ describe('api/media', function() {
 
           expect(err).to.not.exist;
 
-          deletedModel = res.body;
+          deletedModel = res.body.data;
 
           // check the node attributes
           isValidMediaObject(deletedModel);

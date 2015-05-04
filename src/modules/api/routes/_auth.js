@@ -3,11 +3,12 @@
 'use strict';
 
 var
-  _          = require('lodash'),
-  errors     = require('../../../lib/errors'),
-  User       = require('../models/User'),
-  jwtAuth    = require('./../../../lib/jwtAuth'),
-  debug      = require('debug')('MosaiqoApp:routes:auth:' + process.pid);
+  _             = require('lodash'),
+  errors        = require('../../../lib/errors'),
+  respFormatter = require('../../../lib/responseFormatter'),
+  User          = require('../models/User'),
+  jwtAuth       = require('./../../../lib/jwtAuth'),
+  debug         = require('debug')('MosaiqoApp:routes:auth:' + process.pid);
 
 
 // AUTHENTICATION MIDDLEWARE
@@ -73,12 +74,15 @@ module.exports = function(router) {
    * @apiSuccessExample {json} Success-Response:
    *     HTTP/1.1 200 OK
    *     {
-   *       "id": "54ee6175465eaee35cd237ed",
-   *       "username": "demo",
-   *       "email": "demo@demo.demo",
-   *       "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTQ0ODYsImV4cCI6MTQyNzgxODA4Nn0.pZVBE_GKvJUr4BI7BDeTmIIy9gQ2p3tlrG2pcMcjm3U",
-   *       "token_exp": 1427818086,
-   *       "token_iat": 1427814486
+   *       "meta" : {},
+   *       "data" : {
+   *         "id": "54ee6175465eaee35cd237ed",
+   *         "username": "demo",
+   *         "email": "demo@demo.demo",
+   *         "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTQ0ODYsImV4cCI6MTQyNzgxODA4Nn0.pZVBE_GKvJUr4BI7BDeTmIIy9gQ2p3tlrG2pcMcjm3U",
+   *         "token_exp": 1427818086,
+   *         "token_iat": 1427814486
+   *       }
    *     }
    *
    * @apiError (401) {Boolean} error Error.
@@ -94,7 +98,7 @@ module.exports = function(router) {
    *     }
    */
   router.route('/auth').post(authenticate, function(req, res, next) {
-    return res.status(200).json(req.user);
+    return res.status(200).json( respFormatter(req.user) );
   });
 
 
@@ -114,7 +118,10 @@ module.exports = function(router) {
    * @apiSuccessExample {json} Success-Response:
    *     HTTP/1.1 200 OK
    *     {
-   *       "message": "User has been successfully logged out"
+   *       "meta" : {},
+   *       "data" : {
+   *         "message": "User has been successfully logged out"
+   *       }
    *     }
    *
    * @apiError (401) {Boolean} error Error.
@@ -140,9 +147,9 @@ module.exports = function(router) {
       /* istanbul ignore else */
       if (jwtAuth.expire(req.headers)) {
         delete req.user;
-        return res.status(200).json({
+        return res.status(200).json(respFormatter({
           'message': 'User has been successfully logged out'
-        });
+        }));
       } else {
         return next(new errors.Unauthorized());
       }
@@ -171,12 +178,15 @@ module.exports = function(router) {
    * @apiSuccessExample {json} Success-Response:
    *     HTTP/1.1 200 OK
    *     {
-   *       "id": "54ee6175465eaee35cd237ed",
-   *       "username": "demo",
-   *       "email": "demo@demo.demo",
-   *       "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTQ0ODYsImV4cCI6MTQyNzgxODA4Nn0.pZVBE_GKvJUr4BI7BDeTmIIy9gQ2p3tlrG2pcMcjm3U",
-   *       "token_exp": 1427818086,
-   *       "token_iat": 1427814486
+   *       "meta" : {},
+   *       "data" : {
+   *         "id": "54ee6175465eaee35cd237ed",
+   *         "username": "demo",
+   *         "email": "demo@demo.demo",
+   *         "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTQ0ODYsImV4cCI6MTQyNzgxODA4Nn0.pZVBE_GKvJUr4BI7BDeTmIIy9gQ2p3tlrG2pcMcjm3U",
+   *         "token_exp": 1427818086,
+   *         "token_iat": 1427814486
+   *       }
    *     }
    *
    * @apiError (401) {Boolean} error Error.
@@ -209,7 +219,7 @@ module.exports = function(router) {
 
       jwtAuth.create(user, req, res, function() {
         jwtAuth.expire(req.headers);
-        return res.status(200).json(req.user);
+        return res.status(200).json( respFormatter(req.user) );
       });
 
     });
@@ -233,7 +243,10 @@ module.exports = function(router) {
    * @apiSuccessExample {json} Success-Response:
    *     HTTP/1.1 200 OK
    *     {
-   *       "message": "Token is valid"
+   *       "meta" : {},
+   *       "data" : {
+   *         "message": "Token is valid"
+   *       }
    *     }
    *
    * @apiError (401) {Boolean} error Error.
@@ -254,7 +267,7 @@ module.exports = function(router) {
       return next(new errors.Unauthorized());
     }
 
-    return res.status(200).json({'message': 'Token is valid'});
+    return res.status(200).json( respFormatter({'message': 'Token is valid'}) );
   });
 
 };
