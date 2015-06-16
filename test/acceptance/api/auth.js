@@ -31,18 +31,6 @@ describe('API authentication', function() {
   };
 
 
-  /**
-   * Some of the API methods are access restricted using JWT
-   * so create a default user (demo/demo)
-   */
-  before(function(done) {
-    var exec = require('child_process').exec;
-
-    this.timeout(10000);
-    exec('grunt util:createUser --default', done);
-  });
-
-
   describe('Login', function() {
     it('Should return a JWT when supplying valid user credentials', function(done) {
       request(app)
