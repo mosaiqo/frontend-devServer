@@ -63,7 +63,7 @@
     "mockery": "^1.4.0",
     "mongodb": "^2.0.34",
     "node-mocks-http": "^1.4.3",
-    "pow-mongodb-fixtures": "^0.11.0",
+    "pow-mongodb-fixtures": "https://github.com/davearata/pow-mongodb-fixtures.git",
     "redis-mock": "^0.4.9",
     "sinon": "^1.15.3",
     "supertest": "^1.0.1",
