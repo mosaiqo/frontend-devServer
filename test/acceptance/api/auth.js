@@ -12,8 +12,7 @@ var
   mocha          = require('mocha'),
   expect         = require('chai').expect,
   request        = require('supertest'),
-  mongodb        = require('mongodb'),
-  objectid       = mongodb.BSONPure.ObjectID,
+  objectid       = require('mongodb').ObjectID,
   requireHelper  = require(projectRootDir + 'test/require_helper'),
 
   // server
