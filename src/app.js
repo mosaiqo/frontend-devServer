@@ -45,6 +45,13 @@ var routeHandlers = require('./routeHandlers');
 app.get('/', routeHandlers.root);
 
 
+// SETUP THE PAGINATION MIDDLEWARE
+// =============================================================================
+var paginate = require('express-paginate');
+
+app.use(paginate.middleware(20, 200));
+
+
 // FAKE API (the real on will be implemented using Laravel)
 // =============================================================================
 var API = require('./modules/api');
