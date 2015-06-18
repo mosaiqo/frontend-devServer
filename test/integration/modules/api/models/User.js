@@ -58,6 +58,7 @@ describe('User model', function() {
       if(err) done(err);
       expect(user.username).to.equal(userdata.username);
       expect(user.email).to.equal(userdata.email);
+      user.remove();
       done();
     });
   });
@@ -92,6 +93,8 @@ describe('User model', function() {
           expect(match).to.true;
         });
 
+        user.remove();
+
         done();
       });
     });
@@ -111,6 +114,7 @@ describe('User model', function() {
         expect(err.errors).to.have.property('username');
         done();
       } else {
+        user.remove();
         done(new Error('Model saved successfully'));
       }
     });
@@ -130,6 +134,7 @@ describe('User model', function() {
         expect(err.errors).to.have.property('email');
         done();
       } else {
+        user.remove();
         done(new Error('Model saved successfully'));
       }
     });
@@ -149,6 +154,7 @@ describe('User model', function() {
         expect(err.errors).to.have.property('password');
         done();
       } else {
+        user.remove();
         done(new Error('Model saved successfully'));
       }
     });
@@ -170,8 +176,11 @@ describe('User model', function() {
 
       user2.save(function(err, user) {
         if(err) {
+          user1.remove();
           done();
         } else {
+          user1.remove();
+          user2.remove();
           done(new Error('Model saved successfully'));
         }
       });
