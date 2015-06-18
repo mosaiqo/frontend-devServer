@@ -45,7 +45,7 @@ describe('User model', function() {
   });
 
 
-  it('should save user', function(done) {
+  it('should save the user', function(done) {
     var userdata = {
       username: faker.internet.userName(),
       password: faker.internet.password(),
@@ -58,8 +58,32 @@ describe('User model', function() {
       if(err) done(err);
       expect(user.username).to.equal(userdata.username);
       expect(user.email).to.equal(userdata.email);
+      user.remove();
       done();
     });
+  });
+
+
+  it('should transform the virtual attributes when /saving/fetching', function(done) {
+    var userdata = {
+      id :      '000000000000000000000001',
+      username: faker.internet.userName(),
+      password: faker.internet.password(),
+      email:    faker.internet.email()
+    };
+
+    var user = new User(userdata);
+
+    user.save(function(err, user) {
+      var userJSON = user.toJSON();
+      expect(userJSON).to.have.property('id');
+      expect(userJSON).to.not.have.property('_id');
+      expect(userJSON).to.not.have.property('password');
+      user.remove();
+
+      done();
+    });
+
   });
 
 
@@ -92,6 +116,8 @@ describe('User model', function() {
           expect(match).to.true;
         });
 
+        user.remove();
+
         done();
       });
     });
@@ -111,6 +137,7 @@ describe('User model', function() {
         expect(err.errors).to.have.property('username');
         done();
       } else {
+        user.remove();
         done(new Error('Model saved successfully'));
       }
     });
@@ -130,6 +157,7 @@ describe('User model', function() {
         expect(err.errors).to.have.property('email');
         done();
       } else {
+        user.remove();
         done(new Error('Model saved successfully'));
       }
     });
@@ -149,6 +177,7 @@ describe('User model', function() {
         expect(err.errors).to.have.property('password');
         done();
       } else {
+        user.remove();
         done(new Error('Model saved successfully'));
       }
     });
@@ -170,8 +199,11 @@ describe('User model', function() {
 
       user2.save(function(err, user) {
         if(err) {
+          user1.remove();
           done();
         } else {
+          user1.remove();
+          user2.remove();
           done(new Error('Model saved successfully'));
         }
       });
@@ -179,4 +211,3 @@ describe('User model', function() {
   });
 
 });
-

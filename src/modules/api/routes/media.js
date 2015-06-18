@@ -217,9 +217,6 @@ module.exports = function(router) {
      *     }
      */
     .delete(function(req, res, next) {
-      var model = Media.findOne({
-        _id: req.params.media_id
-      });
 
       Media.findById(req.params.media_id, function(err, model) {
 
