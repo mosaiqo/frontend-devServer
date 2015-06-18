@@ -21,7 +21,7 @@ var
 
 
 
-describe('api/media', function() {
+describe('api/blog/articles', function() {
 
   /**
    * References to some of the API models,
@@ -35,15 +35,14 @@ describe('api/media', function() {
    * Aux. method to check the node attributes returned by the CRUD operations
    * @param  {Object}  obj json node returned by the API
    */
-  var isValidMediaObject = function(obj) {
+  var isValidArticleObject = function(obj) {
 
     expect(obj).to.be.an('object');
 
     expect(obj).to.have.property('id');
-    expect(obj).to.have.property('name');
-    expect(obj).to.have.property('description');
-    expect(obj).to.have.property('url');
-    expect(obj).to.have.property('active');
+    expect(obj).to.have.property('title');
+    expect(obj).to.have.property('body');
+    expect(obj).to.have.property('author');
 
     expect(obj.id).not.to.be.null;
   };
@@ -68,11 +67,11 @@ describe('api/media', function() {
 
   // -- GET ALL ---------------------------------
 
-  describe('Get all media objects -> GET /api/media', function() {
+  describe('Get all article objects -> GET /api/blog/articles', function() {
 
     it('should reject the request if there\'s no valid authorization header', function(done) {
       request(app)
-        .get('/api/media')
+        .get('/api/blog/articles')
         .expect('Content-Type', /application\/json/)
         .expect(401)
         .end(function(err, res) {
@@ -85,9 +84,9 @@ describe('api/media', function() {
     });
 
 
-    it('should return an array of media objects', function(done) {
+    it('should return an array of article objects', function(done) {
       request(app)
-        .get('/api/media')
+        .get('/api/blog/articles')
         .set('Authorization', authHeader)
         .expect('Content-Type', /application\/json/)
         .expect(200)
@@ -104,7 +103,7 @@ describe('api/media', function() {
           firstRecord = responseData[0];
 
           // check the node attributes
-          isValidMediaObject(firstRecord);
+          isValidArticleObject(firstRecord);
 
           done();
         });
@@ -114,11 +113,11 @@ describe('api/media', function() {
 
   // -- GET ONE ---------------------------------
 
-  describe('Get one media object -> GET /api/media/:id', function() {
+  describe('Get one article object -> GET /api/blog/articles/:id', function() {
 
     it('should reject the request if there\'s no valid authorization header', function(done) {
       request(app)
-        .get('/api/media/'+firstRecord.id)
+        .get('/api/blog/articles/'+firstRecord.id)
         .expect('Content-Type', /application\/json/)
         .expect(401, done);
     });
@@ -126,15 +125,15 @@ describe('api/media', function() {
 
     it('should return a 404 error if the model does not exist', function(done) {
       request(app)
-        .get('/api/media/a-non-existing-record-id')
+        .get('/api/blog/articles/a-non-existing-record-id')
         .set('Authorization', authHeader)
         .expect(404, done);
     });
 
 
-    it('returns a Media object', function(done) {
+    it('returns an Article object', function(done) {
       request(app)
-        .get('/api/media/'+firstRecord.id)
+        .get('/api/blog/articles/'+firstRecord.id)
         .set('Authorization', authHeader)
         .expect('Content-Type', /application\/json/)
         .expect(200)
@@ -143,7 +142,7 @@ describe('api/media', function() {
           expect(err).to.not.exist;
 
           // check the node attributes
-          isValidMediaObject(res.body.data);
+          isValidArticleObject(res.body.data);
 
           done();
         });
@@ -154,14 +153,13 @@ describe('api/media', function() {
 
   // -- CREATE ----------------------------------
 
-  describe('Create a new media object -> POST /api/media', function() {
+  describe('Create a new article object -> POST /api/blog/articles', function() {
 
     var getModelObject = function() {
       return {
-        name        : 'AAA',
-        description : 'BBB',
-        url         : 'http://foo.bar',
-        active      : false
+        title     : 'AAA',
+        body      : 'BBB',
+        author_id : '000000000000000000000001',
       };
     };
 
@@ -170,7 +168,7 @@ describe('api/media', function() {
       var obj = getModelObject();
 
       request(app)
-        .post('/api/media/')
+        .post('/api/blog/articles/')
         .send(obj)
         .expect('Content-Type', /application\/json/)
         .expect(401, done);
@@ -182,7 +180,7 @@ describe('api/media', function() {
       var obj = getModelObject();
 
       request(app)
-        .post('/api/media/')
+        .post('/api/blog/articles/')
         .set('Authorization', authHeader)
         .send(obj)
         .expect('Content-Type', /application\/json/)
@@ -195,12 +193,10 @@ describe('api/media', function() {
           createdModel = res.body.data;
 
           // check the node attributes
-          isValidMediaObject(createdModel);
+          isValidArticleObject(createdModel);
 
-          expect(createdModel.name).to.equal(obj.name);
-          expect(createdModel.description).to.equal(obj.description);
-          expect(createdModel.url).to.equal(obj.url);
-          expect(createdModel.active).to.equal(obj.active);
+          expect(createdModel.title).to.equal(obj.title);
+          expect(createdModel.body).to.equal(obj.body);
 
           done();
         });
@@ -209,7 +205,7 @@ describe('api/media', function() {
 
     it('should persist the created object', function(done) {
       request(app)
-        .get('/api/media/'+createdModel.id)
+        .get('/api/blog/articles/'+createdModel.id)
         .set('Authorization', authHeader)
         .end(function(err, res) {
           expect(res.body.data.id).to.equal(createdModel.id);
@@ -222,19 +218,18 @@ describe('api/media', function() {
 
   // -- UPDATE ----------------------------------
 
-  describe('Update a media object -> PUT /api/media/:id', function() {
+  describe('Update an article object -> PUT /api/blog/articles/:id', function() {
 
     var newAttrs = {
-      name        : 'CCC',
-      description : 'DDD',
-      url         : 'http://qux.baz',
-      active      : false
+      title     : 'CCC',
+      body      : 'DDD',
+      author_id : '000000000000000000000001',
     };
 
 
     it('should reject the request if there\'s no valid authorization header', function(done) {
       request(app)
-        .put('/api/media/'+createdModel.id)
+        .put('/api/blog/articles/'+createdModel.id)
         .send(newAttrs)
         .expect('Content-Type', /application\/json/)
         .expect(401, done);
@@ -243,7 +238,7 @@ describe('api/media', function() {
 
     it('should retun a 404 error if the model does not exist', function(done) {
       request(app)
-        .put('/api/media/a-non-existing-record-id')
+        .put('/api/blog/articles/a-non-existing-record-id')
         .set('Authorization', authHeader)
         .expect(404, done);
     });
@@ -251,7 +246,7 @@ describe('api/media', function() {
 
     it('should return the modified model', function(done) {
       request(app)
-        .put('/api/media/'+createdModel.id)
+        .put('/api/blog/articles/'+createdModel.id)
         .set('Authorization', authHeader)
         .send(newAttrs)
         .set('Accept', 'application/json')
@@ -262,12 +257,10 @@ describe('api/media', function() {
           var model = res.body.data;
 
           // check the node attributes
-          isValidMediaObject(model);
+          isValidArticleObject(model);
 
-          expect(model.name).to.equal(newAttrs.name);
-          expect(model.description).to.equal(newAttrs.description);
-          expect(model.url).to.equal(newAttrs.url);
-          expect(model.active).to.equal(newAttrs.active);
+          expect(model.title).to.equal(newAttrs.title);
+          expect(model.body).to.equal(newAttrs.body);
 
           done();
         });
@@ -278,11 +271,11 @@ describe('api/media', function() {
 
   // -- DELETE ----------------------------------
 
-  describe('Delete a media object -> DELETE /api/media/:id', function() {
+  describe('Delete an article object -> DELETE /api/blog/articles/:id', function() {
 
     it('should reject the request if there\'s no valid authorization header', function(done) {
       request(app)
-        .delete('/api/media/'+firstRecord.id)
+        .delete('/api/blog/articles/'+firstRecord.id)
         .expect('Content-Type', /application\/json/)
         .expect(401, done);
     });
@@ -290,7 +283,7 @@ describe('api/media', function() {
 
     it('should retun a 404 error if the model does not exist', function(done) {
       request(app)
-        .delete('/api/media/a-non-existing-record-id')
+        .delete('/api/blog/articles/a-non-existing-record-id')
         .set('Authorization', authHeader)
         .expect(404, done);
     });
@@ -298,7 +291,7 @@ describe('api/media', function() {
 
     it('should return the deleted model', function(done) {
       request(app)
-        .delete('/api/media/'+firstRecord.id)
+        .delete('/api/blog/articles/'+firstRecord.id)
         .set('Authorization', authHeader)
         .expect('Content-Type', /application\/json/)
         .expect(200)
@@ -309,7 +302,7 @@ describe('api/media', function() {
           deletedModel = res.body.data;
 
           // check the node attributes
-          isValidMediaObject(deletedModel);
+          isValidArticleObject(deletedModel);
 
           done();
         });
@@ -318,7 +311,7 @@ describe('api/media', function() {
 
     it('should delete the requested model', function(done) {
       request(app)
-        .get('/api/media/'+deletedModel.id)
+        .get('/api/blog/articles/'+deletedModel.id)
         .set('Authorization', authHeader)
         .expect(404, done);
     });

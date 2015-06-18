@@ -12,8 +12,7 @@ var
   mocha          = require('mocha'),
   expect         = require('chai').expect,
   request        = require('supertest'),
-  mongodb        = require('mongodb'),
-  objectid       = mongodb.BSONPure.ObjectID,
+  objectid       = require('mongodb').ObjectID,
   requireHelper  = require(projectRootDir + 'test/require_helper'),
 
   // server
@@ -29,18 +28,6 @@ describe('API authentication', function() {
     password: 'demo',
     email: 'demo@demo.demo'
   };
-
-
-  /**
-   * Some of the API methods are access restricted using JWT
-   * so create a default user (demo/demo)
-   */
-  before(function(done) {
-    var exec = require('child_process').exec;
-
-    this.timeout(10000);
-    exec('grunt util:createUser --default', done);
-  });
 
 
   describe('Login', function() {

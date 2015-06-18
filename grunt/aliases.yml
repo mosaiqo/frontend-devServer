@@ -41,6 +41,7 @@ test:
   description: 'Execute ALL the tests'
   tasks:
     - env:app
+    - mongo:populate
     - mochaTest
 
 test:coverage:
@@ -48,6 +49,7 @@ test:coverage:
   tasks:
     - clean:coverage
     - env:coverage
+    - mongo:populate
     - instrument
     - test
     - storeCoverage
