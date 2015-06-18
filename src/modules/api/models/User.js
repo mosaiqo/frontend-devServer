@@ -35,6 +35,9 @@ var UserSchema = new Schema({
       // transform _id to id
       ret.id = ret._id;
       delete ret._id;
+
+      // filter out some attributes from the output
+      delete ret.password;
     }
   },
   toObject: {
