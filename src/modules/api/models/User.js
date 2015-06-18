@@ -32,6 +32,7 @@ var UserSchema = new Schema({
   toJSON: {
     virtuals: true,
     transform: function(doc, ret) {
+      // transform _id to id
       ret.id = ret._id;
       delete ret._id;
     }
@@ -39,6 +40,7 @@ var UserSchema = new Schema({
   toObject: {
     virtuals: true,
     transform: function(doc, ret) {
+      // transform id to _id
       ret._id = ret.id;
       delete ret.id;
     }
