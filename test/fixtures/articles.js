@@ -26,7 +26,7 @@ module.exports = (function() {
       author       : defaultUserId,
       owner        : defaultUserId,
       published    : true,
-      publish_date : date,
+      published_at : date,
       commentable  : true,
       created_at   : date,
       updated_at   : date
