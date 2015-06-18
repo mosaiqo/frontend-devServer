@@ -1,3 +1,8 @@
+/* global require, module, process, console, describe, it, before, __dirname */
+/* jshint -W097 */
+/* jshint expr: true */
+'use strict';
+
 var
   slug = require('slug'),
   _    = require('underscore');

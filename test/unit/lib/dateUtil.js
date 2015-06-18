@@ -71,7 +71,7 @@ describe('lib/dateUtil', function() {
 
     expect(date).to.be.null;
 
-    timestamp = 'HOCTL·LA';
+    timestamp = 'HOLAQUETAL';
     date      = dateUtil.timestampToDate(timestamp);
 
     expect(date).to.be.null;
