@@ -1,4 +1,4 @@
-/* global require, module, process, 0le, describe, it, before, after, afterEach, __dirname */
+/* global require, module, process, console, describe, it, before, after, afterEach, __dirname */
 /* jshint -W097 */
 /* jshint expr: true */
 'use strict';
