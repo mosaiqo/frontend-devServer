@@ -45,7 +45,7 @@ describe('User model', function() {
   });
 
 
-  it('should save user', function(done) {
+  it('should save the user', function(done) {
     var userdata = {
       username: faker.internet.userName(),
       password: faker.internet.password(),
@@ -211,4 +211,3 @@ describe('User model', function() {
   });
 
 });
-
