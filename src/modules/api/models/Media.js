@@ -21,7 +21,7 @@ var MediaSchema = new Schema({
     }
   },
   toObject: {
-    transform: function(doc, ret) {
+    transform: /* istanbul ignore next */ function(doc, ret) {
       // transform id to _id
       ret._id = ret.id;
       delete ret.id;

@@ -64,6 +64,29 @@ describe('User model', function() {
   });
 
 
+  it('should transform the virtual attributes when /saving/fetching', function(done) {
+    var userdata = {
+      id :      '000000000000000000000001',
+      username: faker.internet.userName(),
+      password: faker.internet.password(),
+      email:    faker.internet.email()
+    };
+
+    var user = new User(userdata);
+
+    user.save(function(err, user) {
+      var userJSON = user.toJSON();
+      expect(userJSON).to.have.property('id');
+      expect(userJSON).to.not.have.property('_id');
+      expect(userJSON).to.not.have.property('password');
+      user.remove();
+
+      done();
+    });
+
+  });
+
+
   it('should store the password encrypted', function(done) {
     var userdata = {
       username: faker.internet.userName(),

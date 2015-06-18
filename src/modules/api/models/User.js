@@ -42,7 +42,7 @@ var UserSchema = new Schema({
   },
   toObject: {
     virtuals: true,
-    transform: function(doc, ret) {
+    transform: /* istanbul ignore next */ function(doc, ret) {
       // transform id to _id
       ret._id = ret.id;
       delete ret.id;
@@ -59,7 +59,7 @@ UserSchema.pre('save', function (next) {
   var user = this;
 
   /* istanbul ignore else */
-  if (this.isModified('password') || this.isNew) {
+  if (this.isModified('password') || /* istanbul ignore next */ this.isNew) {
     bcrypt.genSalt(10, function (err, salt) {
       /* istanbul ignore next */
       if (err) {
