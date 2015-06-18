@@ -105,7 +105,7 @@ module.exports = function(router) {
 
 
     /**
-     * @api {post} /blog/articles Create a medianew article
+     * @api {post} /blog/articles Create a new article
      * @apiName Create
      * @apiGroup Blog/Articles
      *
@@ -144,7 +144,7 @@ module.exports = function(router) {
         // create a new instance of the Article model
         var model = new Article();
 
-        // set the media attributes
+        // set the article attributes
         model.title        = req.body.title;
         model.slug         = articleSlug;
         model.excerpt      = req.body.excerpt;
@@ -156,7 +156,7 @@ module.exports = function(router) {
         model.commentable  = req.body.commentable;
 
 
-        // save the media and check for errors
+        // save the article and check for errors
         model.save(function(err) {
 
           /* istanbul ignore next */
@@ -274,7 +274,7 @@ module.exports = function(router) {
 
       var r = new RequestUtil(req);
 
-      // use our media model to find the media we want
+      // use our article model to find the article we want
       Article.findById(req.params.article_id, function(err, model) {
 
         /* istanbul ignore next */
@@ -287,7 +287,7 @@ module.exports = function(router) {
 
         slugger(Article, req.body.title, req.body.slug, function(articleSlug) {
 
-          // update the media info
+          // update the article info
           model.title        = req.body.title;
           model.slug         = articleSlug;
           model.excerpt      = req.body.excerpt;
