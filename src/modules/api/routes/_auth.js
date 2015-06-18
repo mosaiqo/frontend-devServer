@@ -92,9 +92,10 @@ module.exports = function(router) {
    * @apiErrorExample Error-Response:
    *     HTTP/1.1 401 Unauthorized
    *     {
-   *       "error": true,
-   *       "errorCode": 401,
-   *       "message": "Invalid username or password"
+   *       "error": {
+   *         "code": "401",
+   *         "message": "Invalid username or password"
+   *       }
    *     }
    */
   router.route('/auth').post(authenticate, function(req, res, next) {
@@ -131,9 +132,10 @@ module.exports = function(router) {
    * @apiErrorExample Error-Response:
    *     HTTP/1.1 401 Unauthorized
    *     {
-   *       "error": true,
-   *       "errorCode": 401,
-   *       "message": "invalid_token"
+   *       "error": {
+   *         "code": "401",
+   *         "message": "invalid_token"
+   *       }
    *     }
    */
   router.route('/auth/:token').delete(function(req, res, next) {
@@ -196,9 +198,10 @@ module.exports = function(router) {
    * @apiErrorExample Error-Response:
    *     HTTP/1.1 401 Unauthorized
    *     {
-   *       "error": true,
-   *       "errorCode": 401,
-   *       "message": "invalid_token"
+   *       "error": {
+   *         "code": "401",
+   *         "message": "invalid_token"
+   *       }
    *     }
    */
   router.route('/auth/:token').put(function(req, res, next) {
@@ -256,9 +259,10 @@ module.exports = function(router) {
    * @apiErrorExample Error-Response:
    *     HTTP/1.1 401 Unauthorized
    *     {
-   *       "error": true,
-   *       "errorCode": 401,
-   *       "message": "invalid_token"
+   *       "error": {
+   *         "code": "401",
+   *         "message": "invalid_token"
+   *       }
    *     }
    */
   router.route('/auth/:token').get(function(req, res, next) {

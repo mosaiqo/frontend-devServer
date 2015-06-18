@@ -72,7 +72,7 @@ app.all('*', function (req, res, next) {
 // generic error handler
 app.use(function(err, req, res, next) {
 
-  var code, message;
+  var code, message, resp = {};
 
   /* istanbul ignore next */
   switch (err.name) {
@@ -89,17 +89,31 @@ app.use(function(err, req, res, next) {
       code    = err.code;
       message = err.message;
       break;
+    case 'ValidationError':
+      code    = 422;
+      message = 'Validation Error';
+      resp.errors  = {};
+
+      for (var errName in err.errors) {
+        if(errors[errName]) {
+          resp.errors[errName].push(err.errors[errName].message);
+        } else {
+          resp.errors[errName] = [err.errors[errName].message];
+        }
+      }
+      break;
     default:
       code    = 500;
       message = 'Internal Server Error';
       break;
   }
 
-  return res.status(code).json({
-    error     : true,
-    errorCode : code,
-    message   : message
-  });
+  resp.error = {
+    code:    code,
+    message: message
+  };
+
+  return res.status(code).json(resp);
 
 });
 

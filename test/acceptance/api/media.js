@@ -76,9 +76,10 @@ describe('api/media', function() {
         .expect('Content-Type', /application\/json/)
         .expect(401)
         .end(function(err, res) {
-          expect(res.body.error).to.be.true;
-          expect(res.body.errorCode).to.equal(401);
-          expect(res.body).to.have.property('message');
+          expect(res.body).to.have.property('error');
+          expect(res.body.error).to.have.property('code');
+          expect(res.body.error.code).to.equal(401);
+          expect(res.body.error).to.have.property('message');
           done();
         });
     });
