@@ -64,11 +64,11 @@ var ArticleSchema = new Schema({
     }
   },
 
-  'collection': 'blog-articles'
+  'collection': 'blog.articles'
 
 });
 
 
 ArticleSchema.plugin( require('mongoose-paginate') );
 
-module.exports = mongoose.model('Article', ArticleSchema);
+module.exports = mongoose.model('BlogArticle', ArticleSchema);

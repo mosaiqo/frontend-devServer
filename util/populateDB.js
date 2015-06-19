@@ -76,7 +76,7 @@ glob(fixturesDir + '**/*.js', function (er, files) {
   files.forEach(function(fixture) {
     var
       fileNoExt      = fixture.substr(0, fixture.indexOf('.')).replace(fixturesDir,''),
-      collectionName = fileNoExt.replace('/', '-');
+      collectionName = fileNoExt.replace('/', '.');
 
     data[collectionName] = require(fixturesDir + fileNoExt);
 
