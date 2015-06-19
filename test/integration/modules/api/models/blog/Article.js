@@ -5,7 +5,7 @@
 
 var
   // paths
-  projectRootDir = '../../../../../',
+  projectRootDir = '../../../../../../',
   appRootDir     = projectRootDir + 'src/',
 
   // test dependencies
@@ -18,7 +18,7 @@ var
   mongoConfigParser = require(appRootDir + 'lib/mongoConfigParser'),
 
   // file being tested
-  Article           = requireHelper('modules/api/models/Article');
+  Article           = requireHelper('modules/api/models/blog/Article');
 
 
 

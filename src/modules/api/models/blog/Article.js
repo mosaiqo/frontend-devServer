@@ -5,8 +5,7 @@
 var
   mongoose = require('mongoose'),
   Schema   = mongoose.Schema,
-  User     = require('./User'),
-  dateUtil = require('../../../lib/dateUtil');
+  dateUtil = require('../../../../lib/dateUtil');
 
 
 var ArticleSchema = new Schema({

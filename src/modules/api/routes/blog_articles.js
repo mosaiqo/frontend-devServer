@@ -9,7 +9,7 @@ module.exports = function(router) {
     errors        = require('../../../lib/errors'),
     RequestUtil   = require('../../../lib/apiRequestUtil'),
     slugger       = require('../../../lib/slugger'),
-    Article       = require('../models/Article');
+    Article       = require('../models/blog/Article');
 
 
   router.route('/blog/articles')
