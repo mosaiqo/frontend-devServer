@@ -362,7 +362,15 @@ describe('lib/jwtAuth', function() {
   });
 
 
+  describe('middleware', function() {
 
+    it('should expose unless', function(done) {
+      var middleware = jwtAuth.middleware();
+      expect(middleware).to.have.property('unless');
+      expect(middleware.unless).to.be.a('function');
+      done();
+    });
 
+  });
 
 });
