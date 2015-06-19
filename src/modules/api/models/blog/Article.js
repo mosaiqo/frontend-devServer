@@ -13,11 +13,16 @@ var ArticleSchema = new Schema({
   slug         : { type: String, unique: true },
   excerpt      : String,
   body         : String,
+  commentable  : { type: Boolean, default: false},
+
   author       : { type: Schema.ObjectId, ref: 'User', required: true },
   owner        : { type: Schema.ObjectId, ref: 'User', required: true },
+
+  tags         : [{ type: Schema.ObjectId, ref: 'BlogTag' }],
+
   published    : { type: Boolean, default: false},
   published_at : { type: Date, default: Date.now },
-  commentable  : { type: Boolean, default: false},
+
   created_at   : { type: Date, default: Date.now },
   updated_at   : { type: Date, default: Date.now }
 }, {
