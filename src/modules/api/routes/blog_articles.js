@@ -12,7 +12,7 @@ module.exports = function(router) {
     /**
      * @apiDefine CommonApiParams
      *
-     * @apiParam {String} [expand] Nested objects to expand. It can be an array.
+     * @apiParam {String}  [expand]   Nested objects to expand. It can be an array.
      * @apiParam {Integer} [per_page] The methods that return multiple models are paginated by default. This determines
      *                                the number of elements returned (by default 20). There's a hard limit (200). Requests
      *                                with a greater value will return only the maximum allowed items.
@@ -22,6 +22,36 @@ module.exports = function(router) {
      *                                It's applied to all the sort_by (because the backbone.paginator does not support this,
      *                                anyway, this is really easy to change)
      *
+     */
+
+
+    /**
+     * @apiDefine CommonApiResponseHeader
+     *
+     * @apiSuccess {Object} meta                 Response metadata
+     * @apiSuccess {String} meta.url             Resource url
+     * @apiSuccess {Object} [meta.paginator]     Pagination params
+     *
+     */
+
+
+    /**
+     * @apiDefine CommonApiResponseNode
+     *
+     * @apiSuccess {String} data.id              Id
+     * @apiSuccess {String} data.title           Title
+     * @apiSuccess {String} data.body            Article body
+     * @apiSuccess {String} data.slug            URL slug
+     * @apiSuccess {String} [data.excerpt]       Excerpt
+     * @apiSuccess {String} data.published       Publish status
+     * @apiSuccess {String} [data.publish_date]  Publish date
+     * @apiSuccess {String} data.created_at      Creation date
+     * @apiSuccess {String} data.updated_at      Last update date
+     * @apiSuccess {String} data.author          Author id.
+     *                                           Can be expanded to the full author object (see the `expand` parameter)
+     * @apiSuccess {String} data.commentable     Commenting enabled
+     * @apiSuccess {String} data.tags            Post tags (array of the tags IDs).
+     *                                           Can be expanded to the full author object (see the `expand` parameter)
      *
      */
 
@@ -31,8 +61,14 @@ module.exports = function(router) {
      * @apiName List
      * @apiGroup Blog/Articles
      *
+     * @apiUse CommonApiParams
+     *
      * @apiExample Example usage:
      * curl -4 -i http://localhost:9000/api/blog/articles --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTczNTksImV4cCI6MTQyNzgyMDk1OX0.M3BboY6U9RJlX1ulVG7e9xRVrVdY3qVhvp3jmZaOCJ8"
+     *
+     * @apiUse CommonApiResponseHeader
+     * @apiSuccess {Object[]} data The Articles data
+     * @apiUse CommonApiResponseNode
      *
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
@@ -76,8 +112,6 @@ module.exports = function(router) {
      *       ]
      *     }
      *
-     * @apiUse CommonApiParams
-     *
      */
     .get(BlogArticlesController.getAll)
 
@@ -87,8 +121,24 @@ module.exports = function(router) {
      * @apiName Create
      * @apiGroup Blog/Articles
      *
+     * @apiParam {String} title          Post title.
+     * @apiParam {String} body           Post content.
+     * @apiParam {String} [excerpt]      Excerpt.
+     * @apiParam {String} author_id      The author id.
+     * @apiParam {Boolean} published     Publish status.
+     * @apiParam {Number} [publish_date] Publish date, as a timestamp. If `published` is true and the `publish_date` is
+     *                                   provided, the post will not be published until that date.
+     * @apiParam {String} commentable    Enable user comments.
+     * @apiParam {String} tags_names     Post tags (only the names). If the tag does not exist it will be created.
+     *                                   Accepts multiple values.
+     * @apiUse CommonApiParams
+     *
      * @apiExample Example usage:
      * curl -X POST -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMSIsImlhdCI6MTQzNDYzMzgwNCwiZXhwIjoxNDM0NjM3NDA0fQ.IwPItcFLIDzA1MvwDXNYjVF0PxVcQ_Mft5wAU-2D8bY" -H "Content-Type: application/x-www-form-urlencoded" -d 'title=Article+title&slug=article-slug&excerpt=Article+excerpt&body=Article+body&commentable=1&author_id=000000000000000000000001&published=1&publish_date=1434540172' http://localhost:9000/api/blog/articles
+     *
+     * @apiUse CommonApiResponseHeader
+     * @apiSuccess {Object} data The Article data
+     * @apiUse CommonApiResponseNode
      *
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
@@ -111,8 +161,6 @@ module.exports = function(router) {
      *       }
      *     }
      *
-     * @apiUse CommonApiParams
-     *
      */
     .post(BlogArticlesController.create);
 
@@ -125,8 +173,14 @@ module.exports = function(router) {
      * @apiName Get
      * @apiGroup Blog/Articles
      *
+     * @apiUse CommonApiParams
+     *
      * @apiExample Example usage:
      * curl -4 -i http://localhost:9000/api/blog/articles/551c31d0430d78991f5931e1 --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTczNTksImV4cCI6MTQyNzgyMDk1OX0.M3BboY6U9RJlX1ulVG7e9xRVrVdY3qVhvp3jmZaOCJ8"
+     *
+     * @apiUse CommonApiResponseHeader
+     * @apiSuccess {Object} data The Article data
+     * @apiUse CommonApiResponseNode
      *
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
@@ -149,8 +203,6 @@ module.exports = function(router) {
      *       }
      *     }
      *
-     * @apiUse CommonApiParams
-     *
      */
     .get(BlogArticlesController.getOne)
 
@@ -160,8 +212,28 @@ module.exports = function(router) {
      * @apiName Update
      * @apiGroup Blog/Articles
      *
+     * @apiParam {String} title          Post title.
+     * @apiParam {String} body           Post content.
+     * @apiParam {String} [slug]         Slug. If not provided it will be autogenerated. If there's already some post with the
+     *                                   same slug, a numeric suffix will be added. For example, if the requested slug is *foo*
+     *                                   and there's another post with that slug, the slug for this pos will be *foo-1*
+     * @apiParam {String} [excerpt]      Excerpt.
+     * @apiParam {String} author_id      The author id.
+     * @apiParam {Boolean} published     Publish status.
+     * @apiParam {Number} [publish_date] Publish date, as a timestamp. If `published` is true and the `publish_date` is
+     *                                   provided, the post will not be published until that date.
+     * @apiParam {String} commentable    Enable user comments.
+     * @apiParam {String} tags_names     Post tags (only the names). If the tag does not exist it will be created.
+     *                                   If the post previously had some tag and is not present, it will be unlinked
+     *                                   from the post (but not deleted). Accepts multiple values.
+     * @apiUse CommonApiParams
+     *
      * @apiExample Example usage:
      * curl -X PUT -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMSIsImlhdCI6MTQzNDYzMzgwNCwiZXhwIjoxNDM0NjM3NDA0fQ.IwPItcFLIDzA1MvwDXNYjVF0PxVcQ_Mft5wAU-2D8bY" -H "Content-Type: application/x-www-form-urlencoded" -d 'title=Test&slug=this-is-a-test&excerpt=Holaquetal&body=HOCTL%C2%B7LA&commentable=1&author_id=000000000000000000000001&published=1&publish_date=1434540172' http://localhost:9000/api/blog/articles/5581f70e4901e5baa84a9652
+     *
+     * @apiUse CommonApiResponseHeader
+     * @apiSuccess {Object} data The Article data
+     * @apiUse CommonApiResponseNode
      *
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
@@ -184,8 +256,6 @@ module.exports = function(router) {
      *       }
      *     }
      *
-     * @apiUse CommonApiParams
-     *
      */
     .put(BlogArticlesController.update)
 
@@ -195,8 +265,14 @@ module.exports = function(router) {
      * @apiName Delete
      * @apiGroup Blog/Articles
      *
+     * @apiUse CommonApiParams
+     *
      * @apiExample Example usage:
      * curl -4 -i -X DELETE http://localhost:9000/api/blog/articles/551c31d0430d78991f5931e1 --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTczNTksImV4cCI6MTQyNzgyMDk1OX0.M3BboY6U9RJlX1ulVG7e9xRVrVdY3qVhvp3jmZaOCJ8"
+     *
+     * @apiUse CommonApiResponseHeader
+     * @apiSuccess {Object} data The Article data
+     * @apiUse CommonApiResponseNode
      *
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
@@ -216,8 +292,6 @@ module.exports = function(router) {
      *         "id": "5581f70e4901e5baa84a9652"
      *       }
      *     }
-     *
-     * @apiUse CommonApiParams
      *
      */
     .delete(BlogArticlesController.delete);
