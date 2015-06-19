@@ -16,6 +16,7 @@
   ],
   "dependencies": {
     "app-module-path": "^1.0.2",
+    "async": "^1.2.1",
     "bcryptjs": "^2.1.0",
     "body-parser": "~1.13.1",
     "compression": "^1.5.0",

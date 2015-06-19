@@ -3,11 +3,14 @@
 'use strict';
 
 var
-  respFormatter = require('src/lib/responseFormatter'),
-  errors        = require('src/lib/errors'),
-  RequestUtil   = require('src/lib/apiRequestUtil'),
-  slugger       = require('src/lib/slugger'),
-  Article       = require('../../models/blog/Article');
+  _              = require('underscore'),
+  async          = require('async'),
+  respFormatter  = require('src/lib/responseFormatter'),
+  errors         = require('src/lib/errors'),
+  RequestUtil    = require('src/lib/apiRequestUtil'),
+  slugger        = require('src/lib/slugger'),
+  Article        = require('../../models/blog/Article'),
+  TagsController = require('./TagsController');
 
 
 
@@ -15,14 +18,17 @@ var ArticlesController = {
 
   getOne: function(req, res, next) {
 
-    var r = new RequestUtil(req);
+    var
+      r        = new RequestUtil(req),
+      criteria = _.extend({ '_id': req.params.article_id }, r.query);
 
     Article
-      .findById(req.params.article_id)
+      .findOne(criteria)
       .populate(r.expands)
       .exec(function(err,model) {
         /* istanbul ignore next */
         if (err) {
+          console.log(err);
           return next( new errors.App(err) );
         }
         if (!model) {
@@ -56,43 +62,60 @@ var ArticlesController = {
 
   create: function(req, res, next) {
 
-    slugger(Article, req.body.title, req.body.slug, function(articleSlug) {
-      var r = new RequestUtil(req);
+    var slug, tags, model, r = new RequestUtil(req);
 
-      // create a new instance of the Article model
-      var model = new Article();
+    async.series([
 
-      // set the article attributes
-      model.title        = req.body.title;
-      model.slug         = articleSlug;
-      model.excerpt      = req.body.excerpt;
-      model.body         = req.body.body;
-      model.author       = req.body.author_id;
-      model.owner        = req.user.userId;
-      model.published    = req.body.published;
-      model.published_at = req.body.publish_date;
-      model.commentable  = req.body.commentable;
-
-
-      // save the article and check for errors
-      model.save(function(err) {
-
-        /* istanbul ignore next */
-        if (err) {
-          return next(err);
-        }
-
-        model.populate(r.expands, function(err, model) {
-          /* istanbul ignore next */
-          if (err) {
-            return next( new errors.App(err) );
-          }
-
-          var meta = r.getMeta(model);
-          res.json(respFormatter(model, meta));
+      // get the slug (it's async because it ensures that the slug is not
+      // already used and if so, it adds a numeric suffix)
+      function(callback) {
+        slugger(Article, req.body.title, req.body.slug, function(articleSlug) {
+          slug = articleSlug;
+          callback();
         });
+      },
 
-      });
+      // get the tags IDs (and create the tags if they don't exist)
+      function(callback) {
+        TagsController.retrieveAndCreate(req, function(articleTags) {
+          tags = articleTags;
+          callback();
+        });
+      },
+
+      // create the Article
+      function(callback) {
+        model = new Article(); // create a new instance of the Article model
+
+        // set the article attributes
+        model.title        = req.body.title;
+        model.slug         = slug;
+        model.excerpt      = req.body.excerpt;
+        model.body         = req.body.body;
+        model.author       = req.body.author_id;
+        model.owner        = req.user.userId;
+        model.published    = req.body.published;
+        model.published_at = req.body.publish_date;
+        model.commentable  = req.body.commentable;
+        model.tags         = tags;
+
+        model.save(callback);
+      },
+
+      // expand the relations
+      function(callback) {
+        model.populate(r.expands, callback);
+      }
+
+    ], function(err) {
+
+      /* istanbul ignore next */
+      if (err) {
+        return next( new errors.App(err) );
+      }
+
+      var meta = r.getMeta(model);
+      res.json(respFormatter(model, meta));
 
     });
 
@@ -101,24 +124,46 @@ var ArticlesController = {
 
   update: function(req, res, next) {
 
-    var r = new RequestUtil(req);
+    var slug, tags, model, r = new RequestUtil(req);
 
-    // use our article model to find the article we want
-    Article.findById(req.params.article_id, function(err, model) {
+    async.series([
 
-      /* istanbul ignore next */
-      if (err) {
-        return next( new errors.App(err) );
-      }
-      if (!model) {
-        return next( new errors.NotFound() );
-      }
+      // retrieve the model
+      function(callback) {
+        Article.findById(req.params.article_id, function(err, articleModel) {
+          /* istanbul ignore next */
+          if (err) { return callback(err); }
+          /* istanbul ignore next */
+          if (!articleModel) { return callback( new errors.NotFound() ); }
 
-      slugger(Article, req.body.title, req.body.slug, function(articleSlug) {
+          model = articleModel;
+          callback();
+        });
+      },
 
-        // update the article info
+      // get the slug (it's async because it ensures that the slug is not
+      // already used and if so, it adds a numeric suffix)
+      function(callback) {
+        slugger(Article, req.body.title, req.body.slug, function(articleSlug) {
+          slug = articleSlug;
+          callback();
+        });
+      },
+
+      // get the tags IDs (and create the tags if they don't exist)
+      function(callback) {
+        TagsController.retrieveAndCreate(req, function(articleTags) {
+          tags = articleTags;
+          callback();
+        });
+      },
+
+      // update the Article
+      function(callback) {
+
+        // set the article attributes
         model.title        = req.body.title;
-        model.slug         = articleSlug;
+        model.slug         = slug;
         model.excerpt      = req.body.excerpt;
         model.body         = req.body.body;
         model.author       = req.body.author_id;
@@ -126,31 +171,28 @@ var ArticlesController = {
         model.published    = req.body.published;
         model.published_at = req.body.publish_date;
         model.commentable  = req.body.commentable;
-        model.updated_at   = Date.now();
+        model.tags         = tags;
 
-        // save the model
-        model.save(function(err) {
+        model.save(callback);
+      },
 
-          /* istanbul ignore next */
-          if (err) {
-            return next(err);
-          }
+      // expand the relations
+      function(callback) {
+        model.populate(r.expands, callback);
+      }
 
-          model.populate(r.expands, function(err, model) {
-            /* istanbul ignore next */
-            if (err) {
-              return next( new errors.App(err) );
-            }
+    ], function(err) {
 
-            var meta = r.getMeta();
-            res.json(respFormatter(model, meta));
-          });
+      /* istanbul ignore next */
+      if (err) {
+        var error = (err.name === 'HttpNotFoundError') ? err : new errors.App(err);
+        return next(error);
+      }
 
-        });
+      var meta = r.getMeta();
+      res.json(respFormatter(model, meta));
 
-      });
     });
-
   },
 
 
