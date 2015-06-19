@@ -19,7 +19,7 @@ var
 
 
 
-describe('User model', function() {
+describe('Blog Article model', function() {
 
   this.timeout(10000);
 
