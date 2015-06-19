@@ -5,9 +5,9 @@
 module.exports = function(router) {
 
   var
-    respFormatter = require('../../../lib/responseFormatter'),
-    Media         = require('../models/Media'),
-    errors        = require('../../../lib/errors');
+    respFormatter = require('src/lib/responseFormatter'),
+    errors        = require('src/lib/errors'),
+    Media         = require('../models/Media');
 
 
   router.route('/media')

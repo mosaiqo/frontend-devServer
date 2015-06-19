@@ -5,7 +5,7 @@
 var
   mongoose = require('mongoose'),
   Schema   = mongoose.Schema,
-  dateUtil = require('../../../../lib/dateUtil');
+  dateUtil = require('src/lib/dateUtil');
 
 
 var ArticleSchema = new Schema({

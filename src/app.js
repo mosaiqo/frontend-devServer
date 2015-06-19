@@ -2,10 +2,18 @@
 /* jshint -W097 */
 'use strict';
 
+// set the base path for the requires
+/* istanbul ignore next */
+if(process.env.APP_DIR_FOR_CODE_COVERAGE) {
+  require('../../../../config/require');
+} else {
+  require('../config/require');
+}
+
 var
   debug      = require('debug')('MosaiqoApp:' + process.pid),
   fs         = require('fs'),
-  errors     = require('./lib/errors');
+  errors     = require('src/lib/errors');
 
 
 // New Relic

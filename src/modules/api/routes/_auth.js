@@ -4,10 +4,10 @@
 
 var
   _             = require('lodash'),
-  errors        = require('../../../lib/errors'),
-  respFormatter = require('../../../lib/responseFormatter'),
+  errors        = require('src/lib/errors'),
+  respFormatter = require('src/lib/responseFormatter'),
+  jwtAuth       = require('src/lib/jwtAuth'),
   User          = require('../models/User'),
-  jwtAuth       = require('./../../../lib/jwtAuth'),
   debug         = require('debug')('MosaiqoApp:routes:auth:' + process.pid);
 
 

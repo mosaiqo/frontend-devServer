@@ -4,17 +4,12 @@
 'use strict';
 
 var
-  // paths
-  projectRootDir = '../../../',
-  appRootDir     = projectRootDir + 'src/',
-
-  // other
   _              = require('underscore'),
 
   // test dependencies
   mocha          = require('mocha'),
   expect         = require('chai').expect,
-  requireHelper  = require(projectRootDir + 'test/require_helper'),
+  requireHelper  = require('test/require_helper'),
 
   // file to test
   RequestUtil    = requireHelper('lib/apiRequestUtil');

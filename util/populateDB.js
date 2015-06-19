@@ -82,13 +82,12 @@ glob(fixturesDir + '**/*.js', function (er, files) {
 
     console.log('Loading "' + collectionName + '" collection. Inserting ' + data[collectionName].length + ' items.');
   });
-})
+});
 
 
 // load the fixtures into the db
 loader.clearAllAndLoad(data, function(err) {
   if (err) {
-    console.log('ERROR!!!')
     console.log(err);
   }
 

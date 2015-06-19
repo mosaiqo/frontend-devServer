@@ -4,16 +4,12 @@
 'use strict';
 
 var
-  // paths
-  projectRootDir = '../../../',
-  appRootDir     = projectRootDir + 'src/',
-
   // test dependencies
   mocha          = require('mocha'),
   expect         = require('chai').expect,
   sinon          = require('sinon'),
   mockery        = require('mockery'),
-  requireHelper  = require(projectRootDir + 'test/require_helper'),
+  requireHelper  = require('test/require_helper'),
 
   // file to test
   jwtAuth;

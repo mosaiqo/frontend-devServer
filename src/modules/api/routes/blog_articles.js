@@ -5,10 +5,10 @@
 module.exports = function(router) {
 
   var
-    respFormatter = require('../../../lib/responseFormatter'),
-    errors        = require('../../../lib/errors'),
-    RequestUtil   = require('../../../lib/apiRequestUtil'),
-    slugger       = require('../../../lib/slugger'),
+    respFormatter = require('src/lib/responseFormatter'),
+    errors        = require('src/lib/errors'),
+    RequestUtil   = require('src/lib/apiRequestUtil'),
+    slugger       = require('src/lib/slugger'),
     Article       = require('../models/blog/Article');
 
 
