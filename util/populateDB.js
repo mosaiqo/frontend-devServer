@@ -4,8 +4,9 @@
 
 var
   fs          = require('fs'),
-  rootDir     = __dirname + '/../',
-  fixturesDir = __dirname + '/../test/fixtures/';
+  path        = require('path'),
+  glob        = require('glob'),
+  fixturesDir = path.normalize(__dirname + '/../test/fixtures/');
 
 
 // MONGO CONF:
@@ -70,19 +71,24 @@ var
   loader = require('pow-mongodb-fixtures').connect(mongoConn.getConnectionString(), mongoConn.getConnectionOptions()),
   data   = {};
 
-// load the fixtures from the filesystem
-fs.readdirSync(fixturesDir).forEach(function(file) {
 
-  var collectionName = file.substr(0, file.indexOf('.'));
+glob(fixturesDir + '**/*.js', function (er, files) {
+  files.forEach(function(fixture) {
+    var
+      fileNoExt      = fixture.substr(0, fixture.indexOf('.')).replace(fixturesDir,''),
+      collectionName = fileNoExt.replace('/', '-');
 
-  data[collectionName] = require(fixturesDir + collectionName);
+    data[collectionName] = require(fixturesDir + fileNoExt);
 
-  console.log('Loading "' + collectionName + '" collection. Inserting ' + data[collectionName].length + ' items.');
-});
+    console.log('Loading "' + collectionName + '" collection. Inserting ' + data[collectionName].length + ' items.');
+  });
+})
+
 
 // load the fixtures into the db
-loader.clearAndLoad(data, function(err) {
+loader.clearAllAndLoad(data, function(err) {
   if (err) {
+    console.log('ERROR!!!')
     console.log(err);
   }
 

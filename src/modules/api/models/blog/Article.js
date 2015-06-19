@@ -62,7 +62,9 @@ var ArticleSchema = new Schema({
         ret.author = null;
       }
     }
-  }
+  },
+
+  'collection': 'blog-articles'
 
 });
 
