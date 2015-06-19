@@ -26,6 +26,7 @@ var TagSchema = new Schema({
 
       // filter out some attributes from the output
       delete ret.owner;
+      delete ret.__v;
 
       // convert the dates to timestamps
       ret.created_at   = dateUtil.dateToTimestamp(ret.created_at);
@@ -39,10 +40,10 @@ var TagSchema = new Schema({
       delete ret.id;
 
       // convert the timestamps to dates
-      ret.created_at   = dateUtil.timestampToDate(ret.created_at);
+      ret.created_at = dateUtil.timestampToDate(ret.created_at);
 
       if(ret.updated_at) {
-        ret.updated_at   = dateUtil.timestampToDate(ret.updated_at);
+        ret.updated_at = dateUtil.timestampToDate(ret.updated_at);
       }
     }
   },

@@ -5,7 +5,10 @@
 var
   mongoose = require('mongoose'),
   Schema   = mongoose.Schema,
-  dateUtil = require('src/lib/dateUtil');
+  dateUtil = require('src/lib/dateUtil'),
+
+  User = require('../User'),
+  Tag  = require('./Tag');
 
 
 var ArticleSchema = new Schema({
@@ -39,6 +42,7 @@ var ArticleSchema = new Schema({
 
       // filter out some attributes from the output
       delete ret.owner;
+      delete ret.__v;
 
       // convert the dates to timestamps
       ret.created_at   = dateUtil.dateToTimestamp(ret.created_at);
