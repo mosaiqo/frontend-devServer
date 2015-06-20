@@ -4,26 +4,22 @@
 'use strict';
 
 var
-  // paths
-  projectRootDir = '../../../../../',
-  appRootDir     = projectRootDir + 'src/',
-
   // test dependencies
   mocha             = require('mocha'),
   expect            = require('chai').expect,
   faker             = require('faker'),
   id                = require('pow-mongodb-fixtures').createObjectId,
   mongoose          = require('mongoose'),
-  requireHelper     = require(projectRootDir + 'test/require_helper'),
-  mongoConfigParser = require(appRootDir + 'lib/mongoConfigParser'),
+  requireHelper     = require('test/require_helper'),
+  mongoConfigParser = require('src/lib/mongoConfigParser'),
 
   // file being tested
-  Article           = requireHelper('modules/api/models/Article');
+  Article           = requireHelper('modules/api/models/blog/Article');
 
 
 
 
-describe('User model', function() {
+describe('Blog Article model', function() {
 
   this.timeout(10000);
 

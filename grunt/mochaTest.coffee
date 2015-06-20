@@ -2,6 +2,7 @@
 module.exports =
   options:
     reporter: 'spec'
+    require: './config/require'
 
   unit:
     src: ['test/unit/**/*.js']

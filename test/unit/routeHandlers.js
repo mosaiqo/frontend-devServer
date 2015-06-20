@@ -4,16 +4,12 @@
 'use strict';
 
 var
-  // paths
-  projectRootDir = '../../',
-  appRootDir     = projectRootDir + 'src/',
-
   // test dependencies
   mocha          = require('mocha'),
   expect         = require('chai').expect,
   sinon          = require('sinon'),
   httpMocks      = require('node-mocks-http'),
-  requireHelper  = require(projectRootDir + 'test/require_helper'),
+  requireHelper  = require('test/require_helper'),
 
   // file being tested
   routeHandlers  = requireHelper('routeHandlers');

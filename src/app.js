@@ -2,10 +2,18 @@
 /* jshint -W097 */
 'use strict';
 
+// set the base path for the requires
+/* istanbul ignore next */
+if(process.env.APP_DIR_FOR_CODE_COVERAGE) {
+  require('../../../../config/require');
+} else {
+  require('../config/require');
+}
+
 var
   debug      = require('debug')('MosaiqoApp:' + process.pid),
   fs         = require('fs'),
-  errors     = require('./lib/errors');
+  errors     = require('src/lib/errors');
 
 
 // New Relic
@@ -72,42 +80,75 @@ app.all('*', function (req, res, next) {
 // generic error handler
 app.use(function(err, req, res, next) {
 
-  var code, message, resp = {};
-
-  /* istanbul ignore next */
-  switch (err.name) {
-    case 'UnauthorizedError':
-      code    = err.status;
-      message = err.message;
-      break;
-    case 'HttpNotFoundError':
-      code    = err.code;
-      message = 'Not found';
-      break;
-    case 'BadRequestError':
-    case 'HttpUnauthorized':
-      code    = err.code;
-      message = err.message;
-      break;
-    case 'ValidationError':
-      code    = 422;
-      message = 'Validation Error';
-      resp.errors  = {};
-
-      for (var errName in err.errors) {
-        if(errors[errName]) {
-          resp.errors[errName].push(err.errors[errName].message);
-        } else {
-          resp.errors[errName] = [err.errors[errName].message];
-        }
+  var
+    code,
+    message,
+    resp   = { meta: {} },
+    errors = {
+      default: {
+        code:    500,
+        message: 'Internal Server Error'
+      },
+      notFound: {
+        code:    404,
+        message: 'Not found'
+      },
+      validation: {
+        code:    422,
+        message: 'Validation Error'
       }
-      break;
-    default:
-      code    = 500;
-      message = 'Internal Server Error';
-      break;
+    };
+
+
+  if(err.code) {  // custom errors
+    code = err.code;
+
+    if(isNaN(code)) {
+      code = (err.status && !isNaN(err.status)) ?
+        err.status : /* istanbul ignore next */ errors.default.code;
+    }
+
+    if(err.message) {
+      message = err.message;
+
+    } else {
+      message = (code === 404) ?
+        errors.notFound.message : /* istanbul ignore next */ errors.default.message;
+    }
+
+  } else {
+
+    if(err.name === 'CastError' && err.path === '_id') {
+      code    = errors.notFound.code;
+      message = errors.notFound.message;
+    } else {
+
+      /* istanbul ignore else */
+      if(err.name === 'ValidationError') {
+        code    = errors.validation.code;
+        message = errors.validation.message;
+
+        resp.errors  = {};
+
+        for (var errName in err.errors) {
+          /* istanbul ignore if */
+          if(errors[errName]) {
+            resp.errors[errName].push(err.errors[errName].message);
+          } else {
+            resp.errors[errName] = [err.errors[errName].message];
+          }
+        }
+
+      } else {
+        code    = errors.default.code;
+        message = errors.default.message;
+      }
+    }
+
   }
 
+
+  // build the response
   resp.error = {
     code:    code,
     message: message

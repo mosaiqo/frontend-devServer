@@ -4,17 +4,12 @@
 'use strict';
 
 var
-  // paths
-  projectRootDir = '../../../',
-  appRootDir     = projectRootDir + 'src/',
-
-  // other
   _              = require('underscore'),
 
   // test dependencies
   mocha          = require('mocha'),
   expect         = require('chai').expect,
-  requireHelper  = require(projectRootDir + 'test/require_helper'),
+  requireHelper  = require('test/require_helper'),
 
   // file to test
   RequestUtil    = requireHelper('lib/apiRequestUtil');
@@ -51,7 +46,7 @@ describe('lib/apiRequestUtil', function() {
       // mock the request
       var req = {
         protocol: 'http',
-        get: function() { return 'localhost' },
+        get: function() { return 'localhost'; },
         path: '/api/someCollection',
         query : {}
       };
@@ -80,7 +75,7 @@ describe('lib/apiRequestUtil', function() {
       // mock the request
       var req = {
         protocol: 'http',
-        get: function() { return 'localhost' },
+        get: function() { return 'localhost'; },
         path: '/api/foo',
         query : {
           per_page: 2,
@@ -115,7 +110,7 @@ describe('lib/apiRequestUtil', function() {
       // mock the request
       var req = {
         protocol: 'http',
-        get: function() { return 'localhost' },
+        get: function() { return 'localhost'; },
         path: '/api/foo',
         query : {
           per_page: 2,
@@ -136,7 +131,7 @@ describe('lib/apiRequestUtil', function() {
 
       req = {
         protocol: 'http',
-        get: function() { return 'localhost' },
+        get: function() { return 'localhost'; },
         path: '/api/foo',
         query : {}
       };
@@ -156,7 +151,7 @@ describe('lib/apiRequestUtil', function() {
       // mock the request
       var req = {
         protocol: 'http',
-        get: function() { return 'localhost' },
+        get: function() { return 'localhost'; },
         path: '/api/foo',
         query : {
           per_page: 2,
@@ -177,7 +172,7 @@ describe('lib/apiRequestUtil', function() {
 
       req = {
         protocol: 'http',
-        get: function() { return 'localhost' },
+        get: function() { return 'localhost'; },
         path: '/api/foo',
         query : {
           limit: 2,
@@ -198,7 +193,7 @@ describe('lib/apiRequestUtil', function() {
       // mock the request
       var req = {
         protocol: 'http',
-        get: function() { return 'localhost' },
+        get: function() { return 'localhost'; },
         path: '/api/foo',
         query : {
           per_page: 2,
@@ -228,7 +223,7 @@ describe('lib/apiRequestUtil', function() {
 
       req = {
         protocol: 'http',
-        get: function() { return 'localhost' },
+        get: function() { return 'localhost'; },
         path: '/api/foo',
         query : {
           limit: 2,
@@ -250,7 +245,7 @@ describe('lib/apiRequestUtil', function() {
 
       req = {
         protocol: 'http',
-        get: function() { return 'localhost' },
+        get: function() { return 'localhost'; },
         path: '/api/foo',
         query : {
           limit: 2,
@@ -270,7 +265,7 @@ describe('lib/apiRequestUtil', function() {
 
       req = {
         protocol: 'http',
-        get: function() { return 'localhost' },
+        get: function() { return 'localhost'; },
         path: '/api/foo',
         query : {
           limit: 2,
@@ -299,7 +294,7 @@ describe('lib/apiRequestUtil', function() {
     // mock the request
     var req = {
       protocol: 'http',
-      get: function() { return 'localhost' },
+      get: function() { return 'localhost'; },
       path: '/api/foo',
       query : {},
       user: {
@@ -314,7 +309,7 @@ describe('lib/apiRequestUtil', function() {
 
     req = {
       protocol: 'http',
-      get: function() { return 'localhost' },
+      get: function() { return 'localhost'; },
       path: '/api/foo',
       query : {
         expand: ['nestedObj1', 'nestedObj2']

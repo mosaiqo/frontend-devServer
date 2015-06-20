@@ -1,3 +1,8 @@
+/* global require, module, process, console, describe, it, before, __dirname */
+/* jshint -W097 */
+/* jshint expr: true */
+'use strict';
+
 var
   slug = require('slug'),
   _    = require('underscore');
@@ -21,6 +26,9 @@ var
  */
 module.exports = function(Model, instanceName, instanceSlug, callback) {
 
+  if(!Model)                         { return callback(new Error()); }
+  if(!instanceName && !instanceSlug) { return callback(new Error()); }
+
   var
       /**
        * The attribute to use (the slug by default)
@@ -43,10 +51,12 @@ module.exports = function(Model, instanceName, instanceSlug, callback) {
 
 
     Model.find({slug: regex}, function(err, models) {
+      /* istanbul ignore next */
+      if(err) { return callback(err); }
 
       if (!models.length) {
         // No match, return the generated slug
-        callback(objSlug);
+        callback(null, objSlug);
       } else {
         // Found some docs. with matching slugs.
         // Get the numeric suffixes.
@@ -65,7 +75,7 @@ module.exports = function(Model, instanceName, instanceSlug, callback) {
         }
         objSlug += '-' + (max+1);
 
-        callback(objSlug);
+        callback(null, objSlug);
       }
     });
 };

@@ -4,17 +4,12 @@
 'use strict';
 
 var
-  // paths
-  projectRootDir = '../../../',
-  appRootDir     = projectRootDir + 'src/',
-
-  // other
   _              = require('underscore'),
 
   // test dependencies
   mocha          = require('mocha'),
   expect         = require('chai').expect,
-  requireHelper  = require(projectRootDir + 'test/require_helper'),
+  requireHelper  = require('test/require_helper'),
 
   // file to test
   dateUtil       = requireHelper('lib/dateUtil');
@@ -71,7 +66,7 @@ describe('lib/dateUtil', function() {
 
     expect(date).to.be.null;
 
-    timestamp = 'HOCTL·LA';
+    timestamp = 'HOLAQUETAL';
     date      = dateUtil.timestampToDate(timestamp);
 
     expect(date).to.be.null;
