@@ -6,9 +6,8 @@ var
   fs                = require('fs'),
   path              = require('path'),
   mongoose          = require('mongoose'),
-  rootDir           = __dirname + '/../',
-  mongoConfigParser = require(rootDir + 'src/lib/mongoConfigParser'),
-  User              = require(rootDir + 'src/modules/api/models/User'),
+  mongoConfigParser = require('../src/lib/mongoConfigParser'),
+  User              = require('../src/modules/api/models/User'),
   prompt            = require('prompt');
 
 

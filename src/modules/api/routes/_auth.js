@@ -3,48 +3,8 @@
 'use strict';
 
 var
-  _             = require('lodash'),
-  errors        = require('../../../lib/errors'),
-  respFormatter = require('../../../lib/responseFormatter'),
-  User          = require('../models/User'),
-  jwtAuth       = require('./../../../lib/jwtAuth'),
-  debug         = require('debug')('MosaiqoApp:routes:auth:' + process.pid);
-
-
-// AUTHENTICATION MIDDLEWARE
-// =============================================================================
-var authenticate = function (req, res, next) {
-
-  var
-    username = req.body.username,
-    password = req.body.password;
-
-
-  if (_.isEmpty(username) || _.isEmpty(password)) {
-    return next( new errors.Unauthorized('Invalid username or password') );
-  }
-
-
-  process.nextTick(function () {
-    User.findOne({
-      username: username
-    }, function (err, user) {
-
-      if (err || !user) {
-        return next( new errors.Unauthorized('Invalid username or password') );
-      }
-
-      user.comparePassword(password, function (err, isMatch) {
-        if (isMatch && !err) {
-          debug('User authenticated, generating token');
-          jwtAuth.create(user, req, res, next);
-        } else {
-          return next( new errors.Unauthorized('Invalid username or password') );
-        }
-      });
-    });
-  });
-};
+  authMiddleware = require('../middleware/authenticate'),
+  AuthController = require('../controllers/AuthController');
 
 
 // AUTH RELATED ROUTES
@@ -98,9 +58,7 @@ module.exports = function(router) {
    *       }
    *     }
    */
-  router.route('/auth').post(authenticate, function(req, res, next) {
-    return res.status(200).json( respFormatter(req.user) );
-  });
+  router.route('/auth').post(authMiddleware, AuthController.login);
 
 
   /**
@@ -138,25 +96,7 @@ module.exports = function(router) {
    *       }
    *     }
    */
-  router.route('/auth/:token').delete(function(req, res, next) {
-
-    jwtAuth.retrieve(req.params.token, function(err, data) {
-      /* istanbul ignore next */
-      if (err) {
-        return next( new errors.Unauthorized('User not found') );
-      }
-
-      /* istanbul ignore else */
-      if (jwtAuth.expire(req.headers)) {
-        delete req.user;
-        return res.status(200).json(respFormatter({
-          'message': 'User has been successfully logged out'
-        }));
-      } else {
-        return next(new errors.Unauthorized());
-      }
-    });
-  });
+  router.route('/auth/:token').delete(AuthController.logout);
 
 
   /**
@@ -204,30 +144,7 @@ module.exports = function(router) {
    *       }
    *     }
    */
-  router.route('/auth/:token').put(function(req, res, next) {
-
-    /* istanbul ignore next */
-    if(req.params.token !== req.user.token) {
-      return next(new errors.Unauthorized());
-    }
-
-    User.findOne({
-      username: req.user.username
-    }, function (err, user) {
-
-      /* istanbul ignore next */
-      if (err || !user) {
-        return next( new errors.Unauthorized('User not found') );
-      }
-
-      jwtAuth.create(user, req, res, function() {
-        jwtAuth.expire(req.headers);
-        return res.status(200).json( respFormatter(req.user) );
-      });
-
-    });
-
-  });
+  router.route('/auth/:token').put(AuthController.tokenRenew);
 
 
   /**
@@ -265,16 +182,6 @@ module.exports = function(router) {
    *       }
    *     }
    */
-  router.route('/auth/:token').get(function(req, res, next) {
-    /* istanbul ignore next */
-    if(req.params.token !== req.user.token) {
-      return next(new errors.Unauthorized());
-    }
-
-    return res.status(200).json( respFormatter({'message': 'Token is valid'}) );
-  });
+  router.route('/auth/:token').get(AuthController.tokenVerify);
 
 };
-
-
-module.exports.authenticate = authenticate;

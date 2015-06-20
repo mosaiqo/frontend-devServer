@@ -5,8 +5,10 @@
 var
   mongoose = require('mongoose'),
   Schema   = mongoose.Schema,
-  User     = require('./User'),
-  dateUtil = require('../../../lib/dateUtil');
+  dateUtil = require('src/lib/dateUtil'),
+
+  User = require('../User'),
+  Tag  = require('./Tag');
 
 
 var ArticleSchema = new Schema({
@@ -14,11 +16,16 @@ var ArticleSchema = new Schema({
   slug         : { type: String, unique: true },
   excerpt      : String,
   body         : String,
+  commentable  : { type: Boolean, default: false},
+
   author       : { type: Schema.ObjectId, ref: 'User', required: true },
   owner        : { type: Schema.ObjectId, ref: 'User', required: true },
+
+  tags         : [{ type: Schema.ObjectId, ref: 'BlogTag' }],
+
   published    : { type: Boolean, default: false},
   published_at : { type: Date, default: Date.now },
-  commentable  : { type: Boolean, default: false},
+
   created_at   : { type: Date, default: Date.now },
   updated_at   : { type: Date, default: Date.now }
 }, {
@@ -35,6 +42,7 @@ var ArticleSchema = new Schema({
 
       // filter out some attributes from the output
       delete ret.owner;
+      delete ret.__v;
 
       // convert the dates to timestamps
       ret.created_at   = dateUtil.dateToTimestamp(ret.created_at);
@@ -49,11 +57,16 @@ var ArticleSchema = new Schema({
       delete ret.id;
 
       // convert the timestamps to dates
-      ret.created_at   = dateUtil.timestampToDate(ret.created_at);
-      ret.published_at = dateUtil.timestampToDate(ret.published_at);
+      if(ret.created_at) {
+        ret.created_at = dateUtil.timestampToDate(ret.created_at);
+      }
+
+      if(ret.published_at) {
+        ret.published_at = dateUtil.timestampToDate(ret.published_at);
+      }
 
       if(ret.updated_at) {
-        ret.updated_at   = dateUtil.timestampToDate(ret.updated_at);
+        ret.updated_at = dateUtil.timestampToDate(ret.updated_at);
       }
 
       // convert the author id to an ObjectId
@@ -63,11 +76,13 @@ var ArticleSchema = new Schema({
         ret.author = null;
       }
     }
-  }
+  },
+
+  'collection': 'blog.articles'
 
 });
 
 
 ArticleSchema.plugin( require('mongoose-paginate') );
 
-module.exports = mongoose.model('Article', ArticleSchema);
+module.exports = mongoose.model('BlogArticle', ArticleSchema);

@@ -8,21 +8,14 @@ var
   mongoose   = require('mongoose'),
   debug      = require('debug')('MosaiqoApp:API:' + process.pid),
   jwt        = require('express-jwt'),
-  jwtAuth    = require('./../../lib/jwtAuth'),
-  errors     = require('./../../lib/errors'),
-  rootDir    = __dirname + '/../../../',
+  jwtAuth    = require('src/lib/jwtAuth'),
+  errors     = require('src/lib/errors'),
   routesDir  = __dirname + '/routes/';
-
-
-/* istanbul ignore next */
-if(process.env.APP_DIR_FOR_CODE_COVERAGE) {
- rootDir += '../../../';
-}
 
 
 // MONGO CONF.
 // =============================================================================
-var mongoConfigParser = require('../../lib/mongoConfigParser');
+var mongoConfigParser = require('src/lib/mongoConfigParser');
 
 var mongoConn = new mongoConfigParser().setEnv({
   host     : process.env.MONGO_HOST,

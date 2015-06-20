@@ -49,7 +49,6 @@ test:coverage:
   tasks:
     - clean:coverage
     - env:coverage
-    - mongo:populate
     - instrument
     - test
     - storeCoverage
