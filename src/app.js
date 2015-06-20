@@ -80,42 +80,79 @@ app.all('*', function (req, res, next) {
 // generic error handler
 app.use(function(err, req, res, next) {
 
-  var code, message, resp = {};
-
-  /* istanbul ignore next */
-  switch (err.name) {
-    case 'UnauthorizedError':
-      code    = err.status;
-      message = err.message;
-      break;
-    case 'HttpNotFoundError':
-      code    = err.code;
-      message = 'Not found';
-      break;
-    case 'BadRequestError':
-    case 'HttpUnauthorized':
-      code    = err.code;
-      message = err.message;
-      break;
-    case 'ValidationError':
-      code    = 422;
-      message = 'Validation Error';
-      resp.errors  = {};
-
-      for (var errName in err.errors) {
-        if(errors[errName]) {
-          resp.errors[errName].push(err.errors[errName].message);
-        } else {
-          resp.errors[errName] = [err.errors[errName].message];
-        }
-      }
-      break;
-    default:
-      code    = 500;
-      message = 'Internal Server Error';
-      break;
+  if(err.name === 'CastError') {
+    console.log(err);
   }
 
+  var
+    code,
+    message,
+    resp   = { meta: {} },
+    errors = {
+      default: {
+        code:    500,
+        message: 'Internal Server Error'
+      },
+      notFound: {
+        code:    404,
+        message: 'Not found'
+      },
+      validation: {
+        code:    422,
+        message: 'Validation Error'
+      }
+    };
+
+
+  if(err.code) {  // custom errors
+    code = err.code;
+
+    if(isNaN(code)) {
+      code = (err.status && !isNaN(err.status)) ?
+        err.status : /* istanbul ignore next */ errors.default.code;
+    }
+
+    if(err.message) {
+      message = err.message;
+
+    } else {
+      message = (code === 404) ?
+        errors.notFound.message : /* istanbul ignore next */ errors.default.message;
+    }
+
+  } else {
+
+    if(err.name === 'CastError' && err.path === '_id') {
+      code    = errors.notFound.code;
+      message = errors.notFound.message;
+    } else {
+
+      /* istanbul ignore else */
+      if(err.name === 'ValidationError') {
+        code    = errors.validation.code;
+        message = errors.validation.message;
+
+        resp.errors  = {};
+
+        for (var errName in err.errors) {
+          /* istanbul ignore if */
+          if(errors[errName]) {
+            resp.errors[errName].push(err.errors[errName].message);
+          } else {
+            resp.errors[errName] = [err.errors[errName].message];
+          }
+        }
+
+      } else {
+        code    = errors.default.code;
+        message = errors.default.message;
+      }
+    }
+
+  }
+
+
+  // build the response
   resp.error = {
     code:    code,
     message: message

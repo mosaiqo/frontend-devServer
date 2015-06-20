@@ -232,11 +232,47 @@ describe('api/blog/articles', function() {
     });
 
 
-    it('should retun a 404 error if the model does not exist', function(done) {
+    it('should return a 404 error if the model does not exist', function(done) {
       request(app)
         .put('/api/blog/articles/a-non-existing-record-id')
         .set('Authorization', authHeader)
         .expect(404, done);
+    });
+
+
+    it('should return a 404 error if the model id is not valid', function(done) {
+      request(app)
+        .put('/api/blog/articles/XD')
+        .set('Authorization', authHeader)
+        .expect(404)
+        .end(function(err, res) {
+          expect(res.body).to.have.property('error');
+          expect(res.body.error).to.have.property('code');
+          expect(res.body.error.code).to.equal(404);
+          done();
+        });
+    });
+
+
+    it('should return a validation error if the request params are not valid', function(done) {
+      request(app)
+        .put('/api/blog/articles/'+createdModel.id)
+        .set('Authorization', authHeader)
+        .send({
+          body      : 8,
+          author_id : 'XD',
+        })
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(422)
+        .end(function(err, res) {
+
+          var response = res.body.data;
+
+          console.log('response', response);
+
+          done();
+        });
     });
 
 
