@@ -4,7 +4,9 @@
 
 module.exports = function(router) {
 
-  var BlogArticlesController = require('../controllers/blog/ArticlesController');
+  var
+    BlogArticlesController = require('../controllers/blog/ArticlesController'),
+    controller             = new BlogArticlesController();
 
 
   router.route('/blog/articles')
@@ -135,7 +137,7 @@ module.exports = function(router) {
      *     }
      *
      */
-    .get(BlogArticlesController.getAll)
+    .get(controller.getAll.bind(controller))
 
 
     /**
@@ -183,11 +185,11 @@ module.exports = function(router) {
      *     }
      *
      */
-    .post(BlogArticlesController.create);
+    .post(controller.create.bind(controller));
 
 
 
-  router.route('/blog/articles/:article_id')
+  router.route('/blog/articles/:id')
 
     /**
      * @api {get} /blog/articles Get the article with that id
@@ -224,7 +226,7 @@ module.exports = function(router) {
      *     }
      *
      */
-    .get(BlogArticlesController.getOne)
+    .get(controller.getOne.bind(controller))
 
 
     /**
@@ -276,7 +278,7 @@ module.exports = function(router) {
      *     }
      *
      */
-    .put(BlogArticlesController.update)
+    .put(controller.update.bind(controller))
 
 
     /**
@@ -312,7 +314,7 @@ module.exports = function(router) {
      *     }
      *
      */
-    .delete(BlogArticlesController.delete);
+    .delete(controller.delete.bind(controller));
 
 
 };
