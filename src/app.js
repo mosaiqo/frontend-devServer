@@ -80,10 +80,6 @@ app.all('*', function (req, res, next) {
 // generic error handler
 app.use(function(err, req, res, next) {
 
-  if(err.name === 'CastError') {
-    console.log(err);
-  }
-
   var
     code,
     message,
