@@ -6,8 +6,8 @@ var
   _              = require('underscore'),
   async          = require('async'),
   respFormatter  = require('src/lib/responseFormatter'),
-  errors         = require('src/lib/errors'),
   RequestUtil    = require('src/lib/apiRequestUtil'),
+  errors         = require('src/lib/errors'),
   slugger        = require('src/lib/slugger'),
   Article        = require('../../models/blog/Article'),
   TagsController = require('./TagsController');
@@ -25,15 +25,10 @@ var ArticlesController = {
     Article
       .findOne(criteria)
       .populate(r.expands)
-      .exec(function(err,model) {
+      .exec(function(err, model) {
         /* istanbul ignore next */
-        if (err) {
-          console.log(err);
-          return next( new errors.App(err) );
-        }
-        if (!model) {
-          return next( new errors.NotFound() );
-        }
+        if (err)    { return next(err); }
+        if (!model) { return next(new errors.NotFound()); }
 
         var meta = r.getMeta();
         res.json(respFormatter(model, meta));
@@ -46,10 +41,7 @@ var ArticlesController = {
 
     Article.paginate(r.query, r.page, r.limit, function(err, pageCount, paginatedResults, itemCount) {
       /* istanbul ignore next */
-      if (err) {
-        next( new errors.App(err) );
-        return;
-      }
+      if (err) { return next(err); }
 
       var meta = r.getMeta(null, { itemCount: itemCount, pageCount: pageCount });
 
@@ -110,9 +102,7 @@ var ArticlesController = {
     ], function(err) {
 
       /* istanbul ignore next */
-      if (err) {
-        return next( new errors.App(err) );
-      }
+      if (err) { return next(err); }
 
       var meta = r.getMeta(model);
       res.json(respFormatter(model, meta));
@@ -132,9 +122,9 @@ var ArticlesController = {
       function(callback) {
         Article.findById(req.params.article_id, function(err, articleModel) {
           /* istanbul ignore next */
-          if (err) { return callback(err); }
+          if (err)           { return callback(err); }
           /* istanbul ignore next */
-          if (!articleModel) { return callback( new errors.NotFound() ); }
+          if (!articleModel) { return callback(new errors.NotFound()); }
 
           model = articleModel;
           callback();
@@ -185,8 +175,7 @@ var ArticlesController = {
 
       /* istanbul ignore next */
       if (err) {
-        var error = (err.name === 'HttpNotFoundError') ? err : new errors.App(err);
-        return next(error);
+        return next(err);
       }
 
       var meta = r.getMeta();
@@ -203,21 +192,16 @@ var ArticlesController = {
     Article
       .findById(req.params.article_id)
       .populate(r.expands)
-      .exec(function(err,model) {
+      .exec(function(err, model) {
 
         /* istanbul ignore next */
-        if (err) {
-          return next( new errors.App(err) );
-        }
-        if (!model) {
-          return next( new errors.NotFound() );
-        }
+        if (err)    { return next(err); }
+        if (!model) { return next( new errors.NotFound() ); }
 
         model.remove(function() {
           res.json(respFormatter(model));
         });
     });
-
   }
 
 };
