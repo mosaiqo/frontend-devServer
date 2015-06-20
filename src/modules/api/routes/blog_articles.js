@@ -36,8 +36,31 @@ module.exports = function(router) {
 
 
     /**
-     * @apiDefine CommonApiResponseNode
+     * @apiDefine SingleEntityResponse
      *
+     * @apiSuccess {Object} data                 The Article data
+     * @apiSuccess {String} data.id              Id
+     * @apiSuccess {String} data.title           Title
+     * @apiSuccess {String} data.body            Article body
+     * @apiSuccess {String} data.slug            URL slug
+     * @apiSuccess {String} [data.excerpt]       Excerpt
+     * @apiSuccess {String} data.published       Publish status
+     * @apiSuccess {String} [data.publish_date]  Publish date
+     * @apiSuccess {String} data.created_at      Creation date
+     * @apiSuccess {String} data.updated_at      Last update date
+     * @apiSuccess {String} data.author          Author id.
+     *                                           Can be expanded to the full author object (see the `expand` parameter)
+     * @apiSuccess {String} data.commentable     Commenting enabled
+     * @apiSuccess {String} data.tags            Post tags (array of the tags IDs).
+     *                                           Can be expanded to the full author object (see the `expand` parameter)
+     *
+     */
+
+
+    /**
+     * @apiDefine MultipleEntityResponse
+     *
+     * @apiSuccess {Object[]} data The Articles data
      * @apiSuccess {String} data.id              Id
      * @apiSuccess {String} data.title           Title
      * @apiSuccess {String} data.body            Article body
@@ -67,8 +90,7 @@ module.exports = function(router) {
      * curl -4 -i http://localhost:9000/api/blog/articles --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTczNTksImV4cCI6MTQyNzgyMDk1OX0.M3BboY6U9RJlX1ulVG7e9xRVrVdY3qVhvp3jmZaOCJ8"
      *
      * @apiUse CommonApiResponseHeader
-     * @apiSuccess {Object[]} data The Articles data
-     * @apiUse CommonApiResponseNode
+     * @apiUse MultipleEntityResponse
      *
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
@@ -137,8 +159,7 @@ module.exports = function(router) {
      * curl -X POST -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMSIsImlhdCI6MTQzNDYzMzgwNCwiZXhwIjoxNDM0NjM3NDA0fQ.IwPItcFLIDzA1MvwDXNYjVF0PxVcQ_Mft5wAU-2D8bY" -H "Content-Type: application/x-www-form-urlencoded" -d 'title=Article+title&slug=article-slug&excerpt=Article+excerpt&body=Article+body&commentable=1&author_id=000000000000000000000001&published=1&publish_date=1434540172' http://localhost:9000/api/blog/articles
      *
      * @apiUse CommonApiResponseHeader
-     * @apiSuccess {Object} data The Article data
-     * @apiUse CommonApiResponseNode
+     * @apiUse SingleEntityResponse
      *
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
@@ -179,8 +200,7 @@ module.exports = function(router) {
      * curl -4 -i http://localhost:9000/api/blog/articles/551c31d0430d78991f5931e1 --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTczNTksImV4cCI6MTQyNzgyMDk1OX0.M3BboY6U9RJlX1ulVG7e9xRVrVdY3qVhvp3jmZaOCJ8"
      *
      * @apiUse CommonApiResponseHeader
-     * @apiSuccess {Object} data The Article data
-     * @apiUse CommonApiResponseNode
+     * @apiUse SingleEntityResponse
      *
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
@@ -232,8 +252,7 @@ module.exports = function(router) {
      * curl -X PUT -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMSIsImlhdCI6MTQzNDYzMzgwNCwiZXhwIjoxNDM0NjM3NDA0fQ.IwPItcFLIDzA1MvwDXNYjVF0PxVcQ_Mft5wAU-2D8bY" -H "Content-Type: application/x-www-form-urlencoded" -d 'title=Test&slug=this-is-a-test&excerpt=Holaquetal&body=HOCTL%C2%B7LA&commentable=1&author_id=000000000000000000000001&published=1&publish_date=1434540172' http://localhost:9000/api/blog/articles/5581f70e4901e5baa84a9652
      *
      * @apiUse CommonApiResponseHeader
-     * @apiSuccess {Object} data The Article data
-     * @apiUse CommonApiResponseNode
+     * @apiUse SingleEntityResponse
      *
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
@@ -271,8 +290,7 @@ module.exports = function(router) {
      * curl -4 -i -X DELETE http://localhost:9000/api/blog/articles/551c31d0430d78991f5931e1 --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTczNTksImV4cCI6MTQyNzgyMDk1OX0.M3BboY6U9RJlX1ulVG7e9xRVrVdY3qVhvp3jmZaOCJ8"
      *
      * @apiUse CommonApiResponseHeader
-     * @apiSuccess {Object} data The Article data
-     * @apiUse CommonApiResponseNode
+     * @apiUse SingleEntityResponse
      *
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
