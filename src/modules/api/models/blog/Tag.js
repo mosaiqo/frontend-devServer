@@ -9,7 +9,7 @@ var
 
 
 var TagSchema = new Schema({
-  name         : { type: String, required: true },
+  name         : { type: String, required: true }, // unique per user too
   slug         : { type: String, unique: true },
   description  : String,
 
@@ -40,7 +40,9 @@ var TagSchema = new Schema({
       delete ret.id;
 
       // convert the timestamps to dates
-      ret.created_at = dateUtil.timestampToDate(ret.created_at);
+      if(ret.created_at) {
+        ret.created_at = dateUtil.timestampToDate(ret.created_at);
+      }
 
       if(ret.updated_at) {
         ret.updated_at = dateUtil.timestampToDate(ret.updated_at);

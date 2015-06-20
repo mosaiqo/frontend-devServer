@@ -57,11 +57,16 @@ var ArticleSchema = new Schema({
       delete ret.id;
 
       // convert the timestamps to dates
-      ret.created_at   = dateUtil.timestampToDate(ret.created_at);
-      ret.published_at = dateUtil.timestampToDate(ret.published_at);
+      if(ret.created_at) {
+        ret.created_at = dateUtil.timestampToDate(ret.created_at);
+      }
+
+      if(ret.published_at) {
+        ret.published_at = dateUtil.timestampToDate(ret.published_at);
+      }
 
       if(ret.updated_at) {
-        ret.updated_at   = dateUtil.timestampToDate(ret.updated_at);
+        ret.updated_at = dateUtil.timestampToDate(ret.updated_at);
       }
 
       // convert the author id to an ObjectId
