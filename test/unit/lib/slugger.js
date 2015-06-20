@@ -17,6 +17,30 @@ var
 
 describe('lib/slugger', function() {
 
+  it('should return an error if no model is supplied', function(done) {
+    slugger(null, 'The title', 'a slug', function(err, slug) {
+      expect(err).to.not.be.null;
+      done();
+    });
+  });
+
+
+  it('should return an error if no attributes are supplied', function(done) {
+    // mock the model
+    var Model = {
+      data: [
+        { slug: 'a-slug' },
+      ],
+      find: function(search, cb) { cb(null, this.data); }
+    };
+
+    slugger(Model, null, null, function(err, slug) {
+      expect(err).to.not.be.null;
+      done();
+    });
+  });
+
+
   it('should return the provided slug if there are no other models with that slug', function(done) {
 
     // mock the model
@@ -25,11 +49,10 @@ describe('lib/slugger', function() {
       find: function(search, cb) { cb(null, this.data); }
     };
 
-    slugger(Model, 'The title', 'a slug', function(slug) {
+    slugger(Model, 'The title', 'a slug', function(err, slug) {
       expect(slug).to.equal('a-slug');
+      done();
     });
-
-    done();
   });
 
 
@@ -43,7 +66,7 @@ describe('lib/slugger', function() {
       find: function(search, cb) { cb(null, this.data); }
     };
 
-    slugger(Model, 'The title', 'a slug', function(slug) {
+    slugger(Model, 'The title', 'a slug', function(err, slug) {
       expect(slug).to.equal('a-slug-1');
     });
 
@@ -55,7 +78,7 @@ describe('lib/slugger', function() {
       find: function(search, cb) { cb(null, this.data); }
     };
 
-    slugger(Model, 'The title', 'a slug', function(slug) {
+    slugger(Model, 'The title', 'a slug', function(err, slug) {
       expect(slug).to.equal('a-slug-2');
     });
 
@@ -71,11 +94,10 @@ describe('lib/slugger', function() {
       find: function(search, cb) { cb(null, this.data); }
     };
 
-    slugger(Model, 'The title', null, function(slug) {
+    slugger(Model, 'The title', null, function(err, slug) {
       expect(slug).to.equal('The-title');
+      done();
     });
-
-    done();
   });
 
 });

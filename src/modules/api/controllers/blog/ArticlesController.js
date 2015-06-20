@@ -61,7 +61,8 @@ var ArticlesController = {
       // get the slug (it's async because it ensures that the slug is not
       // already used and if so, it adds a numeric suffix)
       function(callback) {
-        slugger(Article, req.body.title, null, function(articleSlug) {
+        slugger(Article, req.body.title, null, function(err, articleSlug) {
+
           slug = articleSlug;
           callback();
         });
@@ -134,7 +135,7 @@ var ArticlesController = {
       // get the slug (it's async because it ensures that the slug is not
       // already used and if so, it adds a numeric suffix)
       function(callback) {
-        slugger(Article, req.body.title, req.body.slug, function(articleSlug) {
+        slugger(Article, req.body.title, req.body.slug, function(err, articleSlug) {
           slug = articleSlug;
           callback();
         });
