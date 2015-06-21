@@ -27,6 +27,7 @@ if (process.env.NEW_RELIC_ENABLED) {
 var
   express    = require('express'),
   bodyParser = require('body-parser'),
+  cors       = require('cors'),
 
   publicDir  = process.env.APP_PUBLIC_DIR,
   port       = process.env.PORT || 5000,
@@ -41,7 +42,11 @@ var
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// configure app to use response-time to detect possibl bottlenecks or other issues
+// enable CORS
+app.use(cors({ origin: '*' }));
+app.options('*', cors()); //  enable pre-flight across-the-board
+
+// configure app to use response-time to detect possible bottlenecks or other issues
 app.use(require('response-time')());
 app.use(require('compression')());
 
