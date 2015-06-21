@@ -73,11 +73,9 @@ var getPathNameFromMongoUniqueIndexError = function(errMessage) {
   // 'owner_1_errPath_1'
   // where owner is the client (currently there are no other types of compound keys
   // that might trigger this err). Try to clean it up.
-  field.split('_').filter(function(k) {
+  return field.split('_').filter(function(k) {
     return ['1', '-1', 'owner'].indexOf(k) === -1;
   }).join(' ');
-
-  return field;
 };
 
 
