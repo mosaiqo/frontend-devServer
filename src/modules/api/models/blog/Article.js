@@ -13,7 +13,7 @@ var
 
 var ArticleSchema = new Schema({
   title        : { type: String, required: true },
-  slug         : { type: String, unique: true },
+  slug         : { type: String },
   excerpt      : String,
   body         : String,
   commentable  : { type: Boolean, default: false},
@@ -83,6 +83,16 @@ var ArticleSchema = new Schema({
 });
 
 
+// Secondary indexes
+// ------------------------
+
+// slug must be unique for a given client
+ArticleSchema.index({ owner: 1, slug: 1}, { unique: true });
+
+
+// Register the plugins
+// ------------------------
 ArticleSchema.plugin( require('mongoose-paginate') );
+
 
 module.exports = mongoose.model('BlogArticle', ArticleSchema);
