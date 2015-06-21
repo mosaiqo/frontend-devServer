@@ -27,6 +27,7 @@ if (process.env.NEW_RELIC_ENABLED) {
 var
   express    = require('express'),
   bodyParser = require('body-parser'),
+  cors       = require('cors'),
 
   publicDir  = process.env.APP_PUBLIC_DIR,
   port       = process.env.PORT || 5000,
@@ -41,7 +42,11 @@ var
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// configure app to use response-time to detect possibl bottlenecks or other issues
+// enable CORS
+app.use(cors({ origin: '*' }));
+app.options('*', cors()); //  enable pre-flight across-the-board
+
+// configure app to use response-time to detect possible bottlenecks or other issues
 app.use(require('response-time')());
 app.use(require('compression')());
 
@@ -78,85 +83,7 @@ app.all('*', function (req, res, next) {
 });
 
 // generic error handler
-app.use(function(err, req, res, next) {
-
-  var
-    code,
-    message,
-    resp   = { meta: {} },
-    errors = {
-      default: {
-        code:    500,
-        message: 'Internal Server Error'
-      },
-      notFound: {
-        code:    404,
-        message: 'Not found'
-      },
-      validation: {
-        code:    422,
-        message: 'Validation Error'
-      }
-    };
-
-
-  if(err.code) {  // custom errors
-    code = err.code;
-
-    if(isNaN(code)) {
-      code = (err.status && !isNaN(err.status)) ?
-        err.status : /* istanbul ignore next */ errors.default.code;
-    }
-
-    if(err.message) {
-      message = err.message;
-
-    } else {
-      message = (code === 404) ?
-        errors.notFound.message : /* istanbul ignore next */ errors.default.message;
-    }
-
-  } else {
-
-    if(err.name === 'CastError' && err.path === '_id') {
-      code    = errors.notFound.code;
-      message = errors.notFound.message;
-    } else {
-
-      /* istanbul ignore else */
-      if(err.name === 'ValidationError') {
-        code    = errors.validation.code;
-        message = errors.validation.message;
-
-        resp.errors  = {};
-
-        for (var errName in err.errors) {
-          /* istanbul ignore if */
-          if(errors[errName]) {
-            resp.errors[errName].push(err.errors[errName].message);
-          } else {
-            resp.errors[errName] = [err.errors[errName].message];
-          }
-        }
-
-      } else {
-        code    = errors.default.code;
-        message = errors.default.message;
-      }
-    }
-
-  }
-
-
-  // build the response
-  resp.error = {
-    code:    code,
-    message: message
-  };
-
-  return res.status(code).json(resp);
-
-});
+app.use(require('./errorHandlers').middleware);
 
 // START THE SERVER
 // =============================================================================

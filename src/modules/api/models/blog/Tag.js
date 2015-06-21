@@ -9,8 +9,8 @@ var
 
 
 var TagSchema = new Schema({
-  name         : { type: String, required: true }, // unique per user too
-  slug         : { type: String, unique: true },
+  name         : { type: String, required: true },
+  slug         : { type: String },
   description  : String,
 
   owner        : { type: Schema.ObjectId, ref: 'User', required: true },
@@ -55,6 +55,17 @@ var TagSchema = new Schema({
 });
 
 
+// Secondary indexes
+// ------------------------
+
+// name and slug must be unique for a given client
+TagSchema.index({ owner: 1, name: 1}, { unique: true });
+TagSchema.index({ owner: 1, slug: 1}, { unique: true });
+
+
+// Register the plugins
+// ------------------------
 TagSchema.plugin( require('mongoose-paginate') );
+
 
 module.exports = mongoose.model('BlogTag', TagSchema);
