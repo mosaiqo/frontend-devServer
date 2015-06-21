@@ -6,7 +6,7 @@ module.exports = function(router) {
 
   var
     BlogTagsController = require('../controllers/blog/TagsController'),
-    controller             = new BlogTagsController();
+    controller         = new BlogTagsController();
 
 
   router.route('/blog/tags')
