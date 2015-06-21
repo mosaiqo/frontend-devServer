@@ -64,7 +64,7 @@ var getPathNameFromMongoUniqueIndexError = function(errMessage) {
   // The error message should be something like:
   //   E11000 duplicate key error index: dbName.collection.$errPath_1 dup key: { : ObjectId('__id__'), : "someValue" }
   //
-  var field = errMessage.split('.$')[1];
+  var field = errMessage.split('.$')[1] || '';
 
   field = field.split(' dup key')[0];                 // -> 'errPath_1 dup key'
   field = field.substring(0, field.lastIndexOf('_')); // -> 'errPath'
@@ -154,5 +154,6 @@ module.exports = {
   HTTPerrors: HTTPerrors,
   errors: errors,
   normalizeErrorCode: normalizeErrorCode,
+  getPathNameFromMongoUniqueIndexError:getPathNameFromMongoUniqueIndexError,
   middleware: appErrorHandler
 };
