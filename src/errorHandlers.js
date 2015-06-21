@@ -117,7 +117,7 @@ var appErrorHandler = function(err, req, res, next) {
 
     if(field) {
       resp.errors = {};
-      resp.errors[field] = 'Must be unique';
+      resp.errors[field] = ['Must be unique'];
     }
 
   } else if(err.name === 'ValidationError') {
