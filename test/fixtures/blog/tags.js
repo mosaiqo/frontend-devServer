@@ -22,6 +22,7 @@ module.exports = (function() {
       slug        : slug(name),
       description : faker.lorem.paragraph,
       owner       : defaultUserId,
+      articles    : [],
       created_at  : date,
       updated_at  : date
     });

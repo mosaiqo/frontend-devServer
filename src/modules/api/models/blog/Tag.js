@@ -5,14 +5,17 @@
 var
   mongoose = require('mongoose'),
   Schema   = mongoose.Schema,
-  dateUtil = require('src/lib/dateUtil');
+  dateUtil = require('src/lib/dateUtil'),
+
+  User = require('../User'),
+  Tag  = require('./Tag');
 
 
 var TagSchema = new Schema({
   name         : { type: String, required: true },
   slug         : { type: String },
   description  : String,
-
+  articles     : [{ type: Schema.ObjectId, ref: 'BlogArticle'}],
   owner        : { type: Schema.ObjectId, ref: 'User', required: true },
   created_at   : { type: Date, default: Date.now },
   updated_at   : { type: Date, default: Date.now }
