@@ -85,6 +85,7 @@ var ArticleSchema = new Schema({
 
 // Secondary indexes
 // ------------------------
+TagSchema.index({ tags: 1 });
 
 // slug must be unique for a given client
 ArticleSchema.index({ owner: 1, slug: 1}, { unique: true });

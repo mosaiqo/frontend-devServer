@@ -60,6 +60,7 @@ var TagSchema = new Schema({
 
 // Secondary indexes
 // ------------------------
+TagSchema.index({ articles: 1 });
 
 // name and slug must be unique for a given client
 TagSchema.index({ owner: 1, name: 1}, { unique: true });
