@@ -25,3 +25,6 @@ module.exports =
     NEW_RELIC_NO_CONFIG_FILE: true
     NEW_RELIC_APP_NAME:       '<%= newRelic.appName %>'
     NEW_RELIC_LICENSE_KEY:    '<%= newRelic.licenceKey %>'
+
+  dev:
+    DEV: true
