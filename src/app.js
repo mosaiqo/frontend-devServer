@@ -2,7 +2,9 @@
 /* jshint -W097 */
 'use strict';
 
-// set the base path for the requires
+// Set the base path for the requires
+// (The conditional path is necessary in order
+// to run the tests on the instrumented code)
 /* istanbul ignore next */
 if(process.env.APP_DIR_FOR_CODE_COVERAGE) {
   require('../../../../config/require');
@@ -10,28 +12,27 @@ if(process.env.APP_DIR_FOR_CODE_COVERAGE) {
   require('../config/require');
 }
 
-var
-  debug      = require('debug')('MosaiqoApp:' + process.pid),
-  fs         = require('fs'),
-  errors     = require('src/lib/errors');
-
-
 // New Relic
 /* istanbul ignore next */
-if (process.env.NEW_RELIC_ENABLED) {
+if (process.env.NEW_RELIC_ENABLED && !process.env.DEV) {
   require('newrelic');
   debug('Starting New Relic monitoring');
 }
 
 
+
+
 var
+  debug      = require('debug')('MosaiqoApp:' + process.pid),
+  fs         = require('fs'),
+  errors     = require('src/lib/errors'),
+
   express    = require('express'),
   bodyParser = require('body-parser'),
   cors       = require('cors'),
 
   publicDir  = process.env.APP_PUBLIC_DIR,
-  port       = process.env.PORT || 5000,
-  app        = exports.app = express();
+  port       = process.env.PORT || 5000;
 
 
 // BASE SETUP
