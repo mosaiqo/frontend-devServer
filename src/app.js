@@ -35,58 +35,71 @@ var
   port       = process.env.PORT || 5000;
 
 
-// BASE SETUP
-// =============================================================================
+/**
+ * App setup, wrapped inside a function so it can be called multiple
+ * times to create the workers when running in cluster mode
+ */
+var createApp = function() {
 
-// configure app to use bodyParser()
-// this will let us get the data from a POST
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-
-// enable CORS
-app.use(cors({ origin: '*' }));
-app.options('*', cors()); //  enable pre-flight across-the-board
-
-// configure app to use response-time to detect possible bottlenecks or other issues
-app.use(require('response-time')());
-app.use(require('compression')());
-
-// configure app to serve static files from the dist directory
-app.use(express.static(publicDir));
-
-// setup the routes
-var routeHandlers = require('./routeHandlers');
-app.get('/', routeHandlers.root);
+  var app = express();
 
 
-// SETUP THE PAGINATION MIDDLEWARE
-// =============================================================================
-var paginate = require('express-paginate');
+  // BASE SETUP
+  // =============================================================================
 
-app.use(paginate.middleware(20, 200));
+  // configure app to use bodyParser()
+  // this will let us get the data from a POST
+  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(bodyParser.json());
+
+  // enable CORS
+  app.use(cors({ origin: '*' }));
+  app.options('*', cors()); //  enable pre-flight across-the-board
+
+  // configure app to use response-time to detect possible bottlenecks or other issues
+  app.use(require('response-time')());
+  app.use(require('compression')());
+
+  // configure app to serve static files from the dist directory
+  app.use(express.static(publicDir));
+
+  // setup the routes
+  var routeHandlers = require('./routeHandlers');
+  app.get('/', routeHandlers.root);
 
 
-// FAKE API (the real on will be implemented using Laravel)
-// =============================================================================
-var API = require('./modules/api');
+  // SETUP THE PAGINATION MIDDLEWARE
+  // =============================================================================
+  var paginate = require('express-paginate');
 
-// Register the routes
-// all of our routes will be prefixed with /api
-app.use('/api', API);
+  app.use(paginate.middleware(20, 200));
 
 
-// ERROR HANDLING
-// =============================================================================
+  // FAKE API (the real on will be implemented using Laravel)
+  // =============================================================================
+  var API = require('./modules/api');
 
-// throw a 404 error if the route does not match anything
-app.all('*', function (req, res, next) {
-    next(new errors.NotFound());
-});
+  // Register the routes
+  // all of our routes will be prefixed with /api
+  app.use('/api', API);
 
-// generic error handler
-app.use(require('./errorHandlers').middleware);
 
-// START THE SERVER
-// =============================================================================
-app.listen(port);
-debug('Server running on port ' + port);
+  // ERROR HANDLING
+  // =============================================================================
+
+  // throw a 404 error if the route does not match anything
+  app.all('*', function (req, res, next) {
+      next(new errors.NotFound());
+  });
+
+  // generic error handler
+  app.use(require('./errorHandlers').middleware);
+
+  // START THE SERVER
+  // =============================================================================
+  app.listen(port);
+  debug('Server running on port ' + port);
+
+  return app;
+};
+  exports.app = createApp();
