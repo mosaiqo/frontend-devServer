@@ -23,6 +23,7 @@
     "cors": "^2.7.1",
     "debug": "^2.2.0",
     "express": "~4.12.4",
+    "express-cluster": "0.0.3",
     "express-jwt": "^3.0.1",
     "express-paginate": "0.0.8",
     "express-unless": "^0.1.0",

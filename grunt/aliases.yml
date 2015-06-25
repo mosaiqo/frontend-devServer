@@ -10,6 +10,7 @@ dev:
   tasks:
     - redis               # start the local redis
     - mongo               # start the local mongod
+    - env:dev             # disable the clustering, enable logging, etc
     - env:app
     - bgShell:nodemonDev  # start an express server that will be restarted on any server code change
     - browserSync         # reload the browsers when anything changes
@@ -40,6 +41,7 @@ util:createUser:
 test:
   description: 'Execute ALL the tests'
   tasks:
+    - env:dev
     - env:app
     - mongo:populate
     - mochaTest
