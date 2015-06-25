@@ -102,4 +102,14 @@ var createApp = function() {
 
   return app;
 };
+
+
+/* istanbul ignore else */
+if (process.env.DEV) {        // dev/test mode: just create one instance
   exports.app = createApp();
+
+} else {                      // production mode: clustered, one worker per core
+  var cluster = require('express-cluster');
+
+  cluster(createApp);
+}
