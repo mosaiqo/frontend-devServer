@@ -13,7 +13,7 @@ var
 
 var TagSchema = new Schema({
   name         : { type: String, required: true },
-  slug         : { type: String },
+  slug         : { type: String, required: true },
   description  : String,
   articles     : [{ type: Schema.ObjectId, ref: 'BlogArticle'}],
   owner        : { type: Schema.ObjectId, ref: 'User', required: true },

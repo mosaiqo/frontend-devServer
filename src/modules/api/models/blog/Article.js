@@ -13,7 +13,7 @@ var
 
 var ArticleSchema = new Schema({
   title        : { type: String, required: true },
-  slug         : { type: String },
+  slug         : { type: String, required: true },
   excerpt      : String,
   body         : String,
   commentable  : { type: Boolean, default: false},
@@ -71,7 +71,7 @@ var ArticleSchema = new Schema({
 
       // convert the author id to an ObjectId
       if(ret.author) {
-        ret.author = mongoose.Types.ObjectId.fromString(ret.author);
+        ret.author = mongoose.Types.ObjectId(ret.author);
       } else {
         ret.author = null;
       }
