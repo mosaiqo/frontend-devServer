@@ -86,10 +86,12 @@ BaseController.prototype.update = function(req, res, next) {};
  */
 BaseController.prototype.delete = function(req, res, next) {
 
-  var r = new RequestUtil(req);
+  var
+    r = new RequestUtil(req),
+    criteria = _.extend({ 'id': req.params.id }, r.query);
 
   this.Model
-    .findById(req.params.id)
+    .findOne(criteria)
     .populate(r.expands)
     .exec(function(err, model) {
 
