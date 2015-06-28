@@ -3,15 +3,22 @@
 'use strict';
 
 var
-  _              = require('underscore'),
-  async          = require('async'),
-  respFormatter  = require('src/lib/responseFormatter'),
-  RequestUtil    = require('src/lib/apiRequestUtil'),
-  errors         = require('src/lib/errors'),
-  slugger        = require('src/lib/slugger'),
-  Article        = require('../../models/blog/Article'),
-  TagsController = require('./TagsController'),
-  BaseController = require('../BaseController');
+  // generic stuff
+  _               = require('underscore'),
+  async           = require('async'),
+  errors          = require('src/lib/errors'),
+
+  // API utilities
+  respFormatter   = require('../../util/responseFormatter'),
+  RequestUtil     = require('../../util/apiRequestUtil'),
+  ArticleTagsUtil = require('../../util/ArticleTagsUtil'),
+  slugger         = require('../../util/slugger'),
+
+  // Base class
+  BaseController  = require('../BaseController'),
+
+  // Model managed by this controller
+  Article         = require('../../models/blog/Article');
 
 
 /**

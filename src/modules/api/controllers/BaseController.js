@@ -5,9 +5,9 @@
 var
   _              = require('underscore'),
   async          = require('async'),
-  respFormatter  = require('src/lib/responseFormatter'),
-  RequestUtil    = require('src/lib/apiRequestUtil'),
-  errors         = require('src/lib/errors');
+  errors         = require('src/lib/errors'),
+  respFormatter  = require('../util/responseFormatter'),
+  RequestUtil    = require('../util/apiRequestUtil');
 
 
 /**

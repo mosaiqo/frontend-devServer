@@ -3,12 +3,17 @@
 'use strict';
 
 var
+  // generic stuff
   _             = require('lodash'),
+  debug         = require('debug')('MosaiqoApp:AuthController:' + process.pid),
   errors        = require('src/lib/errors'),
-  respFormatter = require('src/lib/responseFormatter'),
   jwtAuth       = require('src/lib/jwtAuth'),
-  User          = require('../models/User'),
-  debug         = require('debug')('MosaiqoApp:AuthController:' + process.pid);
+
+  // API utilities
+  respFormatter = require('../util/responseFormatter'),
+
+  // Model managed by this controller
+  User          = require('../models/User');
 
 
 
