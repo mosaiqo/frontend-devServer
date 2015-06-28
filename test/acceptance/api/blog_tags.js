@@ -153,9 +153,7 @@ describe('api/blog/tags', function() {
     var getModelObject = function() {
       return {
         name        : 'AAA',
-        slug        : 'BBB',
-        description : 'XD',
-        author_id   : '000000000000000000000001',
+        description : 'XD'
       };
     };
 
@@ -191,8 +189,8 @@ describe('api/blog/tags', function() {
           // check the node attributes
           isValidTagObject(createdModel);
 
-          expect(createdModel.title).to.equal(obj.title);
-          expect(createdModel.body).to.equal(obj.body);
+          expect(createdModel.name).to.equal(obj.name);
+          expect(createdModel.description).to.equal(obj.description);
 
           done();
         });
@@ -217,10 +215,8 @@ describe('api/blog/tags', function() {
   describe('Update a tag object -> PUT /api/blog/tags/:id', function() {
 
     var newAttrs = {
-      name        : 'CCC',
-      slug        : 'DDD',
-      description : 'XXX',
-      author_id   : '000000000000000000000001',
+      name        : 'CCCCCC',
+      description : 'XXXXXX'
     };
 
 
@@ -270,7 +266,11 @@ describe('api/blog/tags', function() {
 
           var response = res.body.data;
 
-          console.log('response', response);
+
+
+
+
+
 
           done();
         });
@@ -314,7 +314,7 @@ describe('api/blog/tags', function() {
     });
 
 
-    it('should retun a 404 error if the model does not exist', function(done) {
+    it('should return a 404 error if the model does not exist', function(done) {
       request(app)
         .delete('/api/blog/tags/a-non-existing-record-id')
         .set('Authorization', authHeader)
