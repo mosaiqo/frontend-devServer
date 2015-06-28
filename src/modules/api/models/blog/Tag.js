@@ -6,14 +6,12 @@ var
   mongoose = require('mongoose'),
   Schema   = mongoose.Schema,
   dateUtil = require('src/lib/dateUtil'),
-
-  User = require('../User'),
-  Tag  = require('./Tag');
+  Article;
 
 
 var TagSchema = new Schema({
   name         : { type: String, required: true },
-  slug         : { type: String, required: true },
+  slug         : { type: String, required: true, default: 'slug' },
   description  : String,
   articles     : [{ type: Schema.ObjectId, ref: 'BlogArticle'}],
   owner        : { type: Schema.ObjectId, ref: 'User', required: true },
@@ -97,7 +95,7 @@ TagSchema.statics.safeAttrs = ['name', 'description', 'owner'];
 
 
 // Register the plugins
-// ------------------------
+// ----------------------------------
 TagSchema.plugin( require('mongoose-paginate') );
 
 

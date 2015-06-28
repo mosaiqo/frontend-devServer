@@ -6,14 +6,12 @@ var
   mongoose = require('mongoose'),
   Schema   = mongoose.Schema,
   dateUtil = require('src/lib/dateUtil'),
-
-  User = require('../User'),
-  Tag  = require('./Tag');
+  Tag;
 
 
 var ArticleSchema = new Schema({
   title        : { type: String, required: true },
-  slug         : { type: String, required: true },
+  slug         : { type: String, required: true, default: 'slug' },
   excerpt      : String,
   body         : String,
   commentable  : { type: Boolean, default: false},
@@ -120,7 +118,7 @@ ArticleSchema.statics.safeAttrs = ['title', 'excerpt', 'body', 'published', 'pub
 
 
 // Register the plugins
-// ------------------------
+// ----------------------------------
 ArticleSchema.plugin( require('mongoose-paginate') );
 
 
