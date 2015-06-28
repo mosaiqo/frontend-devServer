@@ -83,8 +83,31 @@ var ArticleSchema = new Schema({
 });
 
 
+// Remove relations from other collections
+ArticleSchema.pre('remove', function (next) {
+  var
+    article  = this,
+    criteria = { _id: {$in: article.tags}, owner: article.owner },
+    update   = { $pull: { 'articles': article._id } };
+
+
+  if(!article.tags.length) {
+    next();
+  } {
+    // requiring at runtime to avoid circular dependencies
+    Tag = Tag || require('./Tag');
+
+    Tag.update(criteria, update, {multi:true}, function(err, numAffected) {
+      /* istanbul ignore next */
+      if(err) { return next(err); }
+      next();
+    });
+  }
+});
+
+
 // Secondary indexes
-// ------------------------
+// ----------------------------------
 ArticleSchema.index({ tags: 1 });
 
 // slug must be unique for a given client
