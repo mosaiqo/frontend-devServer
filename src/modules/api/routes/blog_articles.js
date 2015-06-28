@@ -153,8 +153,9 @@ module.exports = function(router) {
      * @apiParam {Number} [publish_date] Publish date, as a timestamp. If `published` is true and the `publish_date` is
      *                                   provided, the post will not be published until that date.
      * @apiParam {String} commentable    Enable user comments.
-     * @apiParam {String} tags_names     Post tags (only the names). If the tag does not exist it will be created.
-     *                                   Accepts multiple values.
+     * @apiParam {mixed}  tags           Post tags, as objects (an array of this objects is accepted)
+     *                                   The objects must have an id attribute for existing tags. If the tag does not have
+     *                                   an ID it is assumed to be a new one and the creation of the tag will be attempted.
      * @apiUse CommonApiParams
      *
      * @apiExample Example usage:
@@ -245,9 +246,9 @@ module.exports = function(router) {
      * @apiParam {Number} [publish_date] Publish date, as a timestamp. If `published` is true and the `publish_date` is
      *                                   provided, the post will not be published until that date.
      * @apiParam {String} commentable    Enable user comments.
-     * @apiParam {String} tags_names     Post tags (only the names). If the tag does not exist it will be created.
-     *                                   If the post previously had some tag and is not present, it will be unlinked
-     *                                   from the post (but not deleted). Accepts multiple values.
+     * @apiParam {mixed}  tags           Post tags, as objects (an array of this objects is accepted)
+     *                                   The objects must have an id attribute for existing tags. If the tag does not have
+     *                                   an ID it is assumed to be a new one and the creation of the tag will be attempted.
      * @apiUse CommonApiParams
      *
      * @apiExample Example usage:
