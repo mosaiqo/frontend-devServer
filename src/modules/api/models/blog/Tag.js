@@ -67,6 +67,11 @@ TagSchema.index({ owner: 1, name: 1}, { unique: true });
 TagSchema.index({ owner: 1, slug: 1}, { unique: true });
 
 
+// Custom methods and attributes
+// ----------------------------------
+TagSchema.statics.safeAttrs = ['name', 'description', 'owner'];
+
+
 // Register the plugins
 // ------------------------
 TagSchema.plugin( require('mongoose-paginate') );

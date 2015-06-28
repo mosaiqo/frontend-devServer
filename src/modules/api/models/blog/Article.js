@@ -91,6 +91,11 @@ ArticleSchema.index({ tags: 1 });
 ArticleSchema.index({ owner: 1, slug: 1}, { unique: true });
 
 
+// Custom methods and attributes
+// ----------------------------------
+ArticleSchema.statics.safeAttrs = ['title', 'excerpt', 'body', 'published', 'published_at', 'commentable'];
+
+
 // Register the plugins
 // ------------------------
 ArticleSchema.plugin( require('mongoose-paginate') );
