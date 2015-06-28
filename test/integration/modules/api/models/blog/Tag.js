@@ -43,12 +43,15 @@ describe('BlogTag model', function() {
 
 
   it('should save the tag', function(done) {
-    var defaultUserId = id('000000000000000000000001');
-    var tagData = {
-      name:        faker.lorem.words(1).join(),
-      description: faker.lorem.paragraph(),
-      owner:       defaultUserId
-    };
+    var
+      defaultUserId = id('000000000000000000000001'),
+      name = faker.lorem.words(1).join(),
+      tagData = {
+        name:        name,
+        slug:        name,
+        description: faker.lorem.paragraph(),
+        owner:       defaultUserId
+      };
 
     var tag = new Tag(tagData);
 
@@ -62,12 +65,15 @@ describe('BlogTag model', function() {
 
 
   it('should transform the virtual attributes when /saving/fetching', function(done) {
-    var defaultUserId = id('000000000000000000000001');
-    var tagData = {
-      name:        faker.lorem.words(1).join(),
-      description: faker.lorem.paragraph(),
-      owner:       defaultUserId
-    };
+    var
+      defaultUserId = id('000000000000000000000001'),
+      name = faker.lorem.words(1).join(),
+      tagData = {
+        name:        name,
+        slug:        name,
+        description: faker.lorem.paragraph(),
+        owner:       defaultUserId
+      };
 
     var tag = new Tag(tagData);
 
@@ -82,7 +88,13 @@ describe('BlogTag model', function() {
 
       done();
     });
+  });
 
+
+  it('should unlink tagged articles when deleting', function(done) {
+
+
+    done();
   });
 
 });
