@@ -101,4 +101,8 @@ ArticleSchema.statics.safeAttrs = ['title', 'excerpt', 'body', 'published', 'pub
 ArticleSchema.plugin( require('mongoose-paginate') );
 
 
-module.exports = mongoose.model('BlogArticle', ArticleSchema);
+/* istanbul ignore next */
+var BlogArticleModel = mongoose.models.BlogArticle ?
+  mongoose.model('BlogArticle') : mongoose.model('BlogArticle', ArticleSchema);
+
+module.exports = BlogArticleModel;

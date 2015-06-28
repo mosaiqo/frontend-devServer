@@ -77,4 +77,8 @@ TagSchema.statics.safeAttrs = ['name', 'description', 'owner'];
 TagSchema.plugin( require('mongoose-paginate') );
 
 
-module.exports = mongoose.model('BlogTag', TagSchema);
+/* istanbul ignore next */
+var BlogTagModel = mongoose.models.BlogTag ?
+  mongoose.model('BlogTag') : mongoose.model('BlogTag', TagSchema);
+
+module.exports = BlogTagModel;
