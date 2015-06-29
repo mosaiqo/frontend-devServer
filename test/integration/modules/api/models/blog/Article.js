@@ -4,6 +4,8 @@
 'use strict';
 
 var
+  async             = require('async'),
+
   // test dependencies
   mocha             = require('mocha'),
   expect            = require('chai').expect,
@@ -14,7 +16,10 @@ var
   mongoConfigParser = require('src/lib/mongoConfigParser'),
 
   // file being tested
-  Article           = requireHelper('modules/api/models/blog/Article');
+  Article           = requireHelper('modules/api/models/blog/Article'),
+
+  // other
+  Tag               = requireHelper('modules/api/models/blog/Tag');
 
 
 
@@ -47,6 +52,7 @@ describe('Blog Article model', function() {
     var articleData = {
       title:   faker.lorem.sentence(),
       body:    faker.lorem.paragraphs(2),
+      slug:    'some-random-slug-98735353445',
       author:  defaultUserId,
       owner:   defaultUserId
     };
@@ -56,8 +62,7 @@ describe('Blog Article model', function() {
     article.save(function(err, article) {
       expect(article.title).to.equal(articleData.title);
       expect(article.body).to.equal(articleData.body);
-      article.remove();
-      done();
+      article.remove(done);
     });
   });
 
@@ -82,11 +87,50 @@ describe('Blog Article model', function() {
       expect(articleJSON.created_at).to.match(/^\d{10}$/);
       expect(articleJSON.updated_at).to.match(/^\d{10}$/);
       expect(articleJSON.publish_date).to.match(/^\d{10}$/);
-      article.remove();
-
-      done();
+      article.remove(done);
     });
+  });
 
+
+  it('should unlink linked tags when deleting', function(done) {
+    var tag, article, ownerId = id('000000000000000000000001');
+
+    async.series([
+      function(cb) {  // create a tag
+        tag = new Tag({
+          name:  'someRandomTag1321322',
+          slug:  'someRandomTag1321322',
+          owner: ownerId
+        });
+        tag.save(cb);
+      },
+
+      function(cb) {  // create an article and link it
+        article = new Article({
+          title:   faker.lorem.sentence(),
+          body:    faker.lorem.paragraphs(2),
+          slug:    'some-random-slug-5464654654654',
+          author:  ownerId,
+          owner:   ownerId,
+          tags:    [tag._id]
+        });
+
+        article.save(function(err) {
+          if(err) { return cb(err); }
+          tag.articles = [article._id];
+          tag.save(cb);
+        });
+      },
+
+      function(cb) {  // delete the article
+        article.remove(cb);
+      }
+    ], function(err) { // check the tag
+      Tag.findOne({slug: tag.slug}, function(err, model) {
+        expect(model.articles.length).to.equal(0);
+        model.remove(done);
+      });
+    });
   });
 
 });

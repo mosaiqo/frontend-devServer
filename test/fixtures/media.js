@@ -8,7 +8,7 @@ module.exports = (function() {
     data = [];
 
 
-  for(var i=0, l=100; i < l; i++) {
+  for(var i=0, l=10; i < l; i++) {
     data.push({
       "name"        : faker.lorem.words(Math.floor(Math.random() * 4) + 1).join(' '),
       "description" : faker.lorem.sentence(),

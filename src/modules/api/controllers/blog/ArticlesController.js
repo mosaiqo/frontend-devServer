@@ -3,15 +3,22 @@
 'use strict';
 
 var
-  _              = require('underscore'),
-  async          = require('async'),
-  respFormatter  = require('src/lib/responseFormatter'),
-  RequestUtil    = require('src/lib/apiRequestUtil'),
-  errors         = require('src/lib/errors'),
-  slugger        = require('src/lib/slugger'),
-  Article        = require('../../models/blog/Article'),
-  TagsController = require('./TagsController'),
-  BaseController = require('../BaseController');
+  // generic stuff
+  _               = require('underscore'),
+  async           = require('async'),
+  errors          = require('src/lib/errors'),
+
+  // API utilities
+  respFormatter   = require('../../util/responseFormatter'),
+  RequestUtil     = require('../../util/apiRequestUtil'),
+  ArticleTagsUtil = require('../../util/ArticleTagsUtil'),
+  slugger         = require('../../util/slugger'),
+
+  // Base class
+  BaseController  = require('../BaseController'),
+
+  // Model managed by this controller
+  Article         = require('../../models/blog/Article');
 
 
 /**
@@ -31,87 +38,40 @@ ArticlesController.prototype.Model = Article;
 
 
 /**
- * Aux. method to mass assign the attributes to a model
- */
-ArticlesController.prototype.fillModelAttributes = function(model, req) {
-  model.title        = req.body.title;
-  model.excerpt      = req.body.excerpt;
-  model.body         = req.body.body;
-  model.author       = req.body.author_id;
-  model.owner        = req.user.userId;
-  model.published    = req.body.published;
-  model.published_at = req.body.publish_date;
-  model.commentable  = req.body.commentable;
-
-  return model;
-};
-
-
-/**
- * Create one new Article
+ * Create a new Article
  */
 ArticlesController.prototype.create = function(req, res, next) {
 
-  var slug, tags, model, r = new RequestUtil(req), that = this;
+  var r = new RequestUtil(req), that = this;
 
-  async.series([
+  async.waterfall([
+    function setup(callback) {
+      var
+        attrs = _.extend({ owner: req.user.userId }, _.pick(req.body, Article.safeAttrs)),
+        model = new Article(attrs),
+        options = {
+          tags:    req.body.tags,
+          expands: r.expands,
+          slug:    null
+        };
 
-    // validate the attrs
-    function(callback) {
-      var doc = that.fillModelAttributes(new Article(), req);
+      /* istanbul ignore next */
+      if(req.body.author_id) { model.author = req.body.author_id; }
 
-      doc.validate(function (err) {
-        /* istanbul ignore next */
-        if (err) { return next(err); }
-        callback();
-      });
+      callback(null, model, options);
     },
+    that._validate,
+    that._setSlug,
+    that._setTags,
+    that._applyExpands
 
-    // get the slug (it's async because it ensures that the slug is not
-    // already used and if so, it adds a numeric suffix)
-    function(callback) {
-      slugger(Article, req.body.title, null, function(err, articleSlug) {
-        /* istanbul ignore next */
-        if (err) { return next(err); }
-
-        slug = articleSlug;
-        callback();
-      });
-    },
-
-    // get the tags IDs (and create the tags if they don't exist)
-    function(callback) {
-      var tc = new TagsController();
-
-      tc.retrieveAndCreate(req, res, function(articleTags) {
-        tags = articleTags;
-        callback();
-      });
-    },
-
-    // create the Article
-    function(callback) {
-      // set the article attributes
-      model = that.fillModelAttributes(new Article(), req);
-      model.slug = slug;
-      model.tags = tags;
-
-      model.save(callback);
-    },
-
-    // expand the relations
-    function(callback) {
-      model.populate(r.expands, callback);
-    }
-
-  ], function(err) {
+  ], function asyncComplete(err, model) {
 
     /* istanbul ignore next */
     if (err) { return next(err); }
 
     var meta = r.getMeta(model);
     res.json(respFormatter(model, meta));
-
   });
 };
 
@@ -121,83 +81,103 @@ ArticlesController.prototype.create = function(req, res, next) {
  */
 ArticlesController.prototype.update = function(req, res, next) {
 
-  var slug, tags, model, r = new RequestUtil(req), that = this;
+  var r = new RequestUtil(req), that = this;
 
-  async.series([
+  async.waterfall([
+    function setup(callback) {
+      var criteria = _.extend({ '_id': req.params.id }, r.query);
 
-    // retrieve the model
-    function(callback) {
-      Article.findById(req.params.id, function(err, articleModel) {
+      Article.findOne(criteria).exec(function(err, articleModel) {
         /* istanbul ignore next */
         if (err)           { return callback(err); }
         /* istanbul ignore next */
         if (!articleModel) { return callback(new errors.NotFound()); }
 
-        model = articleModel;
-        callback();
-      });
-    },
+        var options = {
+          tags:    req.body.tags,
+          expands: r.expands,
+          slug:    req.body.slug
+        };
 
-    // validate the attrs
-    function(callback) {
-      var doc = that.fillModelAttributes(new Article(), req);
+        // assign the new attributes
+        articleModel.set(_.pick(req.body, Article.safeAttrs));
 
-      doc.validate(function (err) {
         /* istanbul ignore next */
-        if (err) { return next(err); }
-        callback();
+        if(req.body.author_id) { articleModel.author = req.body.author_id; }
+
+        callback(null, articleModel, options);
       });
     },
+    that._validate,
+    that._setSlug,
+    that._setTags,
+    that._applyExpands
 
-    // get the slug (it's async because it ensures that the slug is not
-    // already used and if so, it adds a numeric suffix)
-    function(callback) {
-      slugger(Article, req.body.title, req.body.slug, function(err, articleSlug) {
-        /* istanbul ignore next */
-        if (err) { return next(err); }
-
-        slug = articleSlug;
-        callback();
-      });
-    },
-
-    // get the tags IDs (and create the tags if they don't exist)
-    function(callback) {
-      var tc = new TagsController();
-
-      tc.retrieveAndCreate(req, res, function(articleTags) {
-        tags = articleTags;
-        callback();
-      });
-    },
-
-    // update the Article
-    function(callback) {
-
-      // set the article attributes
-      model = that.fillModelAttributes(model, req);
-      model.slug         = slug;
-      model.tags         = tags;
-      model.updated_at   = Date.now()/1000;
-
-      model.save(callback);
-    },
-
-    // expand the relations
-    function(callback) {
-      model.populate(r.expands, callback);
-    }
-
-  ], function(err) {
+  ], function asyncComplete(err, model) {
 
     /* istanbul ignore next */
-    if (err) {
-      return next(err);
-    }
+    if (err) { return next(err); }
 
     var meta = r.getMeta();
     res.json(respFormatter(model, meta));
+  });
+};
 
+
+// Aux. "private" methods
+// (actually they're not private so can be easily tested)
+// =============================================================================
+
+
+ArticlesController.prototype._validate = function(model, options, callback) {
+  model.validate(function (err) {
+    /* istanbul ignore next */
+    if (err) { return callback(err); }
+    callback(null, model, options);
+  });
+};
+
+
+ArticlesController.prototype._setSlug = function(model, options, callback) {
+  slugger(Article, model.title, options.slug, function(err, articleSlug) {
+    /* istanbul ignore next */
+    if (err) { return callback(err); }
+
+    model.slug = articleSlug;
+    callback(null, model, options);
+  });
+};
+
+
+ArticlesController.prototype._setTags = function(model, options, callback) {
+  var tags = options.tags || [];
+
+  if(!_.isObject(tags) || !_.isArray(tags)) {
+    try {
+      tags = JSON.parse(tags);
+    } catch(e) {
+      return callback( errors.Validation(model, 'tags', 'Tags must be a valid JSON') );
+    }
+  }
+
+  ArticleTagsUtil.setArticleTags(model, tags, function(err) {
+    /* istanbul ignore next */
+    if (err) {
+      if(err.code === 11000) {
+        var repeatedTag = /:\ "(.+)" \}$/.exec(err.message)[1];
+        err = errors.Validation(model, 'tags', "Can't create tag '" + repeatedTag + "', already exists");
+      }
+
+      return callback(err);
+    }
+    callback(null, model, options);
+  });
+};
+
+
+ArticlesController.prototype._applyExpands = function(model, options, callback) {
+  model.populate(options.expands, function() {
+    callback(null, model);
   });
 };
 

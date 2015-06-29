@@ -12,7 +12,7 @@ module.exports = (function() {
     defaultUserId = id('000000000000000000000001');
 
 
-  for(var i=0, l=100; i < l; i++) {
+  for(var i=0, l=10; i < l; i++) {
     var
       title = faker.lorem.sentence(),
       body  = faker.lorem.paragraphs(6),

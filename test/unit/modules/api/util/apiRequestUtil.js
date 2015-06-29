@@ -12,10 +12,10 @@ var
   requireHelper  = require('test/require_helper'),
 
   // file to test
-  RequestUtil    = requireHelper('lib/apiRequestUtil');
+  RequestUtil    = requireHelper('modules/api/util/apiRequestUtil');
 
 
-describe('lib/apiRequestUtil', function() {
+describe('modules/api/util/apiRequestUtil', function() {
 
   it('should return a query object that restricts the results to the entities owned by the requester', function(done) {
 

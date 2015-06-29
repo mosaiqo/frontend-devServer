@@ -12,10 +12,10 @@ var
   requireHelper  = require('test/require_helper'),
 
   // file to test
-  slugger        = requireHelper('lib/slugger');
+  slugger        = requireHelper('modules/api/util/slugger');
 
 
-describe('lib/slugger', function() {
+describe('modules/api/util/slugger', function() {
 
   it('should return an error if no model is supplied', function(done) {
     slugger(null, 'The title', 'a slug', function(err, slug) {

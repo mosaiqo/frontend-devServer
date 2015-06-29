@@ -10,11 +10,11 @@ var
   requireHelper  = require('test/require_helper'),
 
   // file to test
-  resFormatter  = requireHelper('lib/responseFormatter');
+  resFormatter  = requireHelper('modules/api/util/responseFormatter');
 
 
 
-describe('lib/responseFormatter', function() {
+describe('modules/api/util/responseFormatter', function() {
 
 
   it('should return return an "errors" object if supplied', function(done) {

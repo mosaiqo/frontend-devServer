@@ -5,9 +5,9 @@
 var
   _              = require('underscore'),
   async          = require('async'),
-  respFormatter  = require('src/lib/responseFormatter'),
-  RequestUtil    = require('src/lib/apiRequestUtil'),
-  errors         = require('src/lib/errors');
+  errors         = require('src/lib/errors'),
+  respFormatter  = require('../util/responseFormatter'),
+  RequestUtil    = require('../util/apiRequestUtil');
 
 
 /**
@@ -50,9 +50,11 @@ BaseController.prototype.getOne = function(req, res, next) {
  */
 BaseController.prototype.getAll = function(req, res, next) {
 
-  var r = new RequestUtil(req);
+  var
+    r    = new RequestUtil(req),
+    opts = { page: r.page, limit: r.limit, populate: r.expands };
 
-  this.Model.paginate(r.query, r.page, r.limit, function(err, pageCount, paginatedResults, itemCount) {
+  this.Model.paginate(r.query, opts, function(err, paginatedResults, pageCount, itemCount) {
     /* istanbul ignore next */
     if (err) { return next(err); }
 
@@ -82,14 +84,15 @@ BaseController.prototype.update = function(req, res, next) {};
 
 /**
  * Delete one Model instance
- * @abstract
  */
 BaseController.prototype.delete = function(req, res, next) {
 
-  var r = new RequestUtil(req);
+  var
+    r = new RequestUtil(req),
+    criteria = _.extend({ '_id': req.params.id }, r.query);
 
   this.Model
-    .findById(req.params.id)
+    .findOne(criteria)
     .populate(r.expands)
     .exec(function(err, model) {
 

@@ -19,6 +19,8 @@ var
 
 describe('API authentication', function() {
 
+  this.timeout(10000);
+
   var defaultUser = {
     username: 'demo',
     password: 'demo',
