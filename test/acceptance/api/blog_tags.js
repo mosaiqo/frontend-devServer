@@ -1,6 +1,3 @@
-/* global require, module, process, console, describe, it, before, __dirname */
-/* jshint -W097 */
-/* jshint expr: true */
 'use strict';
 
 var
@@ -153,9 +150,7 @@ describe('api/blog/tags', function() {
     var getModelObject = function() {
       return {
         name        : 'AAA',
-        slug        : 'BBB',
-        description : 'XD',
-        author_id   : '000000000000000000000001',
+        description : 'XD'
       };
     };
 
@@ -191,8 +186,8 @@ describe('api/blog/tags', function() {
           // check the node attributes
           isValidTagObject(createdModel);
 
-          expect(createdModel.title).to.equal(obj.title);
-          expect(createdModel.body).to.equal(obj.body);
+          expect(createdModel.name).to.equal(obj.name);
+          expect(createdModel.description).to.equal(obj.description);
 
           done();
         });
@@ -217,10 +212,8 @@ describe('api/blog/tags', function() {
   describe('Update a tag object -> PUT /api/blog/tags/:id', function() {
 
     var newAttrs = {
-      name        : 'CCC',
-      slug        : 'DDD',
-      description : 'XXX',
-      author_id   : '000000000000000000000001',
+      name        : 'CCCCCC',
+      description : 'XXXXXX'
     };
 
 
@@ -260,17 +253,18 @@ describe('api/blog/tags', function() {
         .put('/api/blog/tags/'+createdModel.id)
         .set('Authorization', authHeader)
         .send({
-          body      : 8,
-          author_id : 'XD',
+          name : ''
         })
         .set('Accept', 'application/json')
         .expect('Content-Type', /application\/json/)
         .expect(422)
         .end(function(err, res) {
 
-          var response = res.body.data;
-
-          console.log('response', response);
+          var response = res.body;
+          expect(response).to.have.property('error');
+          expect(response.error.code).to.equal(422);
+          expect(response).to.have.property('errors');
+          expect(response.errors).to.have.property('name');
 
           done();
         });
@@ -314,7 +308,7 @@ describe('api/blog/tags', function() {
     });
 
 
-    it('should retun a 404 error if the model does not exist', function(done) {
+    it('should return a 404 error if the model does not exist', function(done) {
       request(app)
         .delete('/api/blog/tags/a-non-existing-record-id')
         .set('Authorization', authHeader)

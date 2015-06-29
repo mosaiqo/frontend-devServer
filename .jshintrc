@@ -1,9 +1,12 @@
 {
+  "node": true,
+  "mocha": true,
   "curly": true,
   "eqnull": true,
   "eqeqeq": true,
   "undef": true,
+  "expr": true,
   "globals": {
-
+    "console": true
   }
 }

@@ -1,5 +1,3 @@
-/* global require, process, console, __dirname */
-/* jshint -W097 */
 'use strict';
 
 var

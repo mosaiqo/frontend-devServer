@@ -1,6 +1,3 @@
-/* global require, module, process, console, describe, it, before, after, afterEach, __dirname */
-/* jshint -W097 */
-/* jshint expr: true */
 'use strict';
 
 var
@@ -20,7 +17,7 @@ var
  * @todo : improve this tests...
  */
 describe('TagsController', function() {
-
+/*
   describe('TagsController.retrieveAndCreate', function() {
 
     it('should return an empty array if there are no tags in the request', function(done) {
@@ -101,6 +98,6 @@ describe('TagsController', function() {
     });
 
 
-  });
+  });*/
 
 });

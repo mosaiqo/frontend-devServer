@@ -1,10 +1,8 @@
-/* global require, module, process, console, __dirname */
-/* jshint -W097 */
 'use strict';
 
 var
-  respFormatter = require('src/lib/responseFormatter'),
   errors        = require('src/lib/errors'),
+  respFormatter = require('../util/responseFormatter'),
   Media         = require('../models/Media');
 
 

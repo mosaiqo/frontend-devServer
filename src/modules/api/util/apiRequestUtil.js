@@ -1,5 +1,3 @@
-/* global require, module, process, console, __dirname */
-/* jshint -W097 */
 'use strict';
 
 var _ = require('underscore');

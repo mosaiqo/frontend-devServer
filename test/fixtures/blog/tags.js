@@ -1,5 +1,3 @@
-/* global require, module, process, console, __dirname */
-/* jshint -W097 */
 module.exports = (function() {
   'use strict';
 
@@ -22,6 +20,7 @@ module.exports = (function() {
       slug        : slug(name),
       description : faker.lorem.paragraph,
       owner       : defaultUserId,
+      articles    : [],
       created_at  : date,
       updated_at  : date
     });

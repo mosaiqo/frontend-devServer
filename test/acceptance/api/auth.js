@@ -1,6 +1,3 @@
-/* global require, module, process, console, describe, it, before, __dirname, setTimeout */
-/* jshint -W097 */
-/* jshint expr: true */
 'use strict';
 
 var
@@ -18,6 +15,8 @@ var
 
 
 describe('API authentication', function() {
+
+  this.timeout(10000);
 
   var defaultUser = {
     username: 'demo',

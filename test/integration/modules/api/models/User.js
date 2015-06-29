@@ -1,6 +1,3 @@
-/* global require, module, process, console, describe, it, before, after, __dirname */
-/* jshint -W097 */
-/* jshint expr: true */
 'use strict';
 
 var
@@ -51,7 +48,7 @@ describe('User model', function() {
     var user = new User(userdata);
 
     user.save(function(err, user) {
-      if(err) done(err);
+      if(err) { done(err); }
       expect(user.username).to.equal(userdata.username);
       expect(user.email).to.equal(userdata.email);
       user.remove();
@@ -94,7 +91,7 @@ describe('User model', function() {
 
     // user is new
     user.save(function(err, user) {
-      if(err) done(err);
+      if(err) { done(err); }
       expect(user.password).to.not.equal(userdata.password);
       user.comparePassword(userdata.password, function(err, match) {
         expect(match).to.true;
@@ -105,7 +102,7 @@ describe('User model', function() {
       user.password = newPassword;
 
       user.save(function(err, user) {
-        if(err) done(err);
+        if(err) { done(err); }
         expect(user.password).to.not.equal(newPassword);
 
         user.comparePassword(newPassword, function(err, match) {
@@ -191,7 +188,7 @@ describe('User model', function() {
       user2 = new User(userdata);
 
     user1.save(function(err, user) {
-      if(err) done(err);
+      if(err) { done(err); }
 
       user2.save(function(err, user) {
         if(err) {

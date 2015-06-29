@@ -1,19 +1,15 @@
-/* global require, module, process, console, __dirname */
-/* jshint -W097 */
 'use strict';
 
 var
   mongoose = require('mongoose'),
   Schema   = mongoose.Schema,
   dateUtil = require('src/lib/dateUtil'),
-
-  User = require('../User'),
-  Tag  = require('./Tag');
+  Tag;
 
 
 var ArticleSchema = new Schema({
   title        : { type: String, required: true },
-  slug         : { type: String },
+  slug         : { type: String, required: true, default: 'slug' },
   excerpt      : String,
   body         : String,
   commentable  : { type: Boolean, default: false},
@@ -71,7 +67,7 @@ var ArticleSchema = new Schema({
 
       // convert the author id to an ObjectId
       if(ret.author) {
-        ret.author = mongoose.Types.ObjectId.fromString(ret.author);
+        ret.author = mongoose.Types.ObjectId(ret.author);
       } else {
         ret.author = null;
       }
@@ -83,16 +79,49 @@ var ArticleSchema = new Schema({
 });
 
 
+// Remove relations from other collections
+ArticleSchema.pre('remove', function (next) {
+  var
+    article  = this,
+    criteria = { _id: {$in: article.tags}, owner: article.owner },
+    update   = { $pull: { 'articles': article._id } };
+
+
+  if(!article.tags.length) {
+    next();
+  } {
+    // requiring at runtime to avoid circular dependencies
+    Tag = Tag || require('./Tag');
+
+    Tag.update(criteria, update, {multi:true}, function(err, numAffected) {
+      /* istanbul ignore next */
+      if(err) { return next(err); }
+      next();
+    });
+  }
+});
+
+
 // Secondary indexes
-// ------------------------
+// ----------------------------------
+ArticleSchema.index({ tags: 1 });
 
 // slug must be unique for a given client
 ArticleSchema.index({ owner: 1, slug: 1}, { unique: true });
 
 
+// Custom methods and attributes
+// ----------------------------------
+ArticleSchema.statics.safeAttrs = ['title', 'excerpt', 'body', 'published', 'published_at', 'commentable'];
+
+
 // Register the plugins
-// ------------------------
+// ----------------------------------
 ArticleSchema.plugin( require('mongoose-paginate') );
 
 
-module.exports = mongoose.model('BlogArticle', ArticleSchema);
+/* istanbul ignore next */
+var BlogArticleModel = mongoose.models.BlogArticle ?
+  mongoose.model('BlogArticle') : mongoose.model('BlogArticle', ArticleSchema);
+
+module.exports = BlogArticleModel;
