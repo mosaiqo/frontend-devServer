@@ -256,21 +256,18 @@ describe('api/blog/tags', function() {
         .put('/api/blog/tags/'+createdModel.id)
         .set('Authorization', authHeader)
         .send({
-          body      : 8,
-          author_id : 'XD',
+          name : ''
         })
         .set('Accept', 'application/json')
         .expect('Content-Type', /application\/json/)
         .expect(422)
         .end(function(err, res) {
 
-          var response = res.body.data;
-
-
-
-
-
-
+          var response = res.body;
+          expect(response).to.have.property('error');
+          expect(response.error.code).to.equal(422);
+          expect(response).to.have.property('errors');
+          expect(response.errors).to.have.property('name');
 
           done();
         });

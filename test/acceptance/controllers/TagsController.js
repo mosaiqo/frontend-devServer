@@ -20,7 +20,7 @@ var
  * @todo : improve this tests...
  */
 describe('TagsController', function() {
-
+/*
   describe('TagsController.retrieveAndCreate', function() {
 
     it('should return an empty array if there are no tags in the request', function(done) {
@@ -101,6 +101,6 @@ describe('TagsController', function() {
     });
 
 
-  });
+  });*/
 
 });

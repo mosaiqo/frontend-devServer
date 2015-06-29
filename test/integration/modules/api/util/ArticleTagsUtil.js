@@ -102,11 +102,11 @@ describe('modules/api/util/ArticleTagsUtil', function() {
               expect(models.length).to.equal(2);
               models.forEach(function(model) {
                 model.remove();
-              })
+              });
               cb();
             });
           }
-        ], done)
+        ], done);
       });
     });
 

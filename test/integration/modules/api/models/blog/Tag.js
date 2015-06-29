@@ -4,6 +4,8 @@
 'use strict';
 
 var
+  async             = require('async'),
+
   // test dependencies
   mocha             = require('mocha'),
   expect            = require('chai').expect,
@@ -14,7 +16,10 @@ var
   mongoConfigParser = require('src/lib/mongoConfigParser'),
 
   // file being tested
-  Tag               = requireHelper('modules/api/models/blog/Tag');
+  Tag               = requireHelper('modules/api/models/blog/Tag'),
+
+  // other
+  Article           = require('src/modules/api/models/blog/Article');
 
 
 
@@ -58,8 +63,7 @@ describe('BlogTag model', function() {
     tag.save(function(err, tag) {
       expect(tag.name).to.equal(tagData.name);
       expect(tag.description).to.equal(tagData.description);
-      tag.remove();
-      done();
+      tag.remove(done);
     });
   });
 
@@ -84,17 +88,50 @@ describe('BlogTag model', function() {
       expect(tagJSON).to.not.have.property('_id');
       expect(tagJSON.created_at).to.match(/^\d{10}$/);
       expect(tagJSON.updated_at).to.match(/^\d{10}$/);
-      tag.remove();
-
-      done();
+      tag.remove(done);
     });
   });
 
 
   it('should unlink tagged articles when deleting', function(done) {
+    var tag, article, ownerId = id('000000000000000000000001');
 
+    async.series([
+      function(cb) {  // create a tag
+        tag = new Tag({
+          name:  'someRandomTag5646445',
+          slug:  'someRandomTag5646445',
+          owner: ownerId
+        });
+        tag.save(cb);
+      },
 
-    done();
+      function(cb) {  // create an article and link it
+        article = new Article({
+          title:   faker.lorem.sentence(),
+          body:    faker.lorem.paragraphs(2),
+          slug:    'some-random-slug-45454545454',
+          author:  ownerId,
+          owner:   ownerId,
+          tags:    [tag._id]
+        });
+
+        article.save(function(err) {
+          if(err) { return cb(err); }
+          tag.articles = [article._id];
+          tag.save(cb);
+        });
+      },
+
+      function(cb) {  // delete the tag
+        tag.remove(cb);
+      }
+    ], function(err) { // check the article
+      Article.findOne({slug: article.slug}, function(err, model) {
+        expect(model.tags.length).to.equal(0);
+        model.remove(done);
+      });
+    });
   });
 
 });

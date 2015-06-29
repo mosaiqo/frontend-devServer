@@ -259,7 +259,7 @@ describe('api/blog/articles', function() {
         .put('/api/blog/articles/'+createdModel.id)
         .set('Authorization', authHeader)
         .send({
-          body      : 8,
+          title     : '',
           author_id : 'XD',
         })
         .set('Accept', 'application/json')
@@ -267,9 +267,12 @@ describe('api/blog/articles', function() {
         .expect(422)
         .end(function(err, res) {
 
-          var response = res.body.data;
-
-          console.log('response', response);
+          var response = res.body;
+          expect(response).to.have.property('error');
+          expect(response.error.code).to.equal(422);
+          expect(response).to.have.property('errors');
+          expect(response.errors).to.have.property('title');
+          expect(response.errors).to.have.property('author');
 
           done();
         });

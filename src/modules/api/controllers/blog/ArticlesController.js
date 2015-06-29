@@ -55,9 +55,8 @@ ArticlesController.prototype.create = function(req, res, next) {
           slug:    null
         };
 
-      if(req.body.author_id) {
-        model.author = req.body.author_id;
-      }
+      /* istanbul ignore next */
+      if(req.body.author_id) { model.author = req.body.author_id; }
 
       callback(null, model, options);
     },
@@ -103,9 +102,8 @@ ArticlesController.prototype.update = function(req, res, next) {
         // assign the new attributes
         articleModel.set(_.pick(req.body, Article.safeAttrs));
 
-        if(req.body.author_id) {
-          articleModel.author = req.body.author_id;
-        }
+        /* istanbul ignore next */
+        if(req.body.author_id) { articleModel.author = req.body.author_id; }
 
         callback(null, articleModel, options);
       });
