@@ -1,5 +1,3 @@
-/* global require, module, process, console */
-/* jshint -W097 */
 'use strict';
 
 var HTTPerrors = [

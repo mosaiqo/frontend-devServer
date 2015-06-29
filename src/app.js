@@ -1,5 +1,3 @@
-/* global require, module, process, exports, console, __dirname */
-/* jshint -W097 */
 'use strict';
 
 // Set the base path for the requires
@@ -113,3 +111,4 @@ if (process.env.DEV) {        // dev/test mode: just create one instance
 
   cluster(createApp);
 }
+console.log('fuck');

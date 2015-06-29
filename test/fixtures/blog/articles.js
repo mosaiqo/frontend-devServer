@@ -1,5 +1,3 @@
-/* global require, module, process, console, __dirname */
-/* jshint -W097 */
 module.exports = (function() {
   'use strict';
 
