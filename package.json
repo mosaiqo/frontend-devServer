@@ -28,6 +28,7 @@
     "lodash": "^3.9.3",
     "mongoose": "~4.0.6",
     "mongoose-paginate": "https://github.com/josepramon/mongoose-paginate",
+    "mongoose-populator": "^1.0.4",
     "newrelic": "^1.20.2",
     "prompt": "^0.2.14",
     "redis": "^0.12.1",
