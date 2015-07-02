@@ -113,6 +113,7 @@ ArticleSchema.index({ owner: 1, slug: 1}, { unique: true });
 // Custom methods and attributes
 // ----------------------------------
 ArticleSchema.statics.safeAttrs = ['title', 'excerpt', 'body', 'published', 'published_at', 'commentable'];
+ArticleSchema.methods.getRefs = function() { return ['tags', 'author']; };
 
 
 // Register the plugins
@@ -123,5 +124,6 @@ ArticleSchema.plugin( require('mongoose-paginate') );
 /* istanbul ignore next */
 var BlogArticleModel = mongoose.models.BlogArticle ?
   mongoose.model('BlogArticle') : mongoose.model('BlogArticle', ArticleSchema);
+
 
 module.exports = BlogArticleModel;

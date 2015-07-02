@@ -28,4 +28,19 @@ var MediaSchema = new Schema({
 
 });
 
-module.exports = mongoose.model('Media', MediaSchema);
+
+// Custom methods and attributes
+// ----------------------------------
+MediaSchema.methods.getRefs = function() { return []; };
+
+
+// Register the plugins
+// ----------------------------------
+MediaSchema.plugin( require('mongoose-paginate') );
+
+
+/* istanbul ignore next */
+var MediaModel = mongoose.models.Media ?
+  mongoose.model('Media') : mongoose.model('Media', MediaSchema);
+
+module.exports = MediaModel;
