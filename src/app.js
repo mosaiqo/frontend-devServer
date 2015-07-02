@@ -108,7 +108,5 @@ if (process.env.DEV) {        // dev/test mode: just create one instance
 
 } else {                      // production mode: clustered, one worker per core
   var cluster = require('express-cluster');
-
   cluster(createApp);
 }
-console.log('fuck');
