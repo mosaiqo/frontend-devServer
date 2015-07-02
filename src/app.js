@@ -12,10 +12,10 @@ if(process.env.APP_DIR_FOR_CODE_COVERAGE) {
 
 // New Relic
 /* istanbul ignore next */
-if (process.env.NEW_RELIC_ENABLED && !process.env.DEV) {
-  require('newrelic');
-  debug('Starting New Relic monitoring');
-}
+// if (process.env.NEW_RELIC_ENABLED && !process.env.DEV) {
+//   require('newrelic');
+//   debug('Starting New Relic monitoring');
+// }
 
 
 
