@@ -103,7 +103,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks('grunt-istanbul')
 
   # Override some istanbul stuff because it does not support ES6
-  istanbulTraceur = require('istanbul-traceur')
+  istanbulHarmony = require('istanbul-harmony')
 
   usedIstanbul = undefined
   Instrumenter = undefined
@@ -112,7 +112,7 @@ module.exports = (grunt) ->
     usedIstanbul = require('grunt-istanbul/node_modules/istanbul')
     Instrumenter = usedIstanbul.Instrumenter
     # Overrides `Instrumenter`
-    usedIstanbul.Instrumenter = istanbulTraceur.Instrumenter
+    usedIstanbul.Instrumenter = istanbulHarmony.Instrumenter
     return
 
   grunt.registerTask 'istanbul:restore', ->

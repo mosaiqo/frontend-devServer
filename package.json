@@ -54,7 +54,7 @@
     "grunt-nodemon": "~0.4.0",
     "grunt-notify": "^0.4.1",
     "istanbul": "^0.3.17",
-    "istanbul-traceur": "^1.0.7",
+    "istanbul-harmony": "^0.3.16",
     "jit-grunt": "^0.9.1",
     "jshint-stylish": "^2.0.1",
     "load-grunt-config": "^0.17.1",
