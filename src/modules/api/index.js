@@ -27,6 +27,8 @@ var mongoConn = new mongoConfigParser().setEnv({
 mongoose.connection.on('error', function () {
     debug('Mongoose connection error');
 });
+
+/* istanbul ignore next */
 mongoose.connection.once('open', function callback() {
     debug('Mongoose connected to the database');
 });

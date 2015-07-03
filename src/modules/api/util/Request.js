@@ -1,8 +1,6 @@
 'use strict';
 
-var
-  _        = require('underscore'),
-  populate = require('mongoose-populator');
+var _ = require('underscore');
 
 
 /**
