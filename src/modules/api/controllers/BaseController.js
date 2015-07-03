@@ -1,11 +1,12 @@
 'use strict';
 
 var
-  _              = require('underscore'),
-  async          = require('async'),
-  errors         = require('src/lib/errors'),
-  respFormatter  = require('../util/responseFormatter'),
-  RequestUtil    = require('../util/apiRequestUtil');
+  _             = require('underscore'),
+  async         = require('async'),
+  errors        = require('src/lib/errors'),
+  Request       = require('../util/Request'),
+  Response      = require('../util/Response'),
+  ExpandsURLMap = require('../util/ExpandsURLMap');
 
 
 /**
@@ -21,24 +22,40 @@ BaseController.prototype.Model = null;
 
 
 /**
+ * Nested references output config
+ *
+ * @type {ExpandsURLMap}
+ */
+BaseController.prototype.expandsURLMap = new ExpandsURLMap();
+
+
+/**
  * Retrieve one Model element
  */
 BaseController.prototype.getOne = function(req, res, next) {
 
   var
-    r        = new RequestUtil(req),
-    criteria = _.extend({ '_id': req.params.id }, r.query);
+    request  = new Request(req),
+    response = new Response(request, this.expandsURLMap),
+
+    criteria = {
+      owner: request.getOwnerFromAuth(),
+      _id:   req.params.id
+    };
 
   this.Model
     .findOne(criteria)
-    .populate(r.expands)
     .exec(function(err, model) {
       /* istanbul ignore next */
       if (err)    { return next(err); }
       if (!model) { return next(new errors.NotFound()); }
 
-      var meta = r.getMeta();
-      res.json(respFormatter(model, meta));
+      response.formatOutput(model, function(err, output) {
+        /* istanbul ignore next */
+        if (err) { return next(err); }
+
+        res.json(output);
+      });
     });
 };
 
@@ -49,18 +66,28 @@ BaseController.prototype.getOne = function(req, res, next) {
 BaseController.prototype.getAll = function(req, res, next) {
 
   var
-    r    = new RequestUtil(req),
-    opts = { page: r.page, limit: r.limit, populate: r.expands };
+    request    = new Request(req),
+    response   = new Response(request, this.expandsURLMap),
+    pagination = request.pagination,
 
-  this.Model.paginate(r.query, opts, function(err, paginatedResults, pageCount, itemCount) {
+    criteria   = { owner: request.getOwnerFromAuth() },
+    opts       = { page: pagination.page, limit: pagination.limit };
+
+
+  this.Model.paginate(criteria, opts, function(err, paginatedResults, pageCount, itemCount) {
     /* istanbul ignore next */
     if (err) { return next(err); }
 
-    var meta = r.getMeta(null, { itemCount: itemCount, pageCount: pageCount });
+    response
+      .setPaginationParams(pageCount, itemCount)
+      .formatOutput(paginatedResults, function(err, output) {
+        /* istanbul ignore next */
+        if (err) { return next(err); }
 
-    res.json(respFormatter(paginatedResults, meta));
+        res.json(output);
+      });
 
-  }, r.options);
+  }, request.options);
 };
 
 
@@ -86,20 +113,27 @@ BaseController.prototype.update = function(req, res, next) {};
 BaseController.prototype.delete = function(req, res, next) {
 
   var
-    r = new RequestUtil(req),
-    criteria = _.extend({ '_id': req.params.id }, r.query);
+    request  = new Request(req),
+    response = new Response(request, this.expandsURLMap),
+    criteria = {
+      owner: request.getOwnerFromAuth(),
+      _id:   req.params.id
+    };
 
   this.Model
     .findOne(criteria)
-    .populate(r.expands)
     .exec(function(err, model) {
-
       /* istanbul ignore next */
       if (err)    { return next(err); }
       if (!model) { return next( new errors.NotFound() ); }
 
       model.remove(function() {
-        res.json(respFormatter(model));
+        response.formatOutput(model, function(err, output) {
+          /* istanbul ignore next */
+          if (err) { return next(err); }
+          
+          res.json(output);
+        });
       });
   });
 };

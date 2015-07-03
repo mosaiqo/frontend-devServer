@@ -7,8 +7,9 @@ var
   errors          = require('src/lib/errors'),
 
   // API utilities
-  respFormatter   = require('../../util/responseFormatter'),
-  RequestUtil     = require('../../util/apiRequestUtil'),
+  Request         = require('../../util/Request'),
+  Response        = require('../../util/Response'),
+  ExpandsURLMap   = require('../../util/ExpandsURLMap'),
   slugger         = require('../../util/slugger'),
 
   // Base class
@@ -35,36 +36,61 @@ TagsController.prototype.Model = Tag;
 
 
 /**
+ * Nested references output config
+ *
+ * @type {ExpandsURLMap}
+ */
+TagsController.prototype.expandsURLMap = new ExpandsURLMap({
+  "articles": {
+    "route": "/blog/tags/:parentId/articles",
+    "expands": {
+      "tags": {
+        "route": "/blog/articles/:parentId/tags",
+        "expands": {
+          "articles": {
+            "route": "/blog/tags/:parentId/articles"
+          },
+          "author": {
+            "route": "/authors/:itemId"
+          }
+        }
+      }
+    }
+  }
+});
+
+
+/**
  * Create a new Tag
  */
 TagsController.prototype.create = function(req, res, next) {
-
-  var r = new RequestUtil(req), that = this;
+  var
+    request  = new Request(req),
+    response = new Response(request, this.expandsURLMap);
 
   async.waterfall([
     function setup(callback) {
       var
         attrs = _.extend({ owner: req.user.userId }, _.pick(req.body, Tag.safeAttrs)),
-        model = new Tag(attrs),
-        options = {
-          expands: r.expands,
-          slug:    null
-        };
+        model = new Tag(attrs);
 
-      callback(null, model, options);
+      callback(null, model, { slug: null });
     },
-    that._validate,
-    that._setSlug,
-    that._save,
-    that._applyExpands
+    this._validate,
+    this._setSlug,
+    this._save
 
   ], function asyncComplete(err, model) {
 
     /* istanbul ignore next */
     if (err) { return next(err); }
 
-    var meta = r.getMeta(model);
-    res.json(respFormatter(model, meta));
+    response.formatOutput(model, function(err, output) {
+      /* istanbul ignore next */
+      if (err) { return next(err); }
+
+      res.json(output);
+    });
   });
 };
 
@@ -73,12 +99,16 @@ TagsController.prototype.create = function(req, res, next) {
  * Update a Tag
  */
 TagsController.prototype.update = function(req, res, next) {
-
-  var r = new RequestUtil(req), that = this;
+  var
+    request  = new Request(req),
+    response = new Response(request, this.expandsURLMap);
 
   async.waterfall([
     function setup(callback) {
-      var criteria = _.extend({ '_id': req.params.id }, r.query);
+      var criteria = {
+        _id:   req.params.id,
+        owner: request.getOwnerFromAuth()
+      };
 
       Tag.findOne(criteria).exec(function(err, tagModel) {
         /* istanbul ignore next */
@@ -86,30 +116,27 @@ TagsController.prototype.update = function(req, res, next) {
         /* istanbul ignore next */
         if (!tagModel) { return callback(new errors.NotFound()); }
 
-        var
-          options = {
-            expands: r.expands,
-            slug:    req.body.slug
-          };
-
         // assign the new attributes
         tagModel.set(_.pick(req.body, Tag.safeAttrs));
 
-        callback(null, tagModel, options);
+        callback(null, tagModel, { slug: req.body.slug });
       });
     },
-    that._validate,
-    that._setSlug,
-    that._save,
-    that._applyExpands
+    this._validate,
+    this._setSlug,
+    this._save
 
   ], function asyncComplete(err, model) {
 
     /* istanbul ignore next */
     if (err) { return next(err); }
 
-    var meta = r.getMeta();
-    res.json(respFormatter(model, meta));
+    response.formatOutput(model, function(err, output) {
+      /* istanbul ignore next */
+      if (err) { return next(err); }
+
+      res.json(output);
+    });
   });
 };
 
@@ -144,13 +171,6 @@ TagsController.prototype._save = function(model, options, callback) {
     /* istanbul ignore next */
     if (err) { return callback(err); }
     callback(null, model, options);
-  });
-};
-
-
-TagsController.prototype._applyExpands = function(model, options, callback) {
-  model.populate(options.expands, function() {
-    callback(null, model);
   });
 };
 

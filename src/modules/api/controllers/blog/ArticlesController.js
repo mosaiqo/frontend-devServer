@@ -7,9 +7,10 @@ var
   errors          = require('src/lib/errors'),
 
   // API utilities
-  respFormatter   = require('../../util/responseFormatter'),
-  RequestUtil     = require('../../util/apiRequestUtil'),
+  Request         = require('../../util/Request'),
+  Response        = require('../../util/Response'),
   ArticleTagsUtil = require('../../util/ArticleTagsUtil'),
+  ExpandsURLMap   = require('../../util/ExpandsURLMap'),
   slugger         = require('../../util/slugger'),
 
   // Base class
@@ -36,20 +37,48 @@ ArticlesController.prototype.Model = Article;
 
 
 /**
+ * Nested references output config
+ *
+ * @type {ExpandsURLMap}
+ */
+ArticlesController.prototype.expandsURLMap = new ExpandsURLMap({
+  "author": {
+    "route": "/authors/:itemId"
+  },
+  "tags": {
+    "route": "/blog/articles/:parentId/tags",
+    "expands": {
+      "articles": {
+        "route": "/blog/tags/:parentId/articles",
+        "expands": {
+          "tags": {
+            "route": "/blog/articles/:parentId/tags"
+          },
+          "author": {
+            "route": "/authors/:itemId"
+          }
+        }
+      }
+    }
+  }
+});
+
+
+/**
  * Create a new Article
  */
 ArticlesController.prototype.create = function(req, res, next) {
-
-  var r = new RequestUtil(req), that = this;
+  var
+    request  = new Request(req),
+    response = new Response(request, this.expandsURLMap);
 
   async.waterfall([
     function setup(callback) {
       var
-        attrs = _.extend({ owner: req.user.userId }, _.pick(req.body, Article.safeAttrs)),
+        attrs = _.extend({ owner: request.getOwnerFromAuth() }, _.pick(req.body, Article.safeAttrs)),
         model = new Article(attrs),
         options = {
           tags:    req.body.tags,
-          expands: r.expands,
           slug:    null
         };
 
@@ -58,18 +87,21 @@ ArticlesController.prototype.create = function(req, res, next) {
 
       callback(null, model, options);
     },
-    that._validate,
-    that._setSlug,
-    that._setTags,
-    that._applyExpands
+    this._validate,
+    this._setSlug,
+    this._setTags
 
   ], function asyncComplete(err, model) {
 
     /* istanbul ignore next */
     if (err) { return next(err); }
 
-    var meta = r.getMeta(model);
-    res.json(respFormatter(model, meta));
+    response.formatOutput(model, function(err, output) {
+      /* istanbul ignore next */
+      if (err) { return next(err); }
+
+      res.json(output);
+    });
   });
 };
 
@@ -78,12 +110,16 @@ ArticlesController.prototype.create = function(req, res, next) {
  * Update an Article
  */
 ArticlesController.prototype.update = function(req, res, next) {
-
-  var r = new RequestUtil(req), that = this;
+  var
+    request  = new Request(req),
+    response = new Response(request, this.expandsURLMap);
 
   async.waterfall([
     function setup(callback) {
-      var criteria = _.extend({ '_id': req.params.id }, r.query);
+      var criteria = {
+        _id:   req.params.id,
+        owner: request.getOwnerFromAuth()
+      };
 
       Article.findOne(criteria).exec(function(err, articleModel) {
         /* istanbul ignore next */
@@ -93,7 +129,6 @@ ArticlesController.prototype.update = function(req, res, next) {
 
         var options = {
           tags:    req.body.tags,
-          expands: r.expands,
           slug:    req.body.slug
         };
 
@@ -106,18 +141,21 @@ ArticlesController.prototype.update = function(req, res, next) {
         callback(null, articleModel, options);
       });
     },
-    that._validate,
-    that._setSlug,
-    that._setTags,
-    that._applyExpands
+    this._validate,
+    this._setSlug,
+    this._setTags
 
   ], function asyncComplete(err, model) {
 
     /* istanbul ignore next */
     if (err) { return next(err); }
 
-    var meta = r.getMeta();
-    res.json(respFormatter(model, meta));
+    response.formatOutput(model, function(err, output) {
+      /* istanbul ignore next */
+      if (err) { return next(err); }
+
+      res.json(output);
+    });
   });
 };
 
@@ -169,13 +207,6 @@ ArticlesController.prototype._setTags = function(model, options, callback) {
       return callback(err);
     }
     callback(null, model, options);
-  });
-};
-
-
-ArticlesController.prototype._applyExpands = function(model, options, callback) {
-  model.populate(options.expands, function() {
-    callback(null, model);
   });
 };
 
