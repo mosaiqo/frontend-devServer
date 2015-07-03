@@ -3,7 +3,7 @@
 module.exports = function(router) {
 
   var
-    BlogTagsController = require('../controllers/blog/TagsController'),
+    BlogTagsController = require('../../../controllers/blog/TagsController'),
     controller         = new BlogTagsController();
 
 
