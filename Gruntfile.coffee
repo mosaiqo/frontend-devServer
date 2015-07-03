@@ -101,3 +101,21 @@ module.exports = (grunt) ->
   # because istanbul exposes more tasks like 'instrument' and others
   # that are not recognised otherwise by jitGrunt
   grunt.loadNpmTasks('grunt-istanbul')
+
+  # Override some istanbul stuff because it does not support ES6
+  istanbulTraceur = require('istanbul-traceur')
+
+  usedIstanbul = undefined
+  Instrumenter = undefined
+
+  grunt.registerTask 'istanbul:override', ->
+    usedIstanbul = require('grunt-istanbul/node_modules/istanbul')
+    Instrumenter = usedIstanbul.Instrumenter
+    # Overrides `Instrumenter`
+    usedIstanbul.Instrumenter = istanbulTraceur.Instrumenter
+    return
+
+  grunt.registerTask 'istanbul:restore', ->
+    # Restores original `Instrumenter`
+    usedIstanbul.Instrumenter = Instrumenter
+    return

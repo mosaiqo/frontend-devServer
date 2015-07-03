@@ -51,10 +51,12 @@ test:coverage:
   tasks:
     - clean:coverage
     - env:coverage
+    - istanbul:override
     - instrument
     - test
     - storeCoverage
     - makeReport
+    - istanbul:restore
 
 
 
