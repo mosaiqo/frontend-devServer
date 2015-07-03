@@ -81,7 +81,7 @@ class Request {
   get pagination() {
     var pagination = {
       page:     parseInt(this.req.query.page || 1, 10),
-      per_page: parseInt(this.req.query.per_page || this.req.query.limit, 10)
+      per_page: parseInt(this.req.query.per_page || this.req.query.limit || 20, 10)
     };
 
     if(this.options.sortBy) {
