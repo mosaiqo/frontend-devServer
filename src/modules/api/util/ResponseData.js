@@ -14,7 +14,9 @@ var _ = require('underscore');
 class ResponseData {
 
   /**
-   *
+   * @param {String} baseURL              Base URL (the API url)
+   * @param {Array} expands               Nested relations to expand
+   * @param {ExpandsURLMap} expandsURLMap Options for the expands (url mappings, etc)
    */
   constructor(baseURL, expands, expandsURLMap) {
     this.baseURL       = baseURL;
@@ -37,7 +39,7 @@ class ResponseData {
 
 
   /**
-   *
+   * @return {Object} the formatted 'data' node
    */
   toJSON() {
     var formatedData = {};
@@ -50,8 +52,10 @@ class ResponseData {
         this.data.forEach(function(item) {
           formatedData.push(that._formatItem(item, that.expands, 0));
         });
-      } else {
+      } else if(this.data.getRefs) {
         formatedData = this._formatItem(this.data, this.expands, 0);
+      } else {
+        formatedData = this.data;
       }
     }
 
@@ -63,7 +67,13 @@ class ResponseData {
   // --------------------------------------------------------------------
 
   /**
+   * Formats one entity by expanding/collapsing the relations as requested
+   * with the corresponding meta/data nodes for the relations
    *
+   * @param  {Model} item     The entity to format
+   * @param  {Array} expands  Relations to expand
+   * @param  {Array} stack    Current nesting level
+   * @return {Object}         The formatted entity
    */
   _formatItem(item, expands, stack) {
 
@@ -107,7 +117,12 @@ class ResponseData {
 
 
   /**
+   * Formats one of the entity relations
    *
+   * @param  {mixed} nestedData     The nested data (can be a model or an array of them)
+   * @param  {Array} nestedExpands  Expands for that level
+   * @param  {Array} stack          Current nesting level
+   * @return {mixed}                The formatted relations (can be an object or an array of them)
    */
   _formatNestedData(nestedData, nestedExpands, stack) {
     var ret;
@@ -126,7 +141,13 @@ class ResponseData {
 
 
   /**
+   * Formats the meta node for a nested relation
    *
+   * @param  {mixed}    data     The relation data
+   * @param  {String}   attr     The entity attribute that contains the relation
+   * @param  {Array}    stack    Current nesting level
+   * @param  {ObjectId} parentId Parent ntity Id
+   * @return {Object}            The relation 'meta' node
    */
   _getNestedMeta(data, attr, stack, parentId) {
     var url = this.expandsURLMap.getRoute(stack.join('/'));
@@ -159,7 +180,9 @@ class ResponseData {
 
 
   /**
-   *
+   * @param {String} attr    Entity attribute that contains the nested data
+   * @param {Array}  expands Entity attributes to expand
+   * @return {Array}         The attributes to expand on that attr., (false if none)
    */
   _getNestedExpands(attr, expands) {
     return _.compact(expands.map(function(expand) {
@@ -174,7 +197,8 @@ class ResponseData {
 
 
   /**
-   *
+   * @param {mixed} attrVal The data for some attribute that contains related data
+   * @return {Number}       The amount of nested entities for a given attribute
    */
   _getItemCount(attrVal) {
     if(Array.isArray(attrVal)) {

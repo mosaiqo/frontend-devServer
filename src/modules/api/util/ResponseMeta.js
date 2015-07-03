@@ -3,21 +3,24 @@
 var _ = require('underscore');
 
 /**
+ * Response 'meta' node formatter
  *
+ * Adds the meta node with the document URL, pagination params and other metadata
  */
 class ResponseMeta {
 
   /**
-   *
+   * @param {String} requestURL     Full request url, without the querystring params
+   * @param {Object} paginationOpts Pagination options
    */
   constructor(requestURL, paginationOpts) {
     this.requestURL = requestURL;
-    this.paginationOpts = paginationOpts || {};
+    this.paginationOpts = paginationOpts;
   }
 
 
   /**
-   *
+   * @return {Object} the formatted 'meta' node
    */
   toJSON() {
     var meta = {
@@ -34,7 +37,9 @@ class ResponseMeta {
 
 
   /**
-   *
+   * Builds the 'paginator' node
+   * @param  {Object} pagination  Pagination options
+   * @return {Object}             The formatted 'paginator' object
    */
   _getPaginator(pagination) {
     var paginator = {
