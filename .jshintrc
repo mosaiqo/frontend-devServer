@@ -6,6 +6,7 @@
   "eqeqeq": true,
   "undef": true,
   "expr": true,
+  "esnext": true,
   "globals": {
     "console": true
   }

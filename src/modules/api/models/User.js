@@ -79,6 +79,11 @@ UserSchema.pre('save', function (next) {
   }
 });
 
+
+// Custom methods and attributes
+// ----------------------------------
+UserSchema.methods.getRefs = function() { return []; };
+
 //Password verification
 UserSchema.methods.comparePassword = function (passw, cb) {
   bcrypt.compare(passw, this.password, function (err, isMatch) {
@@ -91,4 +96,13 @@ UserSchema.methods.comparePassword = function (passw, cb) {
 };
 
 
-module.exports = mongoose.model('User', UserSchema);
+// Register the plugins
+// ----------------------------------
+UserSchema.plugin( require('mongoose-paginate') );
+
+
+/* istanbul ignore next */
+var UserModel = mongoose.models.User ?
+  mongoose.model('User') : mongoose.model('User', UserSchema);
+
+module.exports = UserModel;

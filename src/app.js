@@ -12,10 +12,10 @@ if(process.env.APP_DIR_FOR_CODE_COVERAGE) {
 
 // New Relic
 /* istanbul ignore next */
-if (process.env.NEW_RELIC_ENABLED && !process.env.DEV) {
-  require('newrelic');
-  debug('Starting New Relic monitoring');
-}
+// if (process.env.NEW_RELIC_ENABLED && !process.env.DEV) {
+//   require('newrelic');
+//   debug('Starting New Relic monitoring');
+// }
 
 
 
@@ -108,7 +108,5 @@ if (process.env.DEV) {        // dev/test mode: just create one instance
 
 } else {                      // production mode: clustered, one worker per core
   var cluster = require('express-cluster');
-
   cluster(createApp);
 }
-console.log('fuck');
