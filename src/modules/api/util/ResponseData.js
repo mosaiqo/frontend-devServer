@@ -99,7 +99,7 @@ class ResponseData {
     for(let attr in willNotExpand) {
       let newStack = stack.concat([attr]);
       ret[attr] = {
-        meta: this._getNestedMeta(willNotExpand[attr], attr, newStack, item._id)
+        meta: this._getNestedMeta(willNotExpand[attr], newStack, item._id)
       };
     }
 
@@ -107,7 +107,7 @@ class ResponseData {
     for(let attr in willExpand) {
       let newStack = stack.concat([attr]);
       ret[attr] = {
-        meta: this._getNestedMeta(willExpand[attr], attr, newStack, item._id),
+        meta: this._getNestedMeta(willExpand[attr], newStack, item._id),
         data: this._formatNestedData(willExpand[attr], this._getNestedExpands(attr, expands), newStack)
       };
     }
@@ -144,12 +144,11 @@ class ResponseData {
    * Formats the meta node for a nested relation
    *
    * @param  {mixed}    data     The relation data
-   * @param  {String}   attr     The entity attribute that contains the relation
    * @param  {Array}    stack    Current nesting level
    * @param  {ObjectId} parentId Parent entity Id
    * @return {Object}            The relation 'meta' node
    */
-  _getNestedMeta(data, attr, stack, parentId) {
+  _getNestedMeta(data, stack, parentId) {
     var url = this.expandsURLMap.getRoute(stack.join('/'));
 
     if(url) {
@@ -159,17 +158,23 @@ class ResponseData {
       url = url.replace(/:parentId/g, parentId);
 
       if(url.indexOf(':itemId') > -1) {
-        let itemId  = null;
-        if(data._id) {
-          itemId = data._id;
-        } else if('toHexString' in data) {
-          itemId = data;
-        }
+        if(!data) {
+          url = '';
+        } else {
+          let itemId;
+          if(data._id) {
+            itemId = data._id;
+          } else if('toHexString' in data) {
+            itemId = data;
+          } else {
+            itemId  = null;
+          }
 
-        if(itemId) {
-          url = url.replace(/:itemId/g, itemId);
+          url = itemId ? url.replace(/:itemId/g, itemId): '';
         }
       }
+    } else {
+      url = '';
     }
 
     return {
