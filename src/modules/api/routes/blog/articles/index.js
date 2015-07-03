@@ -3,7 +3,7 @@
 module.exports = function(router) {
 
   var
-    BlogArticlesController = require('../controllers/blog/ArticlesController'),
+    BlogArticlesController = require('../../../controllers/blog/ArticlesController'),
     controller             = new BlogArticlesController();
 
 
