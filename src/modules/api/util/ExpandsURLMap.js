@@ -51,17 +51,17 @@ class ExpandsURLMap {
    * @return {String}       the route for the requested path
    */
   getRoute(path) {
+    if(!path) { return null; }
+
     var
       node  = null,
       attrs = path.split('/');
 
-    if(attrs.length) {
-      let that = this;
-      
-      attrs.slice(0, this.depth).forEach(function(k,i) {
-        node = (i>0) ? node.expands[k] : that.data[k];
-      });
-    }
+    let that = this;
+
+    attrs.slice(0, this.depth).forEach(function(k,i) {
+      node = (i>0) ? node.expands[k] : that.data[k];
+    });
 
     return node ? node.route : null;
   }
@@ -76,10 +76,11 @@ class ExpandsURLMap {
    * @return {Number}
    */
   _getExpandsMaxDepth(expandsConfig, level) {
-    level = level || 0;
+    level = level || 1;
 
     for(let key in expandsConfig){
-      if (!expandsConfig.hasOwnProperty(key)) {continue;}
+      /* istanbul ignore next */
+      if (!expandsConfig.hasOwnProperty(key)) { continue; }
 
       if(typeof expandsConfig[key] === 'object'){
         if(key === 'expands' && !_.isEmpty(expandsConfig[key])) { level++; }
