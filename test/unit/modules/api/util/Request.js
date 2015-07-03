@@ -13,7 +13,7 @@ var
   Request = requireHelper('modules/api/util/Request');
 
 
-describe('modules/api/util/Request', function(done) {
+describe('modules/api/util/Request', function() {
 
   it('should return the full requestURL', function(done) {
     // mock the req. object

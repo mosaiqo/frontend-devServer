@@ -13,7 +13,7 @@ var
   ResponseMeta = requireHelper('modules/api/util/ResponseMeta');
 
 
-describe('modules/api/util/ResponseMeta', function(done) {
+describe('modules/api/util/ResponseMeta', function() {
 
   it('should return an object with an url attribute equal to the one supplied on the constructor', function(done) {
     var entityUrl = 'http://localhost/api/foo';

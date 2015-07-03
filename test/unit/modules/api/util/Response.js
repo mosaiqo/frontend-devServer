@@ -15,7 +15,7 @@ var
   Response = requireHelper('modules/api/util/Response');
 
 
-describe('modules/api/util/Response', function(done) {
+describe('modules/api/util/Response', function() {
 
   var original_expandData;
 

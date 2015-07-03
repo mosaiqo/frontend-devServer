@@ -13,7 +13,7 @@ var
   ExpandsURLMap = requireHelper('modules/api/util/ExpandsURLMap');
 
 
-describe('modules/api/util/ExpandsURLMap', function(done) {
+describe('modules/api/util/ExpandsURLMap', function() {
 
   it('should store the data passed on the constructor as an attribute', function(done) {
     var data = {
