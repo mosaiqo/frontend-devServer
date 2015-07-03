@@ -96,7 +96,7 @@ class BaseController
    * @abstract
    */
   /* istanbul ignore next */
-  create(req, res, next) {}
+  create(req, res, next) { next(); }
 
 
   /**
@@ -104,7 +104,7 @@ class BaseController
    * @abstract
    */
   /* istanbul ignore next */
-  update(req, res, next) {}
+  update(req, res, next) { next(); }
 
 
   /**
