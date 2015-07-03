@@ -20,9 +20,9 @@ class Response {
    * @param {ExpandsURLMap} expandsURLMap  Options for the expands (url mappings, etc)
    */
   constructor(request, expandsURLMap) {
-    this.request          = request;
-    this.paginationParams = null;
+    this.request          = request || {};
     this.expandsURLMap    = expandsURLMap;
+    this.paginationParams = null;
   }
 
 
@@ -71,20 +71,29 @@ class Response {
 
 
     // create the data formatter
-    expands = this.request.getExpands(this.expandsURLMap.depth);
+    expands = this.expandsURLMap ? this.request.getExpands(this.expandsURLMap.depth): [];
 
     dataNode = new ResponseData(this.request.requestBaseURL, expands, this.expandsURLMap);
 
-    // apply the expands and build the output
-    this._expandData(data, expands, function(err, expandedData) {
-      /* istanbul ignore next */
-      if(err) { return callback(err); }
-
+    // callback executed after populating the nested relations
+    // or right away if there's nothing to populate
+    var cb = function(data) {
       callback(null, {
         meta: metaNode.toJSON(),
-        data: dataNode.setData(expandedData).toJSON()
+        data: dataNode.setData(data).toJSON()
       });
-    });
+    };
+
+    // apply the expands and build the output
+    if(expands.length) {
+      this._expandData(data, expands, function(err, expandedData) {
+        /* istanbul ignore next */
+        if(err) { return callback(err); }
+        cb(expandedData);
+      });
+    } else {
+      cb(data);
+    }
   }
 
 
