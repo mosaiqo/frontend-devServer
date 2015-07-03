@@ -146,7 +146,7 @@ class ResponseData {
    * @param  {mixed}    data     The relation data
    * @param  {String}   attr     The entity attribute that contains the relation
    * @param  {Array}    stack    Current nesting level
-   * @param  {ObjectId} parentId Parent ntity Id
+   * @param  {ObjectId} parentId Parent entity Id
    * @return {Object}            The relation 'meta' node
    */
   _getNestedMeta(data, attr, stack, parentId) {
