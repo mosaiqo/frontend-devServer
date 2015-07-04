@@ -66,14 +66,18 @@ class ArticlesController extends BaseController
    */
   create(req, res, next) {
     var
+      that     = this,
       request  = new Request(req),
-      response = new Response(request, this.expandsURLMap);
+      response = new Response(request, this.expandsURLMap),
+
+      // mass assignable attrs.
+      newAttrs = this._getAssignableAttributes(request);
+
 
     async.waterfall([
       function setup(callback) {
         var
-          attrs = _.extend({ owner: request.getOwnerFromAuth() }, _.pick(req.body, Article.safeAttrs)),
-          model = new Article(attrs),
+          model = new Article(newAttrs),
           options = {
             tags:    req.body.tags,
             slug:    null
@@ -109,15 +113,17 @@ class ArticlesController extends BaseController
   update(req, res, next) {
     var
       request  = new Request(req),
-      response = new Response(request, this.expandsURLMap);
+      response = new Response(request, this.expandsURLMap),
+
+      // query used to find the doc
+      criteria = this._buildCriteria(request),
+
+      // mass assignable attrs.
+      newAttrs = this._getAssignableAttributes(request);
+
 
     async.waterfall([
       function setup(callback) {
-        var criteria = {
-          _id:   req.params.id,
-          owner: request.getOwnerFromAuth()
-        };
-
         Article.findOne(criteria).exec(function(err, articleModel) {
           /* istanbul ignore next */
           if (err)           { return callback(err); }
@@ -130,7 +136,7 @@ class ArticlesController extends BaseController
           };
 
           // assign the new attributes
-          articleModel.set(_.pick(req.body, Article.safeAttrs));
+          articleModel.set(newAttrs);
 
           /* istanbul ignore next */
           if(req.body.author_id) { articleModel.author = req.body.author_id; }
@@ -160,16 +166,6 @@ class ArticlesController extends BaseController
   // Aux. "private" methods
   // (actually they're not private so can be easily tested)
   // =============================================================================
-
-
-  _validate(model, options, callback) {
-    model.validate(function (err) {
-      /* istanbul ignore next */
-      if (err) { return callback(err); }
-      callback(null, model, options);
-    });
-  }
-
 
   _setSlug(model, options, callback) {
     slugger(Article, model.title, options.slug, function(err, articleSlug) {
