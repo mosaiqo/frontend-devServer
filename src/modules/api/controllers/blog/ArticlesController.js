@@ -178,7 +178,7 @@ class ArticlesController extends BaseController
   }
 
 
-   _setTags(model, options, callback) {
+  _setTags(model, options, callback) {
     var tags = options.tags || [];
 
     if(!_.isObject(tags) || !_.isArray(tags)) {
