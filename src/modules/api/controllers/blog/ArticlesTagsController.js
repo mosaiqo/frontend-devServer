@@ -18,17 +18,6 @@ class ArticlesTagsController extends TagsController
 {
   constructor() {
     super();
-
-    /**
-     * Nested references output config
-     *
-     * @type {ExpandsURLMap}
-     */
-    this.expandsURLMap = new ExpandsURLMap({
-      "articles": {
-        "route": "/blog/tags/:parentId/articles"
-      }
-    });
   }
 
 
@@ -49,7 +38,9 @@ class ArticlesTagsController extends TagsController
   _getAssignableAttributes(request, customAttrs) {
     customAttrs = customAttrs || {};
 
-    if(request.req.params.articleId) {
+    // When creating a new tag, link it.
+    // Don't do it when updating to avoid overriding any other linked article.
+    if(request.req.params.articleId && request.req.method === 'POST') {
       customAttrs.articles = request.req.params.articleId;
     }
 
