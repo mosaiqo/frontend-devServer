@@ -107,7 +107,6 @@ class TagsController extends BaseController
       // mass assignable attrs.
       newAttrs = this._getAssignableAttributes(request);
 
-
     async.waterfall([
       function setup(callback) {
         Tag.findOne(criteria).exec(function(err, tagModel) {

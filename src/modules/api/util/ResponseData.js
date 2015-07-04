@@ -151,13 +151,6 @@ class ResponseData {
   _getNestedMeta(data, stack, parentId) {
     var url = this.expandsURLMap.getRoute(stack.join('/'));
 
-    console.log('_getNestedMeta');
-    console.log('data', data);
-    console.log('stack', stack);
-    console.log('parentId', parentId);
-    console.log('url', url);
-    console.log('---------------------------------');
-
     if(url) {
       url = this.baseURL + url;
 
