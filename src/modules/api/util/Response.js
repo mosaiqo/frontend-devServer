@@ -69,9 +69,8 @@ class Response {
 
     metaNode = new ResponseMeta(this.request.requestURL, pagination);
 
-
     // create the data formatter
-    expands = this.expandsURLMap ? this.request.getExpands(this.expandsURLMap.depth): [];
+    expands = this.expandsURLMap ? this.request.getExpands(this.expandsURLMap.depth-2): [];
 
     dataNode = new ResponseData(this.request.requestBaseURL, expands, this.expandsURLMap);
 
