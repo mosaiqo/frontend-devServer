@@ -97,18 +97,18 @@ class ResponseData {
 
     // add the unexpanded nested data
     for(let attr in willNotExpand) {
-      let newStack = stack.concat([attr]);
+      stack = stack.concat([attr]);
       ret[attr] = {
-        meta: this._getNestedMeta(willNotExpand[attr], newStack, item._id)
+        meta: this._getNestedMeta(willNotExpand[attr], stack, item._id)
       };
     }
 
     // add the expanded nested data
     for(let attr in willExpand) {
-      let newStack = stack.concat([attr]);
+      stack = stack.concat([attr]);
       ret[attr] = {
-        meta: this._getNestedMeta(willExpand[attr], newStack, item._id),
-        data: this._formatNestedData(willExpand[attr], this._getNestedExpands(attr, expands), newStack)
+        meta: this._getNestedMeta(willExpand[attr], stack, item._id),
+        data: this._formatNestedData(willExpand[attr], this._getNestedExpands(attr, expands), stack)
       };
     }
 

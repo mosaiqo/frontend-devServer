@@ -9,6 +9,14 @@ module.exports = function(router) {
 
   router.route('/blog/tags')
 
+  /**
+   * @apiDefine BlogTags
+   *
+   * Blog/Tags
+   * Articles tags API endpoint
+   */
+
+
     /**
      * @apiDefine CommonApiParams
      *
@@ -66,7 +74,7 @@ module.exports = function(router) {
     /**
      * @api {get} /blog/tags List all the tags owned by the authenticated user
      * @apiName List
-     * @apiGroup Blog/Tags
+     * @apiGroup BlogTags
      *
      * @apiUse CommonApiParams
      *
@@ -113,7 +121,7 @@ module.exports = function(router) {
     /**
      * @api {post} /blog/tags Create a new tag
      * @apiName Create
-     * @apiGroup Blog/Tags
+     * @apiGroup BlogTags
      *
      * @apiParam {String} name           Tag name. (must be unique for this client)
      * @apiParam {String} [description}  Tag description.
@@ -149,9 +157,9 @@ module.exports = function(router) {
   router.route('/blog/tags/:id')
 
     /**
-     * @api {get} /blog/tags Get the tag with that id
+     * @api {get} /blog/tags/:id Get the tag with that id
      * @apiName Get
-     * @apiGroup Blog/Tags
+     * @apiGroup BlogTags
      *
      * @apiUse CommonApiParams
      *
@@ -181,9 +189,9 @@ module.exports = function(router) {
 
 
     /**
-     * @api {put} /blog/tags Update the tag with this id
+     * @api {put} /blog/tags/:id Update the tag with this id
      * @apiName Update
-     * @apiGroup Blog/Tags
+     * @apiGroup BlogTags
      *
      * @apiParam {String} name           Tag name. (must be unique for this client)
      * @apiParam {String} [description]  Tag description.
@@ -219,9 +227,9 @@ module.exports = function(router) {
 
 
     /**
-     * @api {delete} /blog/tags Delete the tag with this id
+     * @api {delete} /blog/tags/:id Delete the tag with this id
      * @apiName Delete
-     * @apiGroup Blog/Tags
+     * @apiGroup BlogTags
      *
      * @apiUse CommonApiParams
      *

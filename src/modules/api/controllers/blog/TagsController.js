@@ -63,14 +63,15 @@ class TagsController extends BaseController
   create(req, res, next) {
     var
       request  = new Request(req),
-      response = new Response(request, this.expandsURLMap);
+      response = new Response(request, this.expandsURLMap),
+
+      // mass assignable attrs.
+      newAttrs = this._getAssignableAttributes(request);
+
 
     async.waterfall([
       function setup(callback) {
-        var
-          attrs = _.extend({ owner: req.user.userId }, _.pick(req.body, Tag.safeAttrs)),
-          model = new Tag(attrs);
-
+        var model = new Tag(newAttrs);
         callback(null, model, { slug: null });
       },
       this._validate,
@@ -98,15 +99,16 @@ class TagsController extends BaseController
   update(req, res, next) {
     var
       request  = new Request(req),
-      response = new Response(request, this.expandsURLMap);
+      response = new Response(request, this.expandsURLMap),
+
+      // query used to find the doc
+      criteria = this._buildCriteria(request),
+
+      // mass assignable attrs.
+      newAttrs = this._getAssignableAttributes(request);
 
     async.waterfall([
       function setup(callback) {
-        var criteria = {
-          _id:   req.params.id,
-          owner: request.getOwnerFromAuth()
-        };
-
         Tag.findOne(criteria).exec(function(err, tagModel) {
           /* istanbul ignore next */
           if (err)           { return callback(err); }
@@ -114,7 +116,7 @@ class TagsController extends BaseController
           if (!tagModel) { return callback(new errors.NotFound()); }
 
           // assign the new attributes
-          tagModel.set(_.pick(req.body, Tag.safeAttrs));
+          tagModel.set(newAttrs);
 
           callback(null, tagModel, { slug: req.body.slug });
         });
@@ -143,30 +145,12 @@ class TagsController extends BaseController
   // (actually they're not private so can be easily tested)
   // =============================================================================
 
-  _validate(model, options, callback) {
-    model.validate(function (err) {
-      /* istanbul ignore next */
-      if (err) { return callback(err); }
-      callback(null, model, options);
-    });
-  }
-
-
   _setSlug(model, options, callback) {
     slugger(Tag, model.name, options.slug, function(err, tagSlug) {
       /* istanbul ignore next */
       if (err) { return callback(err); }
 
       model.slug = tagSlug;
-      callback(null, model, options);
-    });
-  }
-
-
-  _save(model, options, callback) {
-    model.save(function(err) {
-      /* istanbul ignore next */
-      if (err) { return callback(err); }
       callback(null, model, options);
     });
   }

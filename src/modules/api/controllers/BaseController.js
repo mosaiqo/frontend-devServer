@@ -37,11 +37,7 @@ class BaseController
     var
       request  = new Request(req),
       response = new Response(request, this.expandsURLMap),
-
-      criteria = {
-        owner: request.getOwnerFromAuth(),
-        _id:   req.params.id
-      };
+      criteria = this._buildCriteria(request);
 
     this.Model
       .findOne(criteria)
@@ -69,8 +65,7 @@ class BaseController
       request    = new Request(req),
       response   = new Response(request, this.expandsURLMap),
       pagination = request.pagination,
-
-      criteria   = { owner: request.getOwnerFromAuth() },
+      criteria   = this._buildCriteria(request),
       opts       = { page: pagination.page, limit: pagination.limit };
 
 
@@ -115,10 +110,7 @@ class BaseController
     var
       request  = new Request(req),
       response = new Response(request, this.expandsURLMap),
-      criteria = {
-        owner: request.getOwnerFromAuth(),
-        _id:   req.params.id
-      };
+      criteria = this._buildCriteria(request);
 
     this.Model
       .findOne(criteria)
@@ -135,6 +127,49 @@ class BaseController
             res.json(output);
           });
         });
+    });
+  }
+
+
+  // Aux. "private" methods
+  // (actually they're not private so can be easily tested)
+  // =============================================================================
+
+  _buildCriteria(request) {
+    var criteria = {
+      owner: request.getOwnerFromAuth()
+    };
+
+    if(request.req.params.id) {
+      criteria._id = request.req.params.id;
+    }
+
+    return criteria;
+  }
+
+  _getAssignableAttributes(request, customAttrs) {
+    customAttrs = customAttrs || {};
+    return _.extend(
+      { owner: request.req.user.userId },
+      customAttrs,
+      _.pick(request.req.body, this.Model.safeAttrs)
+    );
+  }
+
+  _validate(model, options, callback) {
+    model.validate(function (err) {
+      /* istanbul ignore next */
+      if (err) { return callback(err); }
+      callback(null, model, options);
+    });
+  }
+
+
+  _save(model, options, callback) {
+    model.save(function(err) {
+      /* istanbul ignore next */
+      if (err) { return callback(err); }
+      callback(null, model, options);
     });
   }
 
