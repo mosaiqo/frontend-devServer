@@ -97,18 +97,18 @@ class ResponseData {
 
     // add the unexpanded nested data
     for(let attr in willNotExpand) {
-      let newStack = stack.concat([attr]);
+      stack = stack.concat([attr]);
       ret[attr] = {
-        meta: this._getNestedMeta(willNotExpand[attr], newStack, item._id)
+        meta: this._getNestedMeta(willNotExpand[attr], stack, item._id)
       };
     }
 
     // add the expanded nested data
     for(let attr in willExpand) {
-      let newStack = stack.concat([attr]);
+      stack = stack.concat([attr]);
       ret[attr] = {
-        meta: this._getNestedMeta(willExpand[attr], newStack, item._id),
-        data: this._formatNestedData(willExpand[attr], this._getNestedExpands(attr, expands), newStack)
+        meta: this._getNestedMeta(willExpand[attr], stack, item._id),
+        data: this._formatNestedData(willExpand[attr], this._getNestedExpands(attr, expands), stack)
       };
     }
 
@@ -150,6 +150,13 @@ class ResponseData {
    */
   _getNestedMeta(data, stack, parentId) {
     var url = this.expandsURLMap.getRoute(stack.join('/'));
+
+    console.log('_getNestedMeta');
+    console.log('data', data);
+    console.log('stack', stack);
+    console.log('parentId', parentId);
+    console.log('url', url);
+    console.log('---------------------------------');
 
     if(url) {
       url = this.baseURL + url;
