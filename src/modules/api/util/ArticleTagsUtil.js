@@ -9,7 +9,65 @@ var
   slugger = require('./slugger'),
 
   // Models
-  Tag     = require('../models/blog/Tag');
+  Tag     = require('../models/blog/Tag'),
+  Article = require('../models/blog/Article');
+
+
+  /**
+   * Sets the articles for a tag
+   *
+   * Sets the tag articles, linking them (bidirectionally),
+   *
+   * @param {Tag}      tag      The Tag model
+   * @param {mixed}    articles An article object or an array of articles
+   * @param {Function} next     Callback
+   */
+var setTagArticles = function(tag, articles, callback) {
+  var
+    currentArticles    = tag.articles || [],
+    articleIdsToLink   = articles.map(_getObjId),
+    currentArticleIds  = currentArticles.map(_getObjId),
+    articleIdsToUnlink = _.difference(currentArticleIds, articleIdsToLink),
+    actions            = [];
+
+  if(articleIdsToUnlink.length) {
+    actions.push({
+      criteria: { _id: {$in: articleIdsToUnlink}, owner: tag.owner },
+      update:   { $pull: { 'tags': tag.id } }
+    });
+  }
+
+  if(articleIdsToLink.length) {
+    actions.push({
+      criteria: { _id: {$in: articleIdsToLink}, owner: tag.owner },
+      update:   { $addToSet: { 'tags': tag.id } }
+    });
+  }
+
+  if(!actions.length) {
+    callback(null, tag);
+  } else {
+    async.each(actions, function(action, cb) {
+      Article.update(action.criteria, action.update, {multi: true}, function(err, numAffected) {
+        /* istanbul ignore next */
+        if(err) { return cb(err); }
+        cb(null);
+      });
+
+    }, function(err) {
+      /* istanbul ignore next */
+      if(err) { return callback(err); }
+
+      tag.articles = _.unique(_.difference(currentArticleIds.concat(articleIdsToLink), articleIdsToUnlink));
+
+      tag.save(function(err, tag) {
+        /* istanbul ignore next */
+        if(err) { return callback(err); }
+        callback(null, tag);
+      });
+    });
+  }
+};
 
 
 /**
