@@ -89,7 +89,8 @@ class ArticlesController extends BaseController
       },
       this._validate,
       this._setSlug,
-      this._setTags
+      this._setTags,
+      this._save
 
     ], function asyncComplete(err, model) {
 
@@ -144,7 +145,8 @@ class ArticlesController extends BaseController
       },
       this._validate,
       this._setSlug,
-      this._setTags
+      this._setTags,
+      this._save
 
     ], function asyncComplete(err, model) {
 
