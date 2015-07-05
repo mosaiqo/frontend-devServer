@@ -60,7 +60,7 @@ describe('modules/api/util/ArticleTagsUtil', function() {
 
 
 
-  describe('createUnexistingTags', function() {
+  describe('_createUnexistingTags', function() {
 
     it('should create only the tags without id', function(done) {
 
@@ -77,7 +77,7 @@ describe('modules/api/util/ArticleTagsUtil', function() {
           { name: 'some-new-tag-2' }                    // another new tag
         ];
 
-      ArticleTagsUtil.createUnexistingTags(articleModel, tagsToAssign, function(err, model) {
+      ArticleTagsUtil._createUnexistingTags(articleModel, tagsToAssign, function(err, model) {
 
         expect(err).to.be.null;
 
@@ -110,7 +110,7 @@ describe('modules/api/util/ArticleTagsUtil', function() {
   });
 
 
-  describe('updateTagsArticles', function() {
+  describe('_updateTagsArticles', function() {
 
     it('should invoke the callback if there\'s nothing to do', function(done) {
       var
@@ -120,7 +120,7 @@ describe('modules/api/util/ArticleTagsUtil', function() {
         },
         tagsToAssign = [];
 
-      ArticleTagsUtil.updateTagsArticles(articleModel, tagsToAssign, function(err, model) {
+      ArticleTagsUtil._updateTagsArticles(articleModel, tagsToAssign, function(err, model) {
         expect(model.tags).to.be.undefined;
         done();
       });
@@ -135,7 +135,7 @@ describe('modules/api/util/ArticleTagsUtil', function() {
         },
         tagsToAssign = [existingTag];
 
-      ArticleTagsUtil.updateTagsArticles(articleModel, tagsToAssign, function(err, model) {
+      ArticleTagsUtil._updateTagsArticles(articleModel, tagsToAssign, function(err, model) {
         Tag.find({_id: existingTag._id}, function(err, models) {
           expect(models[0].articles.length).to.equal(1);
           expect(models[0].articles[0].toString()).to.equal(articleModel.id.toString());
@@ -154,7 +154,7 @@ describe('modules/api/util/ArticleTagsUtil', function() {
         },
         tagsToAssign = [];
 
-      ArticleTagsUtil.updateTagsArticles(articleModel, tagsToAssign, function(err, model) {
+      ArticleTagsUtil._updateTagsArticles(articleModel, tagsToAssign, function(err, model) {
         Tag.find({_id: existingTag._id}, function(err, models) {
           expect(models[0].articles.length).to.equal(0);
           done();
@@ -165,7 +165,7 @@ describe('modules/api/util/ArticleTagsUtil', function() {
   });
 
 
-  describe('updateArticleTags', function() {
+  describe('_updateArticleTags', function() {
 
     it('should update the tags on the article', function(done) {
       var
@@ -179,7 +179,7 @@ describe('modules/api/util/ArticleTagsUtil', function() {
           { id: objectid('000000000000000000000002') }
         ];
 
-      ArticleTagsUtil.updateArticleTags(articleModel, tagsToAssign, function(err, model) {
+      ArticleTagsUtil._updateArticleTags(articleModel, tagsToAssign, function(err, model) {
         expect(model).to.have.property('tags');
         expect(model.tags.length).to.equal(2);
 

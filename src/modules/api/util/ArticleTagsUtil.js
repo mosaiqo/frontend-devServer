@@ -39,9 +39,9 @@ var setArticleTags = function(article, tags, next) {
       callback(null, article, tags);
     },
 
-    createUnexistingTags,
-    updateTagsArticles,
-    updateArticleTags,
+    _createUnexistingTags,
+    _updateTagsArticles,
+    _updateArticleTags,
 
   ], function asyncComplete(err, model) {
 
@@ -54,13 +54,14 @@ var setArticleTags = function(article, tags, next) {
 
 /**
  * Creates the unexistant tags for an article
+ * @private
  *
  * @param {Article}  article        The article model
  * @param {Array}    requestedTags  All the tags to assign.
  *                                  Only the unexistant ones will be created.
  * @param {Function} next           Callback
  */
-var createUnexistingTags = function(article, requestedTags, callback) {
+var _createUnexistingTags = function(article, requestedTags, callback) {
 
   var
     newArticleTags = requestedTags.filter(function(tag) {
@@ -98,12 +99,13 @@ var createUnexistingTags = function(article, requestedTags, callback) {
 
 /**
  * Links the tags to a given Article updating the tags 'articles' tag attributes
+ * @private
  *
  * @param {Article}  article        The article model
  * @param {Array}    newArticleTags The tags to assign.
  * @param {Function} next           Callback
  */
-var updateTagsArticles = function(article, newArticleTags, callback) {
+var _updateTagsArticles = function(article, newArticleTags, callback) {
 
   var
     currentTags    = article.tags || [],
@@ -148,12 +150,13 @@ var updateTagsArticles = function(article, newArticleTags, callback) {
 
 /**
  * Links the tags to a given Article updating the article 'tags' attribute
+ * @private
  *
  * @param {Article}  article        The article model
  * @param {Array}    newArticleTags The tags to assign.
  * @param {Function} next           Callback
  */
-var updateArticleTags = function(article, newArticleTags, callback) {
+var _updateArticleTags = function(article, newArticleTags, callback) {
 
   article.tags = newArticleTags.map(_getObjId);
   article.save(function(err) {
@@ -165,19 +168,21 @@ var updateArticleTags = function(article, newArticleTags, callback) {
 /**
  * Aux. funct. When dealing with object nested relations,
  * the nexted objects can be expanded or they can be just Node ObjectIds
+ * @private
  *
- * @param {mixed} tag The tag model or just its id
- * @return {String} the tag id
+ * @param {mixed} tag The model or just its id
+ * @return {String} the id
  */
-var _getObjId = function(tag) {
-  return tag.toHexString ? tag.toHexString() : tag.id;
+var _getObjId = function(obj) {
+  return obj.toHexString ? obj.toHexString() : obj.id;
 };
 
 
 module.exports = {
-  setArticleTags: setArticleTags,
-  createUnexistingTags: createUnexistingTags,
-  updateTagsArticles: updateTagsArticles,
-  updateArticleTags: updateArticleTags,
-  _getObjId: _getObjId
+  setArticleTags:        setArticleTags,
+  setTagArticles:        setTagArticles,
+  _createUnexistingTags: _createUnexistingTags,
+  _updateTagsArticles:   _updateTagsArticles,
+  _updateArticleTags:    _updateArticleTags,
+  _getObjId:             _getObjId
 };
