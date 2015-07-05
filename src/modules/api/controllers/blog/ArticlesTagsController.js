@@ -35,18 +35,6 @@ class ArticlesTagsController extends TagsController
 
     return criteria;
   }
-
-  _getAssignableAttributes(request, customAttrs) {
-    customAttrs = customAttrs || {};
-
-    // When creating a new tag, link it.
-    // Don't do it when updating to avoid overriding any other linked article.
-    if(request.req.params.articleId && request.req.method === 'POST') {
-      customAttrs.articles = request.req.params.articleId;
-    }
-
-    return super._getAssignableAttributes(request, customAttrs);
-  }
 }
 
 
