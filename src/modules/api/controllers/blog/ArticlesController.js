@@ -78,10 +78,9 @@ class ArticlesController extends BaseController
       function setup(callback) {
         var
           model = new Article(newAttrs),
-          options = {
-            tags:    req.body.tags,
-            slug:    null
-          };
+          options = { slug: null };
+
+        if(!_.isUndefined(req.body.tags)) { options.tags = req.body.tags; }
 
         /* istanbul ignore next */
         if(req.body.author_id) { model.author = req.body.author_id; }
@@ -130,10 +129,9 @@ class ArticlesController extends BaseController
           /* istanbul ignore next */
           if (!articleModel) { return callback(new errors.NotFound()); }
 
-          var options = {
-            tags:    req.body.tags,
-            slug:    req.body.slug
-          };
+          var options = {};
+          if(!_.isUndefined(req.body.tags)) { options.tags = req.body.tags; }
+          if(!_.isUndefined(req.body.slug)) { options.slug = req.body.slug; }
 
           // assign the new attributes
           articleModel.set(newAttrs);
@@ -168,39 +166,48 @@ class ArticlesController extends BaseController
   // =============================================================================
 
   _setSlug(model, options, callback) {
-    slugger(Article, model.title, options.slug, function(err, articleSlug) {
-      /* istanbul ignore next */
-      if (err) { return callback(err); }
-
-      model.slug = articleSlug;
+    if(_.isUndefined(options.slug)) {
       callback(null, model, options);
-    });
+    } else {
+      slugger(Article, model.title, options.slug, function(err, articleSlug) {
+        /* istanbul ignore next */
+        if (err) { return callback(err); }
+
+        model.slug = articleSlug;
+        callback(null, model, options);
+      });
+    }
   }
 
 
   _setTags(model, options, callback) {
-    var tags = options.tags || [];
-
-    if(!_.isObject(tags) || !_.isArray(tags)) {
-      try {
-        tags = JSON.parse(tags);
-      } catch(e) {
-        return callback( errors.Validation(model, 'tags', 'Tags must be a valid JSON') );
-      }
-    }
-
-    ArticleTagsUtil.setArticleTags(model, tags, function(err) {
-      /* istanbul ignore next */
-      if (err) {
-        if(err.code === 11000) {
-          var repeatedTag = /:\ "(.+)" \}$/.exec(err.message)[1];
-          err = errors.Validation(model, 'tags', "Can't create tag '" + repeatedTag + "', already exists");
-        }
-
-        return callback(err);
-      }
+    if(_.isUndefined(options.tags)) {
       callback(null, model, options);
-    });
+    } else {
+
+      let tags = options.tags || [];
+
+      if(!_.isObject(tags) || !_.isArray(tags)) {
+        try {
+          tags = JSON.parse(tags);
+        } catch(e) {
+          return callback( errors.Validation(model, 'tags', 'Tags must be a valid JSON') );
+        }
+      }
+
+      ArticleTagsUtil.setArticleTags(model, tags, function(err) {
+        /* istanbul ignore next */
+        if (err) {
+          if(err.code === 11000) {
+            var repeatedTag = /:\ "(.+)" \}$/.exec(err.message)[1];
+            err = errors.Validation(model, 'tags', "Can't create tag '" + repeatedTag + "', already exists");
+          }
+
+          return callback(err);
+        }
+        callback(null, model, options);
+      });
+    }
   }
 
 }

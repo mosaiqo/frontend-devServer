@@ -118,7 +118,10 @@ class TagsController extends BaseController
           // assign the new attributes
           tagModel.set(newAttrs);
 
-          callback(null, tagModel, { slug: req.body.slug });
+          var options = {};
+          if(!_.isUndefined(req.body.slug)) { options.slug = req.body.slug; }
+
+          callback(null, tagModel, options);
         });
       },
       this._validate,
@@ -146,13 +149,17 @@ class TagsController extends BaseController
   // =============================================================================
 
   _setSlug(model, options, callback) {
-    slugger(Tag, model.name, options.slug, function(err, tagSlug) {
-      /* istanbul ignore next */
-      if (err) { return callback(err); }
-
-      model.slug = tagSlug;
+    if(_.isUndefined(options.slug)) {
       callback(null, model, options);
-    });
+    } else {
+      slugger(Tag, model.name, options.slug, function(err, tagSlug) {
+        /* istanbul ignore next */
+        if (err) { return callback(err); }
+
+        model.slug = tagSlug;
+        callback(null, model, options);
+      });
+    }
   }
 
 }
