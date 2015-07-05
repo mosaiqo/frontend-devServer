@@ -67,7 +67,7 @@ class ArticlesController extends BaseController
   create(req, res, next) {
     var
       that     = this,
-      request  = new Request(req),
+      request  = new Request(this._preprocessRequest(req)),
       response = new Response(request, this.expandsURLMap),
 
       // mass assignable attrs.
@@ -111,7 +111,7 @@ class ArticlesController extends BaseController
    */
   update(req, res, next) {
     var
-      request  = new Request(req),
+      request  = new Request(this._preprocessRequest(req)),
       response = new Response(request, this.expandsURLMap),
 
       // query used to find the doc

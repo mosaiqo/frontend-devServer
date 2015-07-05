@@ -35,7 +35,7 @@ class BaseController
   getOne(req, res, next) {
 
     var
-      request  = new Request(req),
+      request  = new Request(this._preprocessRequest(req)),
       response = new Response(request, this.expandsURLMap),
       criteria = this._buildCriteria(request);
 
@@ -62,7 +62,7 @@ class BaseController
   getAll(req, res, next) {
 
     var
-      request    = new Request(req),
+      request    = new Request(this._preprocessRequest(req)),
       response   = new Response(request, this.expandsURLMap),
       pagination = request.pagination,
       criteria   = this._buildCriteria(request),
@@ -108,7 +108,7 @@ class BaseController
   delete(req, res, next) {
 
     var
-      request  = new Request(req),
+      request  = new Request(this._preprocessRequest(req)),
       response = new Response(request, this.expandsURLMap),
       criteria = this._buildCriteria(request);
 
@@ -135,6 +135,11 @@ class BaseController
   // (actually they're not private so can be easily tested)
   // =============================================================================
 
+  _preprocessRequest(req) {
+    return req;
+  }
+
+
   _buildCriteria(request) {
     var criteria = {
       owner: request.getOwnerFromAuth()
@@ -147,6 +152,7 @@ class BaseController
     return criteria;
   }
 
+
   _getAssignableAttributes(request, customAttrs) {
     customAttrs = customAttrs || {};
     return _.extend(
@@ -155,6 +161,7 @@ class BaseController
       _.pick(request.req.body, this.Model.safeAttrs)
     );
   }
+
 
   _validate(model, options, callback) {
     model.validate(function (err) {
