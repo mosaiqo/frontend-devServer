@@ -35,7 +35,7 @@ class BaseController
   getOne(req, res, next) {
 
     var
-      request  = new Request(this._preprocessRequest(req)),
+      request  = new Request(req),
       response = new Response(request, this.expandsURLMap),
       criteria = this._buildCriteria(request);
 
@@ -62,7 +62,7 @@ class BaseController
   getAll(req, res, next) {
 
     var
-      request    = new Request(this._preprocessRequest(req)),
+      request    = new Request(req),
       response   = new Response(request, this.expandsURLMap),
       pagination = request.pagination,
       criteria   = this._buildCriteria(request),
@@ -108,7 +108,7 @@ class BaseController
   delete(req, res, next) {
 
     var
-      request  = new Request(this._preprocessRequest(req)),
+      request  = new Request(req),
       response = new Response(request, this.expandsURLMap),
       criteria = this._buildCriteria(request);
 
@@ -134,11 +134,6 @@ class BaseController
   // Aux. "private" methods
   // (actually they're not private so can be easily tested)
   // =============================================================================
-
-  _preprocessRequest(req) {
-    return req;
-  }
-
 
   _buildCriteria(request) {
     var criteria = {

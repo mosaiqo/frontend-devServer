@@ -4,7 +4,8 @@ module.exports = function(router) {
 
   var
     BlogArticlesTagsController = require('../../../controllers/blog/ArticlesTagsController'),
-    controller                 = new BlogArticlesTagsController();
+    controller                 = new BlogArticlesTagsController(),
+    tagArticlesMiddleware      = require('../../../middleware/tagArticles');
 
 
   router.route('/blog/articles/:articleId/tags')
@@ -31,7 +32,7 @@ module.exports = function(router) {
      * @apiName Create
      * @apiGroup BlogArticlesTags
      */
-    .post(controller.create.bind(controller));
+    .post(tagArticlesMiddleware, controller.create.bind(controller));
 
 
 

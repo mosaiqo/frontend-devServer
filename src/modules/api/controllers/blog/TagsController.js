@@ -10,6 +10,7 @@ var
   Request         = require('../../util/Request'),
   Response        = require('../../util/Response'),
   ExpandsURLMap   = require('../../util/ExpandsURLMap'),
+  ArticleTagsUtil = require('../../util/ArticleTagsUtil'),
   slugger         = require('../../util/slugger'),
 
   // Base class
@@ -62,7 +63,7 @@ class TagsController extends BaseController
    */
   create(req, res, next) {
     var
-      request  = new Request(this._preprocessRequest(req)),
+      request  = new Request(req),
       response = new Response(request, this.expandsURLMap),
 
       // mass assignable attrs.
@@ -72,10 +73,17 @@ class TagsController extends BaseController
     async.waterfall([
       function setup(callback) {
         var model = new Tag(newAttrs);
-        callback(null, model, { slug: null });
+
+        var options = { slug: null };
+        if(!_.isUndefined(req.body.articles)) { options.articles = req.body.articles; }
+
+        console.log('req.body:', req.body);
+
+        callback(null, model, options);
       },
       this._validate,
       this._setSlug,
+      this._setArticles,
       this._save
 
     ], function asyncComplete(err, model) {
@@ -98,7 +106,7 @@ class TagsController extends BaseController
    */
   update(req, res, next) {
     var
-      request  = new Request(this._preprocessRequest(req)),
+      request  = new Request(req),
       response = new Response(request, this.expandsURLMap),
 
       // query used to find the doc
@@ -119,13 +127,15 @@ class TagsController extends BaseController
           tagModel.set(newAttrs);
 
           var options = {};
-          if(!_.isUndefined(req.body.slug)) { options.slug = req.body.slug; }
+          if(!_.isUndefined(req.body.slug))     { options.slug = req.body.slug; }
+          if(!_.isUndefined(req.body.articles)) { options.tags = req.body.articles; }
 
           callback(null, tagModel, options);
         });
       },
       this._validate,
       this._setSlug,
+      this._setArticles,
       this._save
 
     ], function asyncComplete(err, model) {
@@ -157,6 +167,29 @@ class TagsController extends BaseController
         if (err) { return callback(err); }
 
         model.slug = tagSlug;
+        callback(null, model, options);
+      });
+    }
+  }
+
+
+  _setArticles(model, options, callback) {
+    if(_.isUndefined(options.articles)) {
+      callback(null, model, options);
+    } else {
+      let articles = options.articles || [];
+
+      if(!_.isObject(articles) || !_.isArray(articles)) {
+        try {
+          articles = JSON.parse(articles);
+        } catch(e) {
+          return callback( errors.Validation(model, 'articles', 'Articles must be a valid JSON') );
+        }
+      }
+
+      ArticleTagsUtil.setTagArticles(model, articles, function(err, model) {
+        /* istanbul ignore next */
+        if(err) { return callback(err); }
         callback(null, model, options);
       });
     }
