@@ -2,17 +2,17 @@
 
 var
   // generic stuff
-  _               = require('underscore'),
+  _              = require('underscore'),
 
   // API utilities
-  ExpandsURLMap   = require('../../util/ExpandsURLMap'),
+  ExpandsURLMap  = require('../../util/ExpandsURLMap'),
 
   // Base class
-  TagsController  = require('./TagsController');
+  TagsController = require('./TagsController');
 
 
 /**
- * ArticlesController
+ * ArticlesTagsController
  */
 class ArticlesTagsController extends TagsController
 {
