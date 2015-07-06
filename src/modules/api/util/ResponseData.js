@@ -94,21 +94,20 @@ class ResponseData {
       // pick the 'regular' fields (non refs)
       ret = _.omit(item.toJSON(), expandable);
 
-
     // add the unexpanded nested data
     for(let attr in willNotExpand) {
-      stack = stack.concat([attr]);
+      let newStack = stack.concat([attr]);
       ret[attr] = {
-        meta: this._getNestedMeta(willNotExpand[attr], stack, item._id)
+        meta: this._getNestedMeta(willNotExpand[attr], newStack, item._id)
       };
     }
 
     // add the expanded nested data
     for(let attr in willExpand) {
-      stack = stack.concat([attr]);
+      let newStack = stack.concat([attr]);
       ret[attr] = {
-        meta: this._getNestedMeta(willExpand[attr], stack, item._id),
-        data: this._formatNestedData(willExpand[attr], this._getNestedExpands(attr, expands), stack)
+        meta: this._getNestedMeta(willExpand[attr], newStack, item._id),
+        data: this._formatNestedData(willExpand[attr], this._getNestedExpands(attr, expands), newStack)
       };
     }
 
