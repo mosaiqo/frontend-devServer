@@ -14,7 +14,6 @@ var
 
 describe('middleware/articleTags', function() {
 
-
   it('should do nothing if there is no tagId param', function(done) {
     // mock the request
     var req = {
@@ -94,6 +93,5 @@ describe('middleware/articleTags', function() {
       done();
     });
   });
-
 
 });
