@@ -69,22 +69,21 @@ class ArticlesController extends BaseController
       request  = new Request(req),
       response = new Response(request, this.expandsURLMap),
 
+      // options for the waterfall functs.
+      waterfallOptions = this._buildWaterfallOptions(null, req.body.tags),
+
       // mass assignable attrs.
       newAttrs = this._getAssignableAttributes(request);
 
 
     async.waterfall([
       function setup(callback) {
-        var
-          model = new Article(newAttrs),
-          options = { slug: null };
-
-        if(!_.isUndefined(req.body.tags)) { options.tags = req.body.tags; }
+        var model = new Article(newAttrs);
 
         /* istanbul ignore next */
         if(req.body.author_id) { model.author = req.body.author_id; }
 
-        callback(null, model, options);
+        callback(null, model, waterfallOptions);
       },
       this._validate,
       this._setSlug,
@@ -117,6 +116,9 @@ class ArticlesController extends BaseController
       // query used to find the doc
       criteria = this._buildCriteria(request),
 
+      // options for the waterfall functs.
+      waterfallOptions = this._buildWaterfallOptions(req.body.slug, req.body.tags),
+
       // mass assignable attrs.
       newAttrs = this._getAssignableAttributes(request);
 
@@ -128,18 +130,13 @@ class ArticlesController extends BaseController
           if (err)           { return callback(err); }
           /* istanbul ignore next */
           if (!articleModel) { return callback(new errors.NotFound()); }
-
-          var options = {};
-          if(!_.isUndefined(req.body.tags)) { options.tags = req.body.tags; }
-          if(!_.isUndefined(req.body.slug)) { options.slug = req.body.slug; }
-
           // assign the new attributes
           articleModel.set(newAttrs);
 
           /* istanbul ignore next */
           if(req.body.author_id) { articleModel.author = req.body.author_id; }
 
-          callback(null, articleModel, options);
+          callback(null, articleModel, waterfallOptions);
         });
       },
       this._validate,
@@ -166,6 +163,14 @@ class ArticlesController extends BaseController
   // (actually they're not private so can be easily tested)
   // =============================================================================
 
+  _buildWaterfallOptions(slug, tags) {
+    var options = {};
+    if(!_.isUndefined(slug)) { options.slug = slug; }
+    if(!_.isUndefined(tags)) { options.tags = tags; }
+    return options;
+  }
+
+
   _setSlug(model, options, callback) {
     if(_.isUndefined(options.slug)) {
       callback(null, model, options);
@@ -186,9 +191,9 @@ class ArticlesController extends BaseController
       callback(null, model, options);
     } else {
 
-      let tags = options.tags || [];
+      let tags = options.tags;
 
-      if(!_.isObject(tags) || !_.isArray(tags)) {
+      if(!_.isObject(tags) && !_.isArray(tags)) {
         try {
           tags = JSON.parse(tags);
         } catch(e) {
