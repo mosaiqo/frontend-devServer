@@ -41,6 +41,9 @@ class TagsController extends BaseController
       "articles": {
         "route": "/blog/tags/:parentId/articles",
         "expands": {
+          "author": {
+            "route": "/authors/:itemId"
+          },
           "tags": {
             "route": "/blog/articles/:parentId/tags",
             "expands": {
