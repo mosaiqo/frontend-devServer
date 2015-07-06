@@ -24,7 +24,7 @@ var
    */
 var setTagArticles = function(tag, articles, callback) {
   var
-    currentArticles    = tag.articles || [],
+    currentArticles    = tag.articles /* istanbul ignore next */ || [],
     articleIdsToLink   = articles.map(_getObjId),
     currentArticleIds  = currentArticles.map(_getObjId),
     articleIdsToUnlink = _.difference(currentArticleIds, articleIdsToLink),

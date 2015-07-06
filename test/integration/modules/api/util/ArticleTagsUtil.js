@@ -59,7 +59,6 @@ describe('modules/api/util/ArticleTagsUtil', function() {
   });
 
 
-
   describe('_createUnexistingTags', function() {
 
     it('should create only the tags without id', function(done) {
@@ -228,6 +227,127 @@ describe('modules/api/util/ArticleTagsUtil', function() {
       ArticleTagsUtil.setArticleTags(articleModel, tagsToAssign, function(err, model) {
         expect(err).to.be.null;
         done();
+      });
+    });
+
+  });
+
+
+  describe('setTagArticles', function() {
+
+    it('should do nothing if there is no change in the articles', function(done) {
+      var tagModel = new Tag();
+
+      tagModel.set({
+        owner:    objectid('000000000000000000000001'),
+        id:       objectid('000000000000000000000012'),
+        name:     'setTagArticlesTestTag-0',
+        slug:     'set-tag-articles-test-tag-0'
+      });
+
+      tagModel.save(function(err, model) {
+        ArticleTagsUtil.setTagArticles(model, [], function(err, tag) {
+          expect(err).to.be.null;
+          done();
+        });
+      });
+    });
+
+
+    it('should link and unlink the articles', function(done) {
+      var tagModel, articleModel1, articleModel2;
+
+      async.series([
+
+        function(cb) {
+          (new Article({
+            owner:    objectid('000000000000000000000001'),
+            author:   objectid('000000000000000000000001'),
+            id:       objectid('000000000000000000000009'),
+            title:   'Some article1',
+            slug:    'some-article-00000000001'
+          })).save(function(err, model) {
+            if(err) { return cb(err); }
+            articleModel1 = model;
+            cb();
+          });
+        },
+
+        function(cb) {
+          (new Tag({
+            owner:    objectid('000000000000000000000001'),
+            id:       objectid('000000000000000000000008'),
+            name:     'setTagArticlesTestTag',
+            slug:     'set-tag-articles-test-tag',
+            articles: ['000000000000000000000009']
+          })).save(function(err, model) {
+            if(err) { return cb(err); }
+            tagModel = model;
+            cb();
+          });
+        },
+
+        function(cb) {
+          (new Article({
+            owner:    objectid('000000000000000000000001'),
+            author:   objectid('000000000000000000000001'),
+            id:       objectid('000000000000000000000010'),
+            title:   'Some article2',
+            slug:    'some-article-00000000002'
+          })).save(function(err, model) {
+            if(err) { return cb(err); }
+            articleModel2 = model;
+            cb();
+          });
+        }
+
+      ], function(err) {
+        expect(err).to.be.null;
+
+        if(err) {
+          console.log(err);
+          done();
+        }
+
+        ArticleTagsUtil.setTagArticles(tagModel, [articleModel2], function(err, tag) {
+          expect(err).to.be.null;
+
+          async.series([
+
+            function(cb) {
+              tag.populate('articles', function(err, model) {
+                expect(model.articles.length).to.equal(1);
+                expect(model.articles[0].title).to.equal('Some article2');
+                cb();
+              });
+            },
+
+            function(cb) {
+              Article.findOne(articleModel1._id).populate('tags').exec(function(err, model) {
+                expect(model.tags.length).to.equal(0);
+                cb();
+              });
+            },
+
+            function(cb) {
+              Article.findOne(articleModel2._id).populate('tags').exec(function(err, model) {
+                expect(model.tags.length).to.equal(1);
+                expect(model.tags[0].name).to.equal('setTagArticlesTestTag');
+                cb();
+              });
+            }
+
+          ], function(err) {
+            expect(err).to.be.null;
+
+            if(err) {
+              console.log(err);
+              done();
+            }
+            done();
+          });
+
+        });
       });
     });
 
