@@ -193,7 +193,7 @@ class ArticlesController extends BaseController
 
       let tags = options.tags;
 
-      if(!_.isObject(tags) && !_.isArray(tags)) {
+      if(!_.isObject(tags)) {
         try {
           tags = JSON.parse(tags);
         } catch(e) {

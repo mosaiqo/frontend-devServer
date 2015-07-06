@@ -81,69 +81,100 @@ var getPathNameFromMongoUniqueIndexError = function(errMessage) {
  * Error handling middleware
  */
 var appErrorHandler = function(err, req, res, next) {
-
-  var code, message, resp = { meta: {} };
+  var errResponse;
 
   // normalize the code
   if(err.code) {
     err.code = normalizeErrorCode(err);
   }
 
-
   if(err.code && HTTPerrors.indexOf(err.code) > -1) {  // custom HTTP errors
-    code = err.code;
-
-    if(err.message) {
-      message = err.message;
-
-    } else {
-      message = (code === 404) ?
-        errors.notFound.message : /* istanbul ignore next */ errors.default.message;
-    }
+    errResponse = _errorResponseFromCustomHttpError(err);
 
   } else if(err.name === 'CastError' && err.path === '_id') {
-    code    = errors.notFound.code;
-    message = errors.notFound.message;
+    errResponse = _errorResponseFromBadItemIdError(err);
 
   } else if(err.code === 11000) { // mongo error dupplicate unique index
-    code    = errors.validation.code;
-    message = errors.validation.message;
-
-    var field = getPathNameFromMongoUniqueIndexError(err.message);
-
-    if(field) {
-      resp.errors = {};
-      resp.errors[field] = ['Must be unique'];
-    }
+    errResponse = _errorResponseFromDupplicateUniqueIndexError(err);
 
   } else if(err.name === 'ValidationError') {
-    code    = errors.validation.code;
-    message = errors.validation.message;
-
-    resp.errors = {};
-
-    for (var errName in err.errors) {
-      /* istanbul ignore if */
-      if(errors[errName]) {
-        resp.errors[errName].push(err.errors[errName].message);
-      } else {
-        resp.errors[errName] = [err.errors[errName].message];
-      }
-    }
+    errResponse = _errorResponseFromValidationError(err);
 
   } else {
-    code    = errors.default.code;
-    message = errors.default.message;
+    errResponse = {error: {
+      code    : errors.default.code,
+      message : errors.default.message
+    }};
   }
 
+  // add the meta
+  errResponse.meta = {};
 
-  // build the response
-  resp.error = {
-    code:    code,
+  return res.status(errResponse.error.code).json(errResponse);
+};
+
+
+// Error formatters:
+// -------------------
+
+var _errorResponseFromCustomHttpError = function(err) {
+  var message;
+
+  if(err.message) {
+    message = err.message;
+  } else {
+    message = (err.code === 404) ?
+      errors.notFound.message : /* istanbul ignore next */ errors.default.message;
+  }
+
+  return {error: {
+    code:    err.code,
     message: message
+  }};
+};
+
+var _errorResponseFromBadItemIdError = function(err) {
+  return {error: {
+    code:    errors.notFound.code,
+    message: errors.notFound.message
+  }};
+};
+
+var _errorResponseFromDupplicateUniqueIndexError = function(err) {
+  var ret = {error: {
+    code:    errors.validation.code,
+    message: errors.validation.message,
+  }};
+
+  var field = getPathNameFromMongoUniqueIndexError(err.message);
+
+  if(field) {
+    ret.errors = {};
+    ret.errors[field] = ['Must be unique'];
+  }
+
+  return ret;
+};
+
+var _errorResponseFromValidationError = function(err) {
+  var ret = {
+    error: {
+      code:    errors.validation.code,
+      message: errors.validation.message,
+    },
+    errors: {}
   };
 
-  return res.status(code).json(resp);
+  for (var errName in err.errors) {
+    /* istanbul ignore if */
+    if(errors[errName]) {
+      ret.errors[errName].push(err.errors[errName].message);
+    } else {
+      ret.errors[errName] = [err.errors[errName].message];
+    }
+  }
+
+  return ret;
 };
 
 
