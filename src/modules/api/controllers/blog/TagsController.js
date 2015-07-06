@@ -80,8 +80,6 @@ class TagsController extends BaseController
         var options = { slug: null };
         if(!_.isUndefined(req.body.articles)) { options.articles = req.body.articles; }
 
-        console.log('req.body:', req.body);
-
         callback(null, model, options);
       },
       this._validate,
