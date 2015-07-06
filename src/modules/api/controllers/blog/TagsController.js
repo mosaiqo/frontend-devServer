@@ -69,6 +69,9 @@ class TagsController extends BaseController
       request  = new Request(req),
       response = new Response(request, this.expandsURLMap),
 
+      // options for the waterfall functs.
+      waterfallOptions = this._buildWaterfallOptions(null, req.body.articles),
+
       // mass assignable attrs.
       newAttrs = this._getAssignableAttributes(request);
 
@@ -76,11 +79,7 @@ class TagsController extends BaseController
     async.waterfall([
       function setup(callback) {
         var model = new Tag(newAttrs);
-
-        var options = { slug: null };
-        if(!_.isUndefined(req.body.articles)) { options.articles = req.body.articles; }
-
-        callback(null, model, options);
+        callback(null, model, waterfallOptions);
       },
       this._validate,
       this._setSlug,
@@ -113,6 +112,9 @@ class TagsController extends BaseController
       // query used to find the doc
       criteria = this._buildCriteria(request),
 
+      // options for the waterfall functs.
+      waterfallOptions = this._buildWaterfallOptions(req.body.slug, req.body.articles),
+
       // mass assignable attrs.
       newAttrs = this._getAssignableAttributes(request);
 
@@ -127,11 +129,7 @@ class TagsController extends BaseController
           // assign the new attributes
           tagModel.set(newAttrs);
 
-          var options = {};
-          if(!_.isUndefined(req.body.slug))     { options.slug = req.body.slug; }
-          if(!_.isUndefined(req.body.articles)) { options.tags = req.body.articles; }
-
-          callback(null, tagModel, options);
+          callback(null, tagModel, waterfallOptions);
         });
       },
       this._validate,
@@ -159,6 +157,14 @@ class TagsController extends BaseController
   // (actually they're not private so can be easily tested)
   // =============================================================================
 
+  _buildWaterfallOptions(slug, articles) {
+    var options = {};
+    if(!_.isUndefined(slug))     { options.slug = slug; }
+    if(!_.isUndefined(articles)) { options.articles = articles; }
+    return options;
+  }
+
+
   _setSlug(model, options, callback) {
     if(_.isUndefined(options.slug)) {
       callback(null, model, options);
@@ -178,9 +184,9 @@ class TagsController extends BaseController
     if(_.isUndefined(options.articles)) {
       callback(null, model, options);
     } else {
-      let articles = options.articles || [];
+      let articles = options.articles;
 
-      if(!_.isObject(articles) || !_.isArray(articles)) {
+      if(!_.isObject(articles) && !_.isArray(articles)) {
         try {
           articles = JSON.parse(articles);
         } catch(e) {
