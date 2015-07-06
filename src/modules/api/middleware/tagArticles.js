@@ -9,7 +9,7 @@ module.exports = function(req, res, next) {
       if(Array.isArray(parsedArticles)) {
         parsedArticles.push(thisArticle);
       } else {
-        parsedArticles = [thisArticle, parsedArticles];
+        parsedArticles = [parsedArticles, thisArticle];
       }
 
       req.body.articles = JSON.stringify(parsedArticles);

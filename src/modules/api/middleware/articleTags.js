@@ -9,7 +9,7 @@ module.exports = function(req, res, next) {
       if(Array.isArray(parsedTags)) {
         parsedTags.push(thisTag);
       } else {
-        parsedTags = [thisTag, parsedTags];
+        parsedTags = [parsedTags, thisTag];
       }
 
       req.body.tags = JSON.stringify(parsedTags);
