@@ -10,6 +10,7 @@ var
   Request         = require('../../util/Request'),
   Response        = require('../../util/Response'),
   ExpandsURLMap   = require('../../util/ExpandsURLMap'),
+  ArticleTagsUtil = require('../../util/ArticleTagsUtil'),
   slugger         = require('../../util/slugger'),
 
   // Base class
@@ -40,6 +41,9 @@ class TagsController extends BaseController
       "articles": {
         "route": "/blog/tags/:parentId/articles",
         "expands": {
+          "author": {
+            "route": "/authors/:itemId"
+          },
           "tags": {
             "route": "/blog/articles/:parentId/tags",
             "expands": {
@@ -65,6 +69,9 @@ class TagsController extends BaseController
       request  = new Request(req),
       response = new Response(request, this.expandsURLMap),
 
+      // options for the waterfall functs.
+      waterfallOptions = this._buildWaterfallOptions(null, req.body.articles),
+
       // mass assignable attrs.
       newAttrs = this._getAssignableAttributes(request);
 
@@ -72,10 +79,11 @@ class TagsController extends BaseController
     async.waterfall([
       function setup(callback) {
         var model = new Tag(newAttrs);
-        callback(null, model, { slug: null });
+        callback(null, model, waterfallOptions);
       },
       this._validate,
       this._setSlug,
+      this._setArticles,
       this._save
 
     ], function asyncComplete(err, model) {
@@ -104,6 +112,9 @@ class TagsController extends BaseController
       // query used to find the doc
       criteria = this._buildCriteria(request),
 
+      // options for the waterfall functs.
+      waterfallOptions = this._buildWaterfallOptions(req.body.slug, req.body.articles),
+
       // mass assignable attrs.
       newAttrs = this._getAssignableAttributes(request);
 
@@ -118,11 +129,12 @@ class TagsController extends BaseController
           // assign the new attributes
           tagModel.set(newAttrs);
 
-          callback(null, tagModel, { slug: req.body.slug });
+          callback(null, tagModel, waterfallOptions);
         });
       },
       this._validate,
       this._setSlug,
+      this._setArticles,
       this._save
 
     ], function asyncComplete(err, model) {
@@ -145,14 +157,49 @@ class TagsController extends BaseController
   // (actually they're not private so can be easily tested)
   // =============================================================================
 
-  _setSlug(model, options, callback) {
-    slugger(Tag, model.name, options.slug, function(err, tagSlug) {
-      /* istanbul ignore next */
-      if (err) { return callback(err); }
+  _buildWaterfallOptions(slug, articles) {
+    var options = {};
+    if(!_.isUndefined(slug))     { options.slug = slug; }
+    if(!_.isUndefined(articles)) { options.articles = articles; }
+    return options;
+  }
 
-      model.slug = tagSlug;
+
+  _setSlug(model, options, callback) {
+    if(_.isUndefined(options.slug)) {
       callback(null, model, options);
-    });
+    } else {
+      slugger(Tag, model.name, options.slug, function(err, tagSlug) {
+        /* istanbul ignore next */
+        if (err) { return callback(err); }
+
+        model.slug = tagSlug;
+        callback(null, model, options);
+      });
+    }
+  }
+
+
+  _setArticles(model, options, callback) {
+    if(_.isUndefined(options.articles)) {
+      callback(null, model, options);
+    } else {
+      let articles = options.articles;
+
+      if(!_.isObject(articles) && !_.isArray(articles)) {
+        try {
+          articles = JSON.parse(articles);
+        } catch(e) {
+          return callback( errors.Validation(model, 'articles', 'Articles must be a valid JSON') );
+        }
+      }
+
+      ArticleTagsUtil.setTagArticles(model, articles, function(err, model) {
+        /* istanbul ignore next */
+        if(err) { return callback(err); }
+        callback(null, model, options);
+      });
+    }
   }
 
 }

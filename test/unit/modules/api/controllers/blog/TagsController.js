@@ -11,10 +11,10 @@ var
   requireHelper  = require('test/require_helper'),
 
   // file to test
-  ArticlesController;
+  TagsController;
 
 
-describe('ArticlesController', function() {
+describe('TagsController', function() {
 
   var ArticleTagsUtilStub, ArticleTagsUtilSpy;
 
@@ -26,15 +26,15 @@ describe('ArticlesController', function() {
     });
 
     ArticleTagsUtilStub = {};
-    ArticleTagsUtilStub.setArticleTags = function(model, tags, next) {
+    ArticleTagsUtilStub.setTagArticles = function(model, tags, next) {
       next(null, model);
     };
-    ArticleTagsUtilSpy = sinon.spy(ArticleTagsUtilStub, 'setArticleTags');
+    ArticleTagsUtilSpy = sinon.spy(ArticleTagsUtilStub, 'setTagArticles');
 
     mockery.registerMock('../../util/ArticleTagsUtil', ArticleTagsUtilStub);
 
     // must be loaded after mocking ArticleTagsUtil
-    ArticlesController = requireHelper('modules/api/controllers/blog/ArticlesController');
+    TagsController = requireHelper('modules/api/controllers/blog/TagsController');
 
     done();
   });
@@ -51,7 +51,7 @@ describe('ArticlesController', function() {
     mockery.disable();
 
     // reload
-    ArticlesController = requireHelper('modules/api/controllers/blog/ArticlesController');
+    TagsController = requireHelper('modules/api/controllers/blog/TagsController');
     done();
   });
 
@@ -59,7 +59,7 @@ describe('ArticlesController', function() {
   describe('_buildWaterfallOptions', function() {
 
     it('should return an empty object if called without params', function(done) {
-      var controller = new ArticlesController();
+      var controller = new TagsController();
 
       var opts = controller._buildWaterfallOptions();
       expect(opts).to.deep.equal({});
@@ -68,7 +68,7 @@ describe('ArticlesController', function() {
 
 
     it('should add a slug property if the param is not undefined', function(done) {
-      var controller = new ArticlesController();
+      var controller = new TagsController();
 
       var opts1 = controller._buildWaterfallOptions(null);
       expect(opts1).to.have.property('slug');
@@ -80,26 +80,26 @@ describe('ArticlesController', function() {
       done();
     });
 
-    it('should add a tags property if the param is not undefined', function(done) {
-      var controller = new ArticlesController();
+    it('should add a articles property if the param is not undefined', function(done) {
+      var controller = new TagsController();
 
       var opts1 = controller._buildWaterfallOptions(undefined, null);
-      expect(opts1).to.have.property('tags');
-      expect(opts1.tags).to.be.null;
+      expect(opts1).to.have.property('articles');
+      expect(opts1.articles).to.be.null;
 
       var opts2 = controller._buildWaterfallOptions(undefined, 'foo');
-      expect(opts2).to.have.property('tags');
-      expect(opts2.tags).to.equal('foo');
+      expect(opts2).to.have.property('articles');
+      expect(opts2.articles).to.equal('foo');
       done();
     });
 
   });
 
 
-  describe('_setTags', function() {
+  describe('_setArticles', function() {
 
     it('should return a validation error if a string is supplied and it\'s not a valid JSON', function(done) {
-      (new ArticlesController())._setTags({}, { tags: 'some-random-string' }, function(err, model, options) {
+      (new TagsController())._setArticles({}, { articles: 'some-random-string' }, function(err, model, options) {
         expect(err).to.not.be.null;
         expect(err.name).to.equal('ValidationError');
         done();
@@ -111,7 +111,7 @@ describe('ArticlesController', function() {
         modelParam = {},
         optionsParam = {foo:'bar'};
 
-      (new ArticlesController())._setTags(modelParam, optionsParam = {foo:'bar'}, function(err, model, options) {
+      (new TagsController())._setArticles(modelParam, optionsParam, function(err, model, options) {
         expect(ArticleTagsUtilSpy.called).to.be.false;
         expect(modelParam).to.deep.equal(model);
         expect(optionsParam).to.deep.equal(options);
@@ -120,21 +120,21 @@ describe('ArticlesController', function() {
     });
 
     it('should accept a single tag', function(done) {
-      (new ArticlesController())._setTags({}, { tags: {id: 1234} }, function(err, model, options) {
+      (new TagsController())._setArticles({}, { articles: {id: 1234} }, function(err, model, options) {
         expect(ArticleTagsUtilSpy.called).to.be.true;
         done();
       });
     });
 
     it('should accept an array of tags tag', function(done) {
-      (new ArticlesController())._setTags({}, { tags: [{id: 1234},{id: 4567}] }, function(err, model, options) {
+      (new TagsController())._setArticles({}, { articles: [{id: 1234},{id: 4567}] }, function(err, model, options) {
         expect(ArticleTagsUtilSpy.called).to.be.true;
         done();
       });
     });
 
     it('should accept an JSON string', function(done) {
-      (new ArticlesController())._setTags({}, { tags: '[{"id": 1234},{"id": 4567}]' }, function(err, model, options) {
+      (new TagsController())._setArticles({}, { articles: '[{"id": 1234},{"id": 4567}]' }, function(err, model, options) {
         expect(ArticleTagsUtilSpy.called).to.be.true;
         done();
       });

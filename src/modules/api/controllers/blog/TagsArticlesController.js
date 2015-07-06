@@ -2,19 +2,19 @@
 
 var
   // generic stuff
-  _              = require('underscore'),
+  _                  = require('underscore'),
 
   // API utilities
-  ExpandsURLMap  = require('../../util/ExpandsURLMap'),
+  ExpandsURLMap      = require('../../util/ExpandsURLMap'),
 
   // Base class
-  TagsController = require('./TagsController');
+  ArticlesController = require('./ArticlesController');
 
 
 /**
- * ArticlesTagsController
+ * TagsArticlesController
  */
-class ArticlesTagsController extends TagsController
+class TagsArticlesController extends ArticlesController
 {
   constructor() {
     super();
@@ -29,13 +29,14 @@ class ArticlesTagsController extends TagsController
     var criteria = super._buildCriteria(request);
 
     /* istanbul ignore else */
-    if(request.req.params.articleId) {
-      criteria.articles = request.req.params.articleId;
+    if(request.req.params.tagId) {
+      criteria.tags = request.req.params.tagId;
     }
 
     return criteria;
   }
+
 }
 
 
-module.exports = ArticlesTagsController;
+module.exports = TagsArticlesController;

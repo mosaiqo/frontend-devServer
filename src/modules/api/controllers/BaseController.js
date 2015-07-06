@@ -147,6 +147,7 @@ class BaseController
     return criteria;
   }
 
+
   _getAssignableAttributes(request, customAttrs) {
     customAttrs = customAttrs || {};
     return _.extend(
@@ -155,6 +156,7 @@ class BaseController
       _.pick(request.req.body, this.Model.safeAttrs)
     );
   }
+
 
   _validate(model, options, callback) {
     model.validate(function (err) {
