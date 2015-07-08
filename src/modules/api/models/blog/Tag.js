@@ -96,6 +96,7 @@ TagSchema.methods.getRefs = function() { return ['articles']; };
 // Register the plugins
 // ----------------------------------
 TagSchema.plugin( require('mongoose-paginate') );
+TagSchema.plugin( require('mongoose-deep-populate') );
 
 
 /* istanbul ignore next */
