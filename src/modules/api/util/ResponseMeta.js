@@ -12,10 +12,12 @@ class ResponseMeta {
   /**
    * @param {String} requestURL     Full request url, without the querystring params
    * @param {Object} paginationOpts Pagination options
+   * @param {Object} otherAttrs     Other attributes to add to the meta node
    */
-  constructor(requestURL, paginationOpts) {
-    this.requestURL = requestURL;
+  constructor(requestURL, paginationOpts, otherAttrs) {
+    this.requestURL     = requestURL;
     this.paginationOpts = paginationOpts;
+    this.otherAttrs     = otherAttrs;
   }
 
 
@@ -30,6 +32,10 @@ class ResponseMeta {
     // add the paginator
     if(this.paginationOpts) {
       meta.paginator = this._getPaginator(this.paginationOpts);
+    }
+
+    if(this.otherAttrs) {
+      meta = _.extend(meta, this.otherAttrs);
     }
 
     return meta;
