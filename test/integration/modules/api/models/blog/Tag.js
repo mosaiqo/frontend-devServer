@@ -2,15 +2,14 @@
 
 var
   async             = require('async'),
+  db                = require('test/_util/db'),
 
   // test dependencies
   mocha             = require('mocha'),
   expect            = require('chai').expect,
   faker             = require('faker'),
   id                = require('pow-mongodb-fixtures').createObjectId,
-  mongoose          = require('mongoose'),
   requireHelper     = require('test/_util/require_helper'),
-  mongoConfigParser = require('src/lib/mongoConfigParser'),
 
   // file being tested
   Tag               = requireHelper('modules/api/models/blog/Tag'),
@@ -26,21 +25,12 @@ describe('BlogTag model', function() {
   this.timeout(10000);
 
   before(function(done) {
-    var mongoConn = new mongoConfigParser().setEnv({
-      host     : process.env.MONGO_HOST,
-      port     : process.env.MONGO_PORT,
-      user     : process.env.MONGO_USER,
-      password : process.env.MONGO_PASSWORD,
-      database : process.env.MONGO_DATABASE
-    });
-
-    mongoose.connect(mongoConn.getConnectionString(), mongoConn.getConnectionOptions());
-    mongoose.connection.once('open', done);
+    db.connect(done);
   });
 
 
   after(function(done) {
-    mongoose.connection.close(done);
+    db.disconnect(done);
   });
 
 
