@@ -2,7 +2,6 @@
 
 var
   _            = require('underscore'),
-  populate     = require('mongoose-populator'),
   ResponseMeta = require('./ResponseMeta'),
   ResponseData = require('./ResponseData');
 
@@ -65,7 +64,7 @@ class Response {
 
     // create the meta formatter
     pagination = this.paginationParams ?
-      _.extend(this.request.pagination, this.paginationParams) : null;
+      _.extend(this.request.options, this.paginationParams) : null;
 
     metaNode = new ResponseMeta(this.request.requestURL, pagination);
 
@@ -84,7 +83,7 @@ class Response {
     };
 
     // apply the expands and build the output
-    if(expands.length) {
+    if(_.keys(expands).length) {
       this._expandData(data, expands, function(err, expandedData) {
         /* istanbul ignore next */
         if(err) { return callback(err); }
@@ -106,7 +105,20 @@ class Response {
    * A 'pre' query hook should be better, but a too tricky to implement.
    */
   _expandData(data, expands, callback) {
-    populate(data, expands.join(' '), callback);
+    // create a deep copy of expands because
+    // calling model.deepPopulate alters the original object
+    expands = JSON.parse(JSON.stringify(expands));
+
+    var
+      model = Array.isArray(data) ? (data.length ? data[0].constructor : null) : data.constructor,
+      paths = _.keys(expands).join(' '),
+      populationOpts = { populate: expands };
+
+    if(model && paths) {
+      model.deepPopulate(data, paths, populationOpts, callback);
+    } else {
+      callback(null, data);
+    }
   }
 
 }

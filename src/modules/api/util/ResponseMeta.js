@@ -56,12 +56,7 @@ class ResponseMeta {
     };
 
     if(pagination.sortBy) {
-      let
-        k = _.keys(pagination.sortBy),
-        v = _.values(pagination.sortBy);
-
-      paginator.sort_by = k.length > 1 ? k : k[0];
-      paginator.order   = v[0];
+      paginator.sort_by = pagination.sortBy;
     }
 
     return paginator;

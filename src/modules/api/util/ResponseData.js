@@ -1,13 +1,15 @@
 'use strict';
 
-var _ = require('underscore');
+var
+  _            = require('underscore'),
+  ResponseMeta = require('./ResponseMeta');
 
 /**
  * Response 'data' node formatter
  *
  * It basically transforms the models nested relations into objects
  * with 'meta' and 'data' attributes, where the 'data' node just contains
- * the data, potentially truncated, and the 'meta' node contains some meradata,
+ * the data, potentially truncated, and the 'meta' node contains some metadata,
  * like the nested objects amount or the url of the API endpoint to get/edit that
  * nested objects.
  */
@@ -76,15 +78,16 @@ class ResponseData {
    * @return {Object}         The formatted entity
    */
   _formatItem(item, expands, stack) {
-
     stack = stack || [];
 
     var
       // model refs
-      expandable = item.getRefs(),
+      expandable = (item.getRefs) ? item.getRefs() : [],
 
       // model attributes that will be expanded
-      willExpand = _.pick(item, expands),
+      willExpand = _.pick(item, _.keys(expands).map(function(exp) {
+        return exp.replace((stack.join('.')+'.'),'');
+      })),
 
       // model attributes that will remain unexpanded
       willNotExpand = _.pick(item,
@@ -98,7 +101,7 @@ class ResponseData {
     for(let attr in willNotExpand) {
       let newStack = stack.concat([attr]);
       ret[attr] = {
-        meta: this._getNestedMeta(willNotExpand[attr], newStack, item._id)
+        meta: this._getNestedMeta(item, newStack)
       };
     }
 
@@ -106,7 +109,7 @@ class ResponseData {
     for(let attr in willExpand) {
       let newStack = stack.concat([attr]);
       ret[attr] = {
-        meta: this._getNestedMeta(willExpand[attr], newStack, item._id),
+        meta: this._getNestedMeta(item, newStack, expands),
         data: this._formatNestedData(willExpand[attr], this._getNestedExpands(attr, expands), newStack)
       };
     }
@@ -142,29 +145,64 @@ class ResponseData {
   /**
    * Formats the meta node for a nested relation
    *
-   * @param  {mixed}    data     The relation data
+   * @param  {mixed}    data     The data
    * @param  {Array}    stack    Current nesting level
-   * @param  {ObjectId} parentId Parent entity Id
+   * @param  {Object}   expands  x
    * @return {Object}            The relation 'meta' node
    */
-  _getNestedMeta(data, stack, parentId) {
-    var url = this.expandsURLMap.getRoute(stack.join('/'));
+  _getNestedMeta(data, stack, expands) {
+    var
+      attr = _.last(stack),
+      node = data[attr];
 
-    if(url) {
-      url = this.baseURL + url;
+    // get the url
+    var
+      route = this.expandsURLMap.getRoute(stack.join('/')),
+      url   = this._getNestedMetaUrl(data, node, route);
+
+    // get the pagination
+    var
+      populated  = data.populated(attr) || _.flatten([data[attr]]),
+      totalElems = populated ? populated.length : 0;
+
+    var
+      paginationOpts = this._getNestedMetaPaginationOptions(expands, attr, totalElems),
+      otherParams    = {};
+
+    if(!paginationOpts) {
+      otherParams.count = totalElems;
+    }
+
+    // return the meta node
+    return (new ResponseMeta(url, paginationOpts, otherParams)).toJSON();
+  }
+
+
+  /**
+   * @param  {Object} parent     The parent node
+   * @param  {Object} node       The nested node (the relation being expanded)
+   * @param  {String} nodeRoute  The relation route, from the expandsMap
+   * @return {String}            The url for the nested entities
+   */
+  _getNestedMetaUrl(parent, node, nodeRoute) {
+    var url = '';
+
+    if(nodeRoute) {
+      url = this.baseURL + nodeRoute;
 
       // replace any item ids placeholders with the obj. ids
-      url = url.replace(/:parentId/g, parentId);
+      url = url.replace(/:parentId/g, parent._id);
 
       if(url.indexOf(':itemId') > -1) {
-        if(!data) {
+        if(!node) {
           url = '';
         } else {
           let itemId;
-          if(data._id) {
-            itemId = data._id;
-          } else if('toHexString' in data) {
-            itemId = data;
+
+          if(node._id) {
+            itemId = node._id;
+          } else if('toHexString' in node) {
+            itemId = node;
           } else {
             itemId  = null;
           }
@@ -172,14 +210,35 @@ class ResponseData {
           url = itemId ? url.replace(/:itemId/g, itemId): '';
         }
       }
-    } else {
-      url = '';
     }
 
-    return {
-      count: this._getItemCount(data),
-      url: url
-    };
+    return url;
+  }
+
+
+  /**
+   * @param  {Object} expands        Expands config
+   * @param  {String} attr           Attribute name of the expansion
+   * @param  {Number} totalElements  Total elements for that attribute
+   * @return {Object}                The pagination options for some nested attribute
+   */
+  _getNestedMetaPaginationOptions(expands, attr, totalElements) {
+    var paginationOpts = null;
+
+    if(expands && expands[attr] && expands[attr].options) {
+      let opts = expands[attr].options;
+      paginationOpts = {
+        itemCount: totalElements,
+        pageCount: Math.ceil(totalElements/opts.limit),
+        limit:     opts.limit,
+        page:      opts.skip / opts.limit + 1
+      };
+      if(opts.sort) {
+        paginationOpts.sortBy = opts.sort;
+      }
+    }
+
+    return paginationOpts;
   }
 
 
@@ -189,27 +248,16 @@ class ResponseData {
    * @return {Array}         The attributes to expand on that attr., (false if none)
    */
   _getNestedExpands(attr, expands) {
-    return _.compact(expands.map(function(expand) {
+    var attrs = _.compact(_.keys(expands).map(function(expand) {
       var expandParts = expand.split('.');
       if(expandParts.length > 1 && expandParts[0] === attr) {
-        return expandParts.slice(1).join('.');
+        return expandParts.join('.');
       } else {
         return false;
       }
     }));
-  }
 
-
-  /**
-   * @param {mixed} attrVal The data for some attribute that contains related data
-   * @return {Number}       The amount of nested entities for a given attribute
-   */
-  _getItemCount(attrVal) {
-    if(Array.isArray(attrVal)) {
-      return attrVal.length;
-    } else {
-      return attrVal ? 1 : 0;
-    }
+    return _.pick(expands, attrs);
   }
 
 }
