@@ -52,10 +52,9 @@ describe('modules/api/util/Response', function(done) {
     var response = new Response(null, new ExpandsURLMap());
 
     response._expandData(existingArticle, ['author'], function(err, data) {
-      expect(err).to.be.undefined;
+      expect(err).to.be.null;
       done();
     });
   });
 
 });
-// integration

@@ -10,6 +10,8 @@ var _ = require('underscore');
  * @return {Object}            Something like { sortkey1: direction, sortkey1: direction }
  */
 var parseSortingOptions = function(sortParams) {
+  if(!sortParams) { return {}; }
+
   return _.reduce(sortParams.split(','), function(memo, param) {
     let paramParts = param.split('|');
     memo[paramParts[0]] = _normalizeSortOrder(paramParts[1]);

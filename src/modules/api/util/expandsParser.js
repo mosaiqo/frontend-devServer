@@ -6,6 +6,10 @@ var
   config     = require('../../../config');
 
 
+// default pagination opts
+const defaultExpandOptions = { limit: config.pagination.defaultLimit, skip: 0 };
+
+
 /**
  * Parses the requested expands extracting the pagination options
  * @param  {Array} expands  The requested expands
@@ -25,21 +29,17 @@ var parseExpands = function(expands) {
  */
 var _parseExpand = function(populationOpts, expand) {
   var
-    // default pagination opts
-    defaults    = { page: 1, limit: config.pagination.defaultLimit, skip: 0 },
-
     expandParts = expand.split(':'),
     key         = expandParts.shift(),
-    opts        = _.reduce(expandParts, _parseExpandOpt, defaults);
+    opts        = _.reduce(expandParts, _parseExpandOpt, _.clone(defaultExpandOptions)),
+    page        = opts.page || 1;
 
 
   if(opts.limit > config.pagination.maxLimit) {
     opts.limit = config.pagination.maxLimit;
   }
 
-  if(opts.page) {
-    opts.skip = opts.limit * (opts.page - 1);
-  }
+  opts.skip = opts.limit * (page - 1);
 
   populationOpts[key] = {
     options: _.omit(opts, ['page'])
@@ -67,6 +67,7 @@ var _parseExpandOpt = function(opts, rawOpt) {
     switch(opt) {
       case 'page':
         var page = parseInt(args, 10);
+        /* istanbul ignore else */
         if(!isNaN(page) && page > 0) {
           opts.page = page;
         }
@@ -75,12 +76,12 @@ var _parseExpandOpt = function(opts, rawOpt) {
       case 'per_page':
       case 'limit':
         var limit = parseInt(args, 10);
+        /* istanbul ignore else */
         if(!isNaN(limit)) {
           opts.limit = limit;
         }
         break;
 
-      case 'sort':
       case 'order':
         opts.sort = _.extend(opts.sort || {}, sortParser.parse(args));
         break;
@@ -91,7 +92,8 @@ var _parseExpandOpt = function(opts, rawOpt) {
 
 
 module.exports = {
-  parse:           parseExpands,
-  _parseExpand:    _parseExpand,
-  _parseExpandOpt: _parseExpandOpt
+  parse:              parseExpands,
+  _parseExpand:       _parseExpand,
+  _parseExpandOpt:    _parseExpandOpt,
+  paginationDefaults: defaultExpandOptions
 };
