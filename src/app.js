@@ -28,6 +28,7 @@ var
   express    = require('express'),
   bodyParser = require('body-parser'),
   cors       = require('cors'),
+  config     = require('./config'),
 
   publicDir  = process.env.APP_PUBLIC_DIR,
   port       = process.env.PORT || 5000;
@@ -70,10 +71,10 @@ var createApp = function() {
   // =============================================================================
   var paginate = require('express-paginate');
 
-  app.use(paginate.middleware(20, 200));
+  app.use(paginate.middleware(config.pagination.defaultLimit, config.pagination.maxLimit));
 
 
-  // FAKE API (the real on will be implemented using Laravel)
+  // Restful API
   // =============================================================================
   var API = require('./modules/api');
 
