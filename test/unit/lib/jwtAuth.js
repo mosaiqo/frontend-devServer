@@ -6,7 +6,7 @@ var
   expect         = require('chai').expect,
   sinon          = require('sinon'),
   mockery        = require('mockery'),
-  requireHelper  = require('test/require_helper'),
+  requireHelper  = require('test/_util/require_helper'),
 
   // file to test
   jwtAuth;

@@ -7,7 +7,7 @@ var
   // test dependencies
   mocha           = require('mocha'),
   expect          = require('chai').expect,
-  requireHelper   = require('test/require_helper'),
+  requireHelper   = require('test/_util/require_helper'),
 
   // file to test
   ResponseMeta = requireHelper('modules/api/util/ResponseMeta');

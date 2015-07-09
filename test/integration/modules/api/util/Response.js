@@ -10,7 +10,7 @@ var
   // test dependencies
   mocha             = require('mocha'),
   expect            = require('chai').expect,
-  requireHelper     = require('test/require_helper'),
+  requireHelper     = require('test/_util/require_helper'),
 
   // other
   Article           = require('src/modules/api/models/blog/Article'),

@@ -6,7 +6,7 @@ var
   // test dependencies
   mocha          = require('mocha'),
   expect         = require('chai').expect,
-  requireHelper  = require('test/require_helper'),
+  requireHelper  = require('test/_util/require_helper'),
 
   // file to test
   articleTagsMiddleware = requireHelper('modules/api/middleware/articleTags');

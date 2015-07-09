@@ -7,7 +7,7 @@ var
   sinon          = require('sinon'),
   mockery        = require('mockery'),
   mockFs         = require('mock-fs'),
-  requireHelper  = require('test/require_helper'),
+  requireHelper  = require('test/_util/require_helper'),
 
   // file to test
   parser;

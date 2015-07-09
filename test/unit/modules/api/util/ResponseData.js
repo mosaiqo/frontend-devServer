@@ -8,7 +8,7 @@ var
   mocha           = require('mocha'),
   expect          = require('chai').expect,
   sinon           = require('sinon'),
-  requireHelper   = require('test/require_helper'),
+  requireHelper   = require('test/_util/require_helper'),
 
   // other
   ExpandsURLMap   = require('src/modules/api/util/ExpandsURLMap'),

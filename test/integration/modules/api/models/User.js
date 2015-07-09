@@ -6,7 +6,7 @@ var
   expect            = require('chai').expect,
   faker             = require('faker'),
   mongoose          = require('mongoose'),
-  requireHelper     = require('test/require_helper'),
+  requireHelper     = require('test/_util/require_helper'),
   mongoConfigParser = require('src/lib/mongoConfigParser'),
 
   // file being tested
