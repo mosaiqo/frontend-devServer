@@ -1,5 +1,8 @@
 {
   "order": [
     "ROOT"
-  ]
+  ],
+  "header": {
+    "filename": "doc/_api/header.md"
+  }
 }
