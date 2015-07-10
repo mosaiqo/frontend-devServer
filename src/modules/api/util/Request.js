@@ -49,8 +49,14 @@ class Request {
     maxDepth = maxDepth || 1;
 
     var
-      expands       = _.compact(_.flatten([this.req.query.include])),
+      expands       = this.req.query.include,
       filteredSpans = {};
+
+    if(!Array.isArray(expands)) {
+      expands = [expands];
+    }
+    expands = _.reduce(_.compact(expands), function(memo, expand){ return memo.concat(expand.split(',')); }, []);
+    expands = _.unique(expands);
 
     if(expands.length) {
       // filter out the expands to a maximum depth
