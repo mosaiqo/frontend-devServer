@@ -64,12 +64,10 @@ class BaseController
     var
       request    = new Request(req),
       response   = new Response(request, this.expandsURLMap),
-      pagination = request.pagination,
-      criteria   = this._buildCriteria(request),
-      opts       = { page: pagination.page, limit: pagination.limit };
+      criteria   = this._buildCriteria(request);
 
 
-    this.Model.paginate(criteria, opts, function(err, paginatedResults, pageCount, itemCount) {
+    this.Model.paginate(criteria, request.options, function(err, paginatedResults, pageCount, itemCount) {
       /* istanbul ignore next */
       if (err) { return next(err); }
 
@@ -82,7 +80,7 @@ class BaseController
           res.json(output);
         });
 
-    }, request.options);
+    });
   }
 
 

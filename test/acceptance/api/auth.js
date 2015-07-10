@@ -6,7 +6,7 @@ var
   expect         = require('chai').expect,
   request        = require('supertest'),
   objectid       = require('mongodb').ObjectID,
-  requireHelper  = require('test/require_helper'),
+  requireHelper  = require('test/_util/require_helper'),
 
   // server
   app            = requireHelper('app').app;

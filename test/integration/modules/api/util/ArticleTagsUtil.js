@@ -4,14 +4,12 @@ var
   _                 = require('underscore'),
   async             = require('async'),
   objectid          = require('mongodb').ObjectID,
-
-  mongoose          = require('mongoose'),
-  mongoConfigParser = require('src/lib/mongoConfigParser'),
+  db                = require('test/_util/db'),
 
   // test dependencies
   mocha             = require('mocha'),
   expect            = require('chai').expect,
-  requireHelper     = require('test/require_helper'),
+  requireHelper     = require('test/_util/require_helper'),
 
   // other
   Article           = require('src/modules/api/models/blog/Article'),
@@ -26,16 +24,7 @@ describe('modules/api/util/ArticleTagsUtil', function() {
   var existingTag;
 
   before(function(done) {
-    var mongoConn = new mongoConfigParser().setEnv({
-      host     : process.env.MONGO_HOST,
-      port     : process.env.MONGO_PORT,
-      user     : process.env.MONGO_USER,
-      password : process.env.MONGO_PASSWORD,
-      database : process.env.MONGO_DATABASE
-    });
-    mongoose.connect(mongoConn.getConnectionString(), mongoConn.getConnectionOptions());
-    mongoose.connection.once('open', function() {
-
+    db.connect(function() {
       existingTag = new Tag({
         name:  'some-new-tag-0',
         slug:  'some-new-tag-0',
@@ -54,7 +43,7 @@ describe('modules/api/util/ArticleTagsUtil', function() {
 
   after(function(done) {
     existingTag.remove(function() {
-      mongoose.connection.close(done);
+      db.disconnect(done);
     });
   });
 

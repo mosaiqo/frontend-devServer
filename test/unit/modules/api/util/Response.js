@@ -6,7 +6,8 @@ var
   // test dependencies
   mocha           = require('mocha'),
   expect          = require('chai').expect,
-  requireHelper   = require('test/require_helper'),
+  sinon           = require('sinon'),
+  requireHelper   = require('test/_util/require_helper'),
 
   // other
   ExpandsURLMap   = require('src/modules/api/util/ExpandsURLMap'),
@@ -17,23 +18,24 @@ var
 
 describe('modules/api/util/Response', function() {
 
-  var original_expandData;
+  var model, spy;
 
   before(function(done) {
-    // override the '_expandData' method so it
-    // does not call the database during the tests
-    original_expandData = Response.prototype._expandData;
-
-    Response.prototype._expandData = function(data, expands, callback) {
-      callback(null, data);
+    // mock the model
+    var constr = {
+      deepPopulate : function(data, paths, populationOpts, callback) {
+        callback(null, data);
+      }
     };
+
+    spy = sinon.spy(constr, 'deepPopulate');
+    model = { constructor: constr };
     done();
   });
 
 
-  after(function(done) {
-    // restore the overrided method
-    Response.prototype._expandData = original_expandData;
+  beforeEach(function(done) {
+    spy.reset();
     done();
   });
 
@@ -67,12 +69,56 @@ describe('modules/api/util/Response', function() {
 
     var response = new Response(request, new ExpandsURLMap());
 
-    response.formatOutput({}, function(error, formattedOutput) {
+    response.formatOutput(model, function(error, formattedOutput) {
       expect(error).to.be.null;
       expect(formattedOutput).to.have.property('meta');
       expect(formattedOutput).to.have.property('data');
       done();
     });
+  });
+
+
+  describe('_expandData', function() {
+
+    it('should accept a single model', function(done) {
+      var response = new Response();
+      response._expandData(model,{foo:{}}, function(err, data) {
+        expect(err).to.be.null;
+        expect(spy.called).to.be.true;
+        done();
+      });
+    });
+
+
+    it('should accept a an empty array', function(done) {
+      var response = new Response();
+      response._expandData([],{foo:{}}, function(err, data) {
+        expect(err).to.be.null;
+        expect(spy.called).to.be.false;
+        done();
+      });
+    });
+
+
+    it('should accept a an array of models', function(done) {
+      var response = new Response();
+      response._expandData([model, model],{foo:{}}, function(err, data) {
+        expect(err).to.be.null;
+        expect(spy.called).to.be.true;
+        done();
+      });
+    });
+
+
+    it('should not call the `deepPopulate` method on the model if there are no expands', function(done) {
+      var response = new Response();
+      response._expandData([],{}, function(err, data) {
+        expect(err).to.be.null;
+        expect(spy.called).to.be.false;
+        done();
+      });
+    });
+
   });
 
 });

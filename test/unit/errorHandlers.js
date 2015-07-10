@@ -6,7 +6,7 @@ var
   expect         = require('chai').expect,
   sinon          = require('sinon'),
   httpMocks      = require('node-mocks-http'),
-  requireHelper  = require('test/require_helper'),
+  requireHelper  = require('test/_util/require_helper'),
 
   // file being tested
   errorHandlers  = requireHelper('errorHandlers');

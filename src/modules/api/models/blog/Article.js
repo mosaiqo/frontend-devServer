@@ -119,6 +119,7 @@ ArticleSchema.methods.getRefs = function() { return ['tags', 'author']; };
 // Register the plugins
 // ----------------------------------
 ArticleSchema.plugin( require('mongoose-paginate') );
+ArticleSchema.plugin( require('mongoose-deep-populate') );
 
 
 /* istanbul ignore next */

@@ -1,6 +1,10 @@
 'use strict';
 
-var _ = require('underscore');
+var
+  _             = require('underscore'),
+  expandsParser = require('./expandsParser'),
+  sortParser    = require('./requestSortParser'),
+  config        = require('../../../config');
 
 
 /**
@@ -39,56 +43,54 @@ class Request {
 
   /**
    * @param {Number} maxDepth maximum nested expansion level (by default 1)
-   * @return {Array}           the attributes to expand
+   * @return {Object}         the attributes to expand
    */
   getExpands(maxDepth) {
-    var expands = this.req.query.expand;
     maxDepth = maxDepth || 1;
 
-    if(expands) {
-      return _.flatten([expands]).filter(function(expand) {
-        return expand.split('.').length <= maxDepth;
+    var
+      expands       = _.compact(_.flatten([this.req.query.include])),
+      filteredSpans = {};
+
+    if(expands.length) {
+      // filter out the expands to a maximum depth
+      filteredSpans = expands.filter(function(expand) {
+        let expandPath = expand.split(':')[0];
+        return expandPath.split('.').length <= maxDepth;
       });
-    } else {
-      return [];
+
+      if(filteredSpans.length) {
+        filteredSpans = expandsParser.parse(filteredSpans);
+      }
     }
+
+    return filteredSpans;
   }
 
 
   /**
-   * Mongoose queries options builder from the querystring params
+   * Mongoose queries options builder from the querystring params (used on the paginated queries)
    *
    * @return {Object} Options for the mongoose queries.
-   *                  (currently this just returns the sort. opts,
-   *                  because this is only used with the paginate model plugin,
-   *                  where the limit is supplied as another arg.)
    */
   get options() {
-    var opts = {}, sort = this._getSort();
+    var
+      limit = this.req.query.per_page || this.req.query.limit || config.pagination.defaultLimit,
+      sort  = this._getSort(),
+      opts  = {
+        page:  parseInt(this.req.query.page || 1, 10),
+        limit: parseInt(limit, 10)
+      };
+
+    if(opts.limit > config.pagination.maxLimit) {
+      opts.limit = config.pagination.maxLimit;
+    }
 
     if(sort) {
       opts.sortBy = sort;
     }
 
     return opts;
-  }
-
-
-  /**
-   * @return {Object} The pagination options,
-   *                  that will be used on the response 'meta' node.
-   */
-  get pagination() {
-    var pagination = {
-      page:     parseInt(this.req.query.page || 1, 10),
-      per_page: parseInt(this.req.query.per_page || this.req.query.limit || 20, 10)
-    };
-
-    if(this.options.sortBy) {
-      pagination.sortBy = this.options.sortBy;
-    }
-
-    return pagination;
   }
 
 
@@ -110,55 +112,25 @@ class Request {
 
 
   /**
-   * Results sorting direction getter
-   *
-   * Normalizes the supplied value or returns the default
-   *
-   * @return {String} Sort order
-   */
-  _getSortOrder() {
-    var
-      order       = 'asc', // default
-      sortOptions = {
-        'asc'  : 'asc',
-        'desc' : 'desc',
-        '1'    : 'asc',
-        '-1'   : 'desc'
-      };
-
-    if(this.req.query.order) {
-      this.req.query.order = this.req.query.order.toLowerCase();
-      order = sortOptions[this.req.query.order] || order;
-    }
-
-    return order;
-  }
-
-
-  /**
    * Sort options builder
    * @return {Object} Sorting options for the mongoose queries
    */
   _getSort() {
-    var
-      sortOpts = null,
-      order    = null;
+    var sortOpts = null;
 
     if(this.req.query.sort_by) {
-      order    = this._getSortOrder(this.req);
-      sortOpts = {};
+      let sortParams = this.req.query.sort_by;
 
-      if(_.isArray(this.req.query.sort_by)) {
-        this.req.query.sort_by.forEach(function(key) {
-          sortOpts[key] = order;
-        });
-      } else {
-        sortOpts[this.req.query.sort_by] = order;
+      if(_.isArray(sortParams)) {
+        sortParams = sortParams.join(',');
       }
+
+      sortOpts = sortParser.parse(sortParams);
     }
 
     return sortOpts;
   }
+
 }
 
 

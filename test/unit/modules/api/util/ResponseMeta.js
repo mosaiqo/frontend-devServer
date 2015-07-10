@@ -7,7 +7,7 @@ var
   // test dependencies
   mocha           = require('mocha'),
   expect          = require('chai').expect,
-  requireHelper   = require('test/require_helper'),
+  requireHelper   = require('test/_util/require_helper'),
 
   // file to test
   ResponseMeta = requireHelper('modules/api/util/ResponseMeta');
@@ -43,52 +43,25 @@ describe('modules/api/util/ResponseMeta', function() {
       page:          paginationOpts.page,
       per_page:      paginationOpts.limit
     });
-    done();
-  });
-
-
-  it('should format the pagination params', function(done) {
-    var entityUrl = 'http://localhost/api/foo';
-    var paginationOpts = {
-      itemCount: 40,
-      pageCount: 4,
-      page:  1,
-      limit: 10,
-      sortBy: {
-        'foo': 'asc'
-      }
-    };
-    var meta = (new ResponseMeta(entityUrl, paginationOpts));
-
-    expect(meta._getPaginator(meta.paginationOpts)).to.deep.equal({
-      total_entries: paginationOpts.itemCount,
-      total_pages:   paginationOpts.pageCount,
-      page:          paginationOpts.page,
-      per_page:      paginationOpts.limit,
-      sort_by:       'foo',
-      order:         'asc'
-    });
-
 
     paginationOpts = {
       itemCount: 40,
       pageCount: 4,
       page:  1,
       limit: 10,
-      sortBy: {
-        'foo': 'asc',
-        'bar': 'asc'
-      }
+      sortBy: {id: 'asc'}
     };
-    meta = (new ResponseMeta(entityUrl, paginationOpts));
 
-    expect(meta._getPaginator(meta.paginationOpts)).to.deep.equal({
+    meta = (new ResponseMeta(entityUrl, paginationOpts)).toJSON();
+
+    expect(meta.paginator).to.deep.equal({
       total_entries: paginationOpts.itemCount,
       total_pages:   paginationOpts.pageCount,
       page:          paginationOpts.page,
       per_page:      paginationOpts.limit,
-      sort_by:       ['foo', 'bar'],
-      order:         'asc'
+      sort_by: {
+        id: 'asc'
+      }
     });
 
     done();
