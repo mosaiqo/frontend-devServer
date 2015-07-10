@@ -3,7 +3,8 @@
 var
   _             = require('underscore'),
   expandsParser = require('./expandsParser'),
-  sortParser    = require('./requestSortParser');
+  sortParser    = require('./requestSortParser'),
+  config        = require('../../../config');
 
 
 /**
@@ -51,14 +52,14 @@ class Request {
       expands       = _.compact(_.flatten([this.req.query.expand])),
       filteredSpans = {};
 
-    if(expands) {
+    if(expands.length) {
       // filter out the expands to a maximum depth
       filteredSpans = expands.filter(function(expand) {
         let expandPath = expand.split(':')[0];
         return expandPath.split('.').length <= maxDepth;
       });
 
-      if(filteredSpans) {
+      if(filteredSpans.length) {
         filteredSpans = expandsParser.parse(filteredSpans);
       }
     }
@@ -68,17 +69,22 @@ class Request {
 
 
   /**
-   * Mongoose queries options builder from the querystring params
+   * Mongoose queries options builder from the querystring params (used on the paginated queries)
    *
    * @return {Object} Options for the mongoose queries.
    */
   get options() {
     var
-      opts = {
+      limit = this.req.query.per_page || this.req.query.limit || config.pagination.defaultLimit,
+      sort  = this._getSort(),
+      opts  = {
         page:  parseInt(this.req.query.page || 1, 10),
-        limit: parseInt(this.req.query.per_page || this.req.query.limit || 20, 10)
-      },
-      sort = this._getSort();
+        limit: parseInt(limit, 10)
+      };
+
+    if(opts.limit > config.pagination.maxLimit) {
+      opts.limit = config.pagination.maxLimit;
+    }
 
     if(sort) {
       opts.sortBy = sort;

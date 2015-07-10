@@ -3,6 +3,7 @@
 var
   _               = require('underscore'),
   objectid        = require('mongodb').ObjectID,
+  config          = require('src/config'),
 
   // test dependencies
   mocha           = require('mocha'),
@@ -60,26 +61,30 @@ describe('modules/api/util/Request', function() {
   });
 
 
-  it('should return an empty array if no expands are requested', function(done) {
+  it('should return an empty object if no expands are requested', function(done) {
     // mock the req. object
     var req = {
       query: {}
     };
-    expect((new Request(req).getExpands())).to.deep.equal([]);
+    expect((new Request(req).getExpands())).to.deep.equal({});
     done();
   });
 
 
-  it('should returns the requested expands', function(done) {
+  it('should return the requested expands', function(done) {
     // mock the req. object
     var req = {
       query: {
         expand: ['foo', 'bar']
       }
     };
-    expect((new Request(req).getExpands())).to.deep.equal(['foo', 'bar']);
+
+    var expands = (new Request(req)).getExpands();
+    expect(expands).to.have.property('foo');
+    expect(expands).to.have.property('bar');
     done();
   });
+
 
   it('should limit the expands to a certain nesting level', function(done) {
     // mock the req. object
@@ -87,34 +92,34 @@ describe('modules/api/util/Request', function() {
       query: {
         expand: ['foo', 'foo.bar', 'foo.bar.baz']
       }
+    },
+    request = new Request(req);
+
+
+    var expands1 = request.getExpands();
+    expect(expands1).to.have.property('foo');
+    expect(expands1).to.not.have.property('foo.bar');
+    expect(expands1).to.not.have.property('foo.bar.baz');
+
+    var expands2 = request.getExpands(2);
+    expect(expands2).to.have.property('foo');
+    expect(expands2).to.have.property('foo.bar');
+    expect(expands2).to.not.have.property('foo.bar.baz');
+
+    var expands3 = request.getExpands(3);
+    expect(expands3).to.have.property('foo');
+    expect(expands3).to.have.property('foo.bar');
+    expect(expands3).to.have.property('foo.bar.baz');
+
+    var req2 = {
+      query: {
+        expand: ['foo.bar', 'foo.bar.baz']
+      }
     };
-    expect((new Request(req).getExpands())).to.deep.equal(['foo']);
-    expect((new Request(req).getExpands(2))).to.deep.equal(['foo', 'foo.bar']);
-    expect((new Request(req).getExpands(3))).to.deep.equal(['foo', 'foo.bar', 'foo.bar.baz']);
-    done();
-  });
 
-
-  it('should return a default sort order', function(done) {
-    // mock the req. object
-    var req = {
-      query: {}
-    };
-    expect((new Request(req)._getSortOrder())).to.equal('asc');
-    done();
-  });
-
-
-  it('should normalize the sort order', function(done) {
-    expect((new Request({query: { order: 'desc' }})._getSortOrder())).to.equal('desc');
-    expect((new Request({query: { order: 'DESC' }})._getSortOrder())).to.equal('desc');
-    expect((new Request({query: { order: '-1' }})._getSortOrder())).to.equal('desc');
-    expect((new Request({query: { order: 'asc' }})._getSortOrder())).to.equal('asc');
-    expect((new Request({query: { order: 'ASC' }})._getSortOrder())).to.equal('asc');
-    expect((new Request({query: { order: '1' }})._getSortOrder())).to.equal('asc');
-
-    // just an invalid value
-    expect((new Request({query: { order: 'xxx' }})._getSortOrder())).to.equal('asc');
+    var expands4 = (new Request(req2)).getExpands(1);
+    expect(expands4).to.not.have.property('foo.bar');
+    expect(expands4).to.not.have.property('foo.bar.baz');
 
     done();
   });
@@ -127,92 +132,62 @@ describe('modules/api/util/Request', function() {
   });
 
 
-  it('should return the sorting params', function(done) {
-    // mock the req. object
-    var req = {
-      query: {
-        sort_by: 'foo'
-      }
-    };
-    expect((new Request(req)._getSort())).to.deep.equal({
-      foo: 'asc' // the default
-    });
-
-    req = {
-      query: {
-        sort_by: ['foo', 'bar']
-      }
-    };
-    expect((new Request(req)._getSort())).to.deep.equal({
-      foo: 'asc', // the default
-      bar: 'asc' // the default
-    });
-
-    req = {
-      query: {
-        sort_by: ['foo', 'bar'],
-        order: 'desc'
-      }
-    };
-    expect((new Request(req)._getSort())).to.deep.equal({
-      foo: 'desc',
-      bar: 'desc'
-    });
-    done();
-  });
-
-
-  it('should return the options', function(done) {
-    // mock the req. object
+  it('should return the options with some defaults', function(done) {
     var req = {query: {}};
-    expect((new Request(req)).options).to.deep.equal({});
-
-    req = {
-      query: {
-        sort_by: ['foo', 'bar'],
-        order: 'desc'
-      }
-    };
     expect((new Request(req)).options).to.deep.equal({
-      sortBy: {
-        foo: 'desc',
-        bar: 'desc'
-      }
+      page: 1,
+      limit: config.pagination.defaultLimit
     });
     done();
   });
 
 
-  it('should return the pagination with some defaults', function(done) {
-    // mock the req. object
-    var req = {query: {}};
-    var pagination = (new Request(req)).pagination;
-
-    expect(pagination).to.have.property('page');
-    expect(pagination).to.have.property('per_page');
-    expect(pagination).to.not.have.property('sortBy');
-    expect(pagination.page).to.equal(1);
-    expect(pagination.per_page).to.equal(20);
+  it('should return the options with the provided values', function(done) {
+    var req = {query: { page: 4, limit: 8 }};
+    expect((new Request(req)).options).to.deep.equal({
+      page: 4,
+      limit: 8
+    });
     done();
   });
 
 
-  it('should return the pagination with the requested params', function(done) {
-    // mock the req. object
-    var req = {query: {
-      page: 4,
-      per_page: 40,
-      sort_by: 'foo',
-      order: 'desc'
-    }};
-    var pagination = (new Request(req)).pagination;
+  it('should not allow a limit over the app allowed maximum', function(done) {
+    var req = {query: { page: 4, limit: 8000 }};
+    expect((new Request(req)).options.limit).to.equal(config.pagination.maxLimit);
+    done();
+  });
 
-    expect(pagination).to.have.property('page');
-    expect(pagination).to.have.property('per_page');
-    expect(pagination).to.have.property('sortBy');
-    expect(pagination.page).to.equal(4);
-    expect(pagination.per_page).to.equal(40);
-    expect(pagination.sortBy).to.deep.equal({ 'foo': 'desc' });
+
+  it('should return the options with the sorting criterias', function(done) {
+    var req = {query: { page: 1, limit: 10, sort_by: 'id' }};
+    expect((new Request(req)).options).to.deep.equal({
+      page: 1,
+      limit: 10,
+      sortBy: {
+        id: 'asc'
+      }
+    });
+
+    req = {query: { page: 1, limit: 10, sort_by: 'id,name|desc' }};
+    expect((new Request(req)).options).to.deep.equal({
+      page: 1,
+      limit: 10,
+      sortBy: {
+        id: 'asc',
+        name: 'desc'
+      }
+    });
+
+    req = {query: { page: 1, limit: 10, sort_by: ['id','name|desc'] }};
+    expect((new Request(req)).options).to.deep.equal({
+      page: 1,
+      limit: 10,
+      sortBy: {
+        id: 'asc',
+        name: 'desc'
+      }
+    });
 
     done();
   });
