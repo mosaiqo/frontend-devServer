@@ -127,7 +127,6 @@ describe('modules/api/util/Request', function() {
 
   it('should return null if no sorting is requested', function(done) {
     expect((new Request({query: {}})._getSort())).to.be.null;
-    expect((new Request({query: { order: '1' }})._getSort())).to.be.null;
     done();
   });
 
