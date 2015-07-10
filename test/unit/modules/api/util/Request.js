@@ -127,7 +127,6 @@ describe('modules/api/util/Request', function() {
 
   it('should return null if no sorting is requested', function(done) {
     expect((new Request({query: {}})._getSort())).to.be.null;
-    expect((new Request({query: { order: '1' }})._getSort())).to.be.null;
     done();
   });
 
@@ -160,7 +159,7 @@ describe('modules/api/util/Request', function() {
 
 
   it('should return the options with the sorting criterias', function(done) {
-    var req = {query: { page: 1, limit: 10, sort_by: 'id' }};
+    var req = {query: { page: 1, limit: 10, order: 'id' }};
     expect((new Request(req)).options).to.deep.equal({
       page: 1,
       limit: 10,
@@ -169,7 +168,7 @@ describe('modules/api/util/Request', function() {
       }
     });
 
-    req = {query: { page: 1, limit: 10, sort_by: 'id,name|desc' }};
+    req = {query: { page: 1, limit: 10, order: 'id,name|desc' }};
     expect((new Request(req)).options).to.deep.equal({
       page: 1,
       limit: 10,
@@ -179,7 +178,7 @@ describe('modules/api/util/Request', function() {
       }
     });
 
-    req = {query: { page: 1, limit: 10, sort_by: ['id','name|desc'] }};
+    req = {query: { page: 1, limit: 10, order: ['id','name|desc'] }};
     expect((new Request(req)).options).to.deep.equal({
       page: 1,
       limit: 10,

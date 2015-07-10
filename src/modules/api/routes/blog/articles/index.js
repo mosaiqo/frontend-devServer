@@ -18,33 +18,36 @@ module.exports = function(router) {
 
 
     /**
-     * @apiDefine CommonApiParams
+     * @apiDefine Articles_CommonApiParams
      *
-     * @apiParam {String}  [expand]   Nested objects to expand. It can be an array.
+     * @apiParam {String}  [include]  Nested objects to expand. It can be an array.
      * @apiParam {Integer} [per_page] The methods that return multiple models are paginated by default. This determines
      *                                the number of elements returned (by default 20). There's a hard limit (200). Requests
      *                                with a greater value will return only the maximum allowed items.
      * @apiParam {Integer} [page]     The results page (for paginated results)
-     * @apiParam {String}  [sort_by]  Sort criteria. Accepts multiple values (arrays)
-     * @apiParam {String}  [order]    Sort direction. Accepted values: `1`, `-1`, `asc`, `desc`.
-     *                                It's applied to all the sort_by (because the backbone.paginator does not support this,
-     *                                anyway, this is really easy to change)
+     * @apiParam {String}  [order]    Sort criteria. Accepts multiple values (arrays or separated with commas).
+     *                                It also accepts the sort direction (if not provided, 'asc' will be used).
+     *                                Accepted values: `1`, `-1`, `asc`, `desc`.
+     *                                Examples:
+     *                                  `?order=id`
+     *                                  `?order=id|asc`
+     *                                  `?order=id|asc,name|desc`
+     *                                  `?order[]=id|asc&order[]=name`
      *
      */
 
 
     /**
-     * @apiDefine CommonApiResponseHeader
+     * @apiDefine Articles_CommonApiResponseHeader
      *
      * @apiSuccess {Object} meta                 Response metadata
      * @apiSuccess {String} meta.url             Resource url
-     * @apiSuccess {Object} [meta.paginator]     Pagination params
      *
      */
 
 
     /**
-     * @apiDefine SingleEntityResponse
+     * @apiDefine Articles_SingleEntityResponse
      *
      * @apiSuccess {Object} data                 The Article data
      * @apiSuccess {String} data.id              Id
@@ -56,19 +59,20 @@ module.exports = function(router) {
      * @apiSuccess {String} [data.publish_date]  Publish date
      * @apiSuccess {String} data.created_at      Creation date
      * @apiSuccess {String} data.updated_at      Last update date
-     * @apiSuccess {String} data.author          Author id.
-     *                                           Can be expanded to the full author object (see the `expand` parameter)
+     * @apiSuccess {String} data.author          Author object. Collapsed by default (only a `meta` node with the object url and the item count (0|1)).
+     *                                           Can be expanded to the full author object (see the `include` parameter)
      * @apiSuccess {String} data.commentable     Commenting enabled
-     * @apiSuccess {String} data.tags            Post tags (array of the tags IDs).
-     *                                           Can be expanded to the full author object (see the `expand` parameter)
+     * @apiSuccess {String} data.tags            Post tags. Collapsed by default (only a `meta` node with the collection url and the item count).
+     *                                           Can be expanded to the full tag objects (see the `include` parameter)
      *
      */
 
 
     /**
-     * @apiDefine MultipleEntityResponse
+     * @apiDefine Articles_MultipleEntityResponse
      *
-     * @apiSuccess {Object[]} data The Articles data
+     * @apiSuccess {Object} [meta.paginator]     Pagination params
+     * @apiSuccess {Object[]} data               The Articles data
      * @apiSuccess {String} data.id              Id
      * @apiSuccess {String} data.title           Title
      * @apiSuccess {String} data.body            Article body
@@ -78,11 +82,11 @@ module.exports = function(router) {
      * @apiSuccess {String} [data.publish_date]  Publish date
      * @apiSuccess {String} data.created_at      Creation date
      * @apiSuccess {String} data.updated_at      Last update date
-     * @apiSuccess {String} data.author          Author id.
-     *                                           Can be expanded to the full author object (see the `expand` parameter)
+     * @apiSuccess {String} data.author          Author object. Collapsed by default (only a `meta` node with the object url and the item count (0|1)).
+     *                                           Can be expanded to the full author object (see the `include` parameter)
      * @apiSuccess {String} data.commentable     Commenting enabled
-     * @apiSuccess {String} data.tags            Post tags (array of the tags IDs).
-     *                                           Can be expanded to the full author object (see the `expand` parameter)
+     * @apiSuccess {String} data.tags            Post tags. Collapsed by default (only a `meta` node with the collection url and the item count).
+     *                                           Can be expanded to the full tag objects (see the `include` parameter)
      *
      */
 
@@ -92,13 +96,13 @@ module.exports = function(router) {
      * @apiName List
      * @apiGroup BlogArticles
      *
-     * @apiUse CommonApiParams
+     * @apiUse Articles_CommonApiParams
      *
      * @apiExample Example usage:
      * curl -4 -i http://localhost:9000/api/blog/articles --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTczNTksImV4cCI6MTQyNzgyMDk1OX0.M3BboY6U9RJlX1ulVG7e9xRVrVdY3qVhvp3jmZaOCJ8"
      *
-     * @apiUse CommonApiResponseHeader
-     * @apiUse MultipleEntityResponse
+     * @apiUse Articles_CommonApiResponseHeader
+     * @apiUse Articles_MultipleEntityResponse
      *
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
@@ -114,7 +118,12 @@ module.exports = function(router) {
      *       },
      *       "data": [
      *         {
-     *           "author": "000000000000000000000001",
+     *           "author": {
+     *             "meta": {
+     *               "url": "http://localhost:9000/api/authors/000000000000000000000001",
+     *               "count": 1
+     *             }
+     *           },
      *           "body": "Article body",
      *           "excerpt": "Article excerpt",
      *           "slug": "article-slug-1",
@@ -124,10 +133,21 @@ module.exports = function(router) {
      *           "commentable": true,
      *           "publish_date": 1434540,
      *           "published": true,
-     *           "id": "5582af212207075ddbc42210"
+     *           "id": "5582af212207075ddbc42210",
+     *           "tags": {
+     *             "meta": {
+     *               "url": "http://localhost:9000/api/blog/articles/5582af212207075ddbc42210/tags",
+     *               "count": 0
+     *             }
+     *           }
      *         },
      *         {
-     *           "author": "000000000000000000000001",
+     *           "author": {
+     *             "meta": {
+     *               "url": "http://localhost:9000/api/authors/000000000000000000000001",
+     *               "count": 1
+     *             }
+     *           },
      *           "body": "Article body",
      *           "excerpt": "Article excerpt",
      *           "slug": "article-slug-2",
@@ -137,7 +157,13 @@ module.exports = function(router) {
      *           "commentable": true,
      *           "publish_date": 1434540,
      *           "published": true,
-     *           "id": "5582afdc2cf7b648dcf84aba"
+     *           "id": "5582afdc2cf7b648dcf84aba",
+     *           "tags": {
+     *             "meta": {
+     *               "url": "http://localhost:9000/api/blog/articles/5582afdc2cf7b648dcf84aba/tags",
+     *               "count": 0
+     *             }
+     *           }
      *         }
      *       ]
      *     }
@@ -162,13 +188,13 @@ module.exports = function(router) {
      * @apiParam {mixed}  tags           Post tags, as objects (an array of this objects is accepted)
      *                                   The objects must have an id attribute for existing tags. If the tag does not have
      *                                   an ID it is assumed to be a new one and the creation of the tag will be attempted.
-     * @apiUse CommonApiParams
+     * @apiUse Articles_CommonApiParams
      *
      * @apiExample Example usage:
      * curl -X POST -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMSIsImlhdCI6MTQzNDYzMzgwNCwiZXhwIjoxNDM0NjM3NDA0fQ.IwPItcFLIDzA1MvwDXNYjVF0PxVcQ_Mft5wAU-2D8bY" -H "Content-Type: application/x-www-form-urlencoded" -d 'title=Article+title&slug=article-slug&excerpt=Article+excerpt&body=Article+body&commentable=1&author_id=000000000000000000000001&published=1&publish_date=1434540172' http://localhost:9000/api/blog/articles
      *
-     * @apiUse CommonApiResponseHeader
-     * @apiUse SingleEntityResponse
+     * @apiUse Articles_CommonApiResponseHeader
+     * @apiUse Articles_SingleEntityResponse
      *
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
@@ -177,7 +203,12 @@ module.exports = function(router) {
      *         "url": "http://localhost:9001/blog/articles/5582cedfbc15803005798b8f"
      *       },
      *       "data": {
-     *         "author": "000000000000000000000001",
+     *         "author": {
+     *           "meta": {
+     *             "url": "http://localhost:9000/api/authors/000000000000000000000001",
+     *             "count": 1
+     *           }
+     *         },
      *         "body": "Article body",
      *         "excerpt": "Article excerpt",
      *         "slug": "article-slug-16",
@@ -187,7 +218,13 @@ module.exports = function(router) {
      *         "commentable": true,
      *         "publish_date": 1434540,
      *         "published": true,
-     *         "id": "5582cedfbc15803005798b8f"
+     *         "id": "5582cedfbc15803005798b8f",
+     *         "tags": {
+     *           "meta": {
+     *             "url": "http://localhost:9000/api/blog/articles/5582cedfbc15803005798b8f/tags",
+     *             "count": 0
+     *           }
+     *         }
      *       }
      *     }
      *
@@ -203,13 +240,13 @@ module.exports = function(router) {
      * @apiName Get
      * @apiGroup BlogArticles
      *
-     * @apiUse CommonApiParams
+     * @apiUse Articles_CommonApiParams
      *
      * @apiExample Example usage:
      * curl -4 -i http://localhost:9000/api/blog/articles/551c31d0430d78991f5931e1 --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTczNTksImV4cCI6MTQyNzgyMDk1OX0.M3BboY6U9RJlX1ulVG7e9xRVrVdY3qVhvp3jmZaOCJ8"
      *
-     * @apiUse CommonApiResponseHeader
-     * @apiUse SingleEntityResponse
+     * @apiUse Articles_CommonApiResponseHeader
+     * @apiUse Articles_SingleEntityResponse
      *
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
@@ -222,13 +259,24 @@ module.exports = function(router) {
      *         "slug": "this-is-a-test",
      *         "excerpt": "Holaquetal",
      *         "body": "HOLAQUETAL",
-     *         "author": "000000000000000000000001",
+     *         "author": {
+     *           "meta": {
+     *             "url": "http://localhost:9000/api/authors/000000000000000000000001",
+     *             "count": 1
+     *           }
+     *         },
      *         "updated_at": 1434622332,
      *         "created_at": 1434518089,
      *         "commentable": true,
      *         "publish_date": 1434540,
      *         "published": true,
-     *         "id": "5581f70e4901e5baa84a9652"
+     *         "id": "5581f70e4901e5baa84a9652",
+     *         "tags": {
+     *           "meta": {
+     *             "url": "http://localhost:9000/api/blog/articles/5581f70e4901e5baa84a9652/tags",
+     *             "count": 0
+     *           }
+     *         }
      *       }
      *     }
      *
@@ -255,13 +303,13 @@ module.exports = function(router) {
      * @apiParam {mixed}  tags           Post tags, as objects (an array of this objects is accepted)
      *                                   The objects must have an id attribute for existing tags. If the tag does not have
      *                                   an ID it is assumed to be a new one and the creation of the tag will be attempted.
-     * @apiUse CommonApiParams
+     * @apiUse Articles_CommonApiParams
      *
      * @apiExample Example usage:
      * curl -X PUT -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMSIsImlhdCI6MTQzNDYzMzgwNCwiZXhwIjoxNDM0NjM3NDA0fQ.IwPItcFLIDzA1MvwDXNYjVF0PxVcQ_Mft5wAU-2D8bY" -H "Content-Type: application/x-www-form-urlencoded" -d 'title=Test&slug=this-is-a-test&excerpt=Holaquetal&body=HOCTL%C2%B7LA&commentable=1&author_id=000000000000000000000001&published=1&publish_date=1434540172' http://localhost:9000/api/blog/articles/5581f70e4901e5baa84a9652
      *
-     * @apiUse CommonApiResponseHeader
-     * @apiUse SingleEntityResponse
+     * @apiUse Articles_CommonApiResponseHeader
+     * @apiUse Articles_SingleEntityResponse
      *
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
@@ -274,13 +322,24 @@ module.exports = function(router) {
      *         "slug": "this-is-a-test",
      *         "excerpt": "Holaquetal",
      *         "body": "HOLAQUETAL",
-     *         "author": "000000000000000000000001",
+     *         "author": {
+     *           "meta": {
+     *             "url": "http://localhost:9000/api/authors/000000000000000000000001",
+     *             "count": 1
+     *           }
+     *         },
      *         "updated_at": 1434636343,
      *         "created_at": 1434518089,
      *         "commentable": true,
      *         "publish_date": 1434540,
      *         "published": true,
-     *         "id": "5581f70e4901e5baa84a9652"
+     *         "id": "5581f70e4901e5baa84a9652",
+     *         "tags": {
+     *           "meta": {
+     *             "url": "http://localhost:9000/api/blog/articles/5581f70e4901e5baa84a9652/tags",
+     *             "count": 0
+     *           }
+     *         }
      *       }
      *     }
      *
@@ -293,13 +352,13 @@ module.exports = function(router) {
      * @apiName Delete
      * @apiGroup BlogArticles
      *
-     * @apiUse CommonApiParams
+     * @apiUse Articles_CommonApiParams
      *
      * @apiExample Example usage:
      * curl -4 -i -X DELETE http://localhost:9000/api/blog/articles/551c31d0430d78991f5931e1 --header "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI1NGVlNjE3NTQ2NWVhZWUzNWNkMjM3ZWQiLCJpYXQiOjE0Mjc4MTczNTksImV4cCI6MTQyNzgyMDk1OX0.M3BboY6U9RJlX1ulVG7e9xRVrVdY3qVhvp3jmZaOCJ8"
      *
-     * @apiUse CommonApiResponseHeader
-     * @apiUse SingleEntityResponse
+     * @apiUse Articles_CommonApiResponseHeader
+     * @apiUse Articles_SingleEntityResponse
      *
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
@@ -310,13 +369,24 @@ module.exports = function(router) {
      *         "slug": "this-is-a-test",
      *         "excerpt": "Holaquetal",
      *         "body": "HOLAQUETAL",
-     *         "author": "000000000000000000000001",
+     *         "author": {
+     *           "meta": {
+     *             "url": "http://localhost:9000/api/authors/000000000000000000000001",
+     *             "count": 1
+     *           }
+     *         },
      *         "updated_at": 1434636343,
      *         "created_at": 1434518089,
      *         "commentable": true,
      *         "publish_date": 1434540,
      *         "published": true,
-     *         "id": "5581f70e4901e5baa84a9652"
+     *         "id": "5581f70e4901e5baa84a9652",
+     *         "tags": {
+     *           "meta": {
+     *             "url": "http://localhost:9000/api/blog/articles/5581f70e4901e5baa84a9652/tags",
+     *             "count": 0
+     *           }
+     *         }
      *       }
      *     }
      *

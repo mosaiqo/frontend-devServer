@@ -59,7 +59,7 @@ describe('modules/api/util/ResponseMeta', function() {
       total_pages:   paginationOpts.pageCount,
       page:          paginationOpts.page,
       per_page:      paginationOpts.limit,
-      sort_by: {
+      order: {
         id: 'asc'
       }
     });

@@ -49,8 +49,14 @@ class Request {
     maxDepth = maxDepth || 1;
 
     var
-      expands       = _.compact(_.flatten([this.req.query.include])),
+      expands       = this.req.query.include,
       filteredSpans = {};
+
+    if(!Array.isArray(expands)) {
+      expands = [expands];
+    }
+    expands = _.reduce(_.compact(expands), function(memo, expand){ return memo.concat(expand.split(',')); }, []);
+    expands = _.unique(expands);
 
     if(expands.length) {
       // filter out the expands to a maximum depth
@@ -118,8 +124,8 @@ class Request {
   _getSort() {
     var sortOpts = null;
 
-    if(this.req.query.sort_by) {
-      let sortParams = this.req.query.sort_by;
+    if(this.req.query.order) {
+      let sortParams = this.req.query.order;
 
       if(_.isArray(sortParams)) {
         sortParams = sortParams.join(',');
