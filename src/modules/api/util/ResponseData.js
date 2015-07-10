@@ -147,7 +147,7 @@ class ResponseData {
    *
    * @param  {mixed}    data     The data
    * @param  {Array}    stack    Current nesting level
-   * @param  {Object}   expands  x
+   * @param  {Object}   expands  Expansions
    * @return {Object}            The relation 'meta' node
    */
   _getNestedMeta(data, stack, expands) {
@@ -162,8 +162,8 @@ class ResponseData {
 
     // get the pagination
     var
-      populated  = data.populated(attr) || _.flatten([data[attr]]),
-      totalElems = populated ? populated.length : 0;
+      elems      = data.populated(attr) || _.compact(_.flatten([data[attr]])),
+      totalElems = elems.length;
 
     var
       paginationOpts = this._getNestedMetaPaginationOptions(expands, attr, totalElems),
@@ -190,25 +190,32 @@ class ResponseData {
     if(nodeRoute) {
       url = this.baseURL + nodeRoute;
 
+      // aux internal method
+      let getId = function(obj) {
+        var ret;
+        if(obj) {
+          if(obj._id) {
+            ret = obj._id;
+          } else if('toHexString' in obj) {
+            ret = obj;
+          } else {
+            ret  = null;
+          }
+        } else {
+          ret  = null;
+        }
+        return ret;
+      };
+
       // replace any item ids placeholders with the obj. ids
-      url = url.replace(/:parentId/g, parent._id);
+      if(url.indexOf(':parentId') > -1) {
+        let parentId = getId(parent) || '';
+        url = parentId ? url.replace(/:parentId/g, parentId) : '';
+      }
 
       if(url.indexOf(':itemId') > -1) {
-        if(!node) {
-          url = '';
-        } else {
-          let itemId;
-
-          if(node._id) {
-            itemId = node._id;
-          } else if('toHexString' in node) {
-            itemId = node;
-          } else {
-            itemId  = null;
-          }
-
-          url = itemId ? url.replace(/:itemId/g, itemId): '';
-        }
+        let itemId = getId(node) || '';
+        url = itemId ? url.replace(/:itemId/g, itemId): '';
       }
     }
 
@@ -243,9 +250,9 @@ class ResponseData {
 
 
   /**
-   * @param {String} attr    Entity attribute that contains the nested data
-   * @param {Array}  expands Entity attributes to expand
-   * @return {Array}         The attributes to expand on that attr., (false if none)
+   * @param  {String} attr     Entity attribute that contains the nested data
+   * @param  {Object}  expands Expands object
+   * @return {Array}           The attributes to expand on that attr. (false if none)
    */
   _getNestedExpands(attr, expands) {
     var attrs = _.compact(_.keys(expands).map(function(expand) {
