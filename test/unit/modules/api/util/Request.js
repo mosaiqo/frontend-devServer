@@ -75,7 +75,7 @@ describe('modules/api/util/Request', function() {
     // mock the req. object
     var req = {
       query: {
-        expand: ['foo', 'bar']
+        include: ['foo', 'bar']
       }
     };
 
@@ -90,7 +90,7 @@ describe('modules/api/util/Request', function() {
     // mock the req. object
     var req = {
       query: {
-        expand: ['foo', 'foo.bar', 'foo.bar.baz']
+        include: ['foo', 'foo.bar', 'foo.bar.baz']
       }
     },
     request = new Request(req);
@@ -113,7 +113,7 @@ describe('modules/api/util/Request', function() {
 
     var req2 = {
       query: {
-        expand: ['foo.bar', 'foo.bar.baz']
+        include: ['foo.bar', 'foo.bar.baz']
       }
     };
 

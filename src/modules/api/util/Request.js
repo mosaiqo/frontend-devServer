@@ -49,7 +49,7 @@ class Request {
     maxDepth = maxDepth || 1;
 
     var
-      expands       = _.compact(_.flatten([this.req.query.expand])),
+      expands       = _.compact(_.flatten([this.req.query.include])),
       filteredSpans = {};
 
     if(expands.length) {
