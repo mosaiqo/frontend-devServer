@@ -7,8 +7,9 @@ var
   errors          = require('src/lib/errors'),
 
   // API utilities
-  respFormatter   = require('../../util/responseFormatter'),
-  RequestUtil     = require('../../util/apiRequestUtil'),
+  Request         = require('../../util/Request'),
+  Response        = require('../../util/Response'),
+  ExpandsURLMap   = require('../../util/ExpandsURLMap'),
   ArticleTagsUtil = require('../../util/ArticleTagsUtil'),
   slugger         = require('../../util/slugger'),
 
@@ -16,168 +17,206 @@ var
   BaseController  = require('../BaseController'),
 
   // Model managed by this controller
-  Article         = require('../../models/blog/Article');
+  Article = require('../../models/blog/Article');
 
 
 /**
- * ArticlesController contructor
+ * ArticlesController
  */
-function ArticlesController() {
-  BaseController.call(this);
-}
-// make it extend the parent class
-ArticlesController.prototype = Object.create(BaseController.prototype);
+class ArticlesController extends BaseController
+{
+  constructor() {
+    super();
+    /**
+     * @type {Model}
+     */
+    this.Model = Article;
+
+    /**
+     * Nested references output config
+     *
+     * @type {ExpandsURLMap}
+     */
+    this.expandsURLMap = new ExpandsURLMap({
+      "author": {
+        "route": "/authors/:itemId"
+      },
+      "tags": {
+        "route": "/blog/articles/:parentId/tags",
+        "expands": {
+          "articles": {
+            "route": "/blog/tags/:parentId/articles",
+            "expands": {
+              "tags": {
+                "route": "/blog/articles/:parentId/tags"
+              },
+              "author": {
+                "route": "/authors/:itemId"
+              }
+            }
+          }
+        }
+      }
+    });
+  }
 
 
-/**
- * @type {Model}
- */
-ArticlesController.prototype.Model = Article;
+  /**
+   * Create a new Article
+   */
+  create(req, res, next) {
+    var
+      request  = new Request(req),
+      response = new Response(request, this.expandsURLMap),
+
+      // options for the waterfall functs.
+      waterfallOptions = this._buildWaterfallOptions(null, req.body.tags),
+
+      // mass assignable attrs.
+      newAttrs = this._getAssignableAttributes(request);
 
 
-/**
- * Create a new Article
- */
-ArticlesController.prototype.create = function(req, res, next) {
+    async.waterfall([
+      function setup(callback) {
+        var model = new Article(newAttrs);
 
-  var r = new RequestUtil(req), that = this;
+        /* istanbul ignore next */
+        if(req.body.author_id) { model.author = req.body.author_id; }
 
-  async.waterfall([
-    function setup(callback) {
-      var
-        attrs = _.extend({ owner: req.user.userId }, _.pick(req.body, Article.safeAttrs)),
-        model = new Article(attrs),
-        options = {
-          tags:    req.body.tags,
-          expands: r.expands,
-          slug:    null
-        };
+        callback(null, model, waterfallOptions);
+      },
+      this._validate,
+      this._setSlug,
+      this._setTags,
+      this._save
+
+    ], function asyncComplete(err, model) {
 
       /* istanbul ignore next */
-      if(req.body.author_id) { model.author = req.body.author_id; }
+      if (err) { return next(err); }
 
-      callback(null, model, options);
-    },
-    that._validate,
-    that._setSlug,
-    that._setTags,
-    that._applyExpands
-
-  ], function asyncComplete(err, model) {
-
-    /* istanbul ignore next */
-    if (err) { return next(err); }
-
-    var meta = r.getMeta(model);
-    res.json(respFormatter(model, meta));
-  });
-};
-
-
-/**
- * Update an Article
- */
-ArticlesController.prototype.update = function(req, res, next) {
-
-  var r = new RequestUtil(req), that = this;
-
-  async.waterfall([
-    function setup(callback) {
-      var criteria = _.extend({ '_id': req.params.id }, r.query);
-
-      Article.findOne(criteria).exec(function(err, articleModel) {
+      response.formatOutput(model, function(err, output) {
         /* istanbul ignore next */
-        if (err)           { return callback(err); }
-        /* istanbul ignore next */
-        if (!articleModel) { return callback(new errors.NotFound()); }
+        if (err) { return next(err); }
 
-        var options = {
-          tags:    req.body.tags,
-          expands: r.expands,
-          slug:    req.body.slug
-        };
-
-        // assign the new attributes
-        articleModel.set(_.pick(req.body, Article.safeAttrs));
-
-        /* istanbul ignore next */
-        if(req.body.author_id) { articleModel.author = req.body.author_id; }
-
-        callback(null, articleModel, options);
+        res.json(output);
       });
-    },
-    that._validate,
-    that._setSlug,
-    that._setTags,
-    that._applyExpands
-
-  ], function asyncComplete(err, model) {
-
-    /* istanbul ignore next */
-    if (err) { return next(err); }
-
-    var meta = r.getMeta();
-    res.json(respFormatter(model, meta));
-  });
-};
+    });
+  }
 
 
-// Aux. "private" methods
-// (actually they're not private so can be easily tested)
-// =============================================================================
+  /**
+   * Update an Article
+   */
+  update(req, res, next) {
+    var
+      request  = new Request(req),
+      response = new Response(request, this.expandsURLMap),
+
+      // query used to find the doc
+      criteria = this._buildCriteria(request),
+
+      // options for the waterfall functs.
+      waterfallOptions = this._buildWaterfallOptions(req.body.slug, req.body.tags),
+
+      // mass assignable attrs.
+      newAttrs = this._getAssignableAttributes(request);
 
 
-ArticlesController.prototype._validate = function(model, options, callback) {
-  model.validate(function (err) {
-    /* istanbul ignore next */
-    if (err) { return callback(err); }
-    callback(null, model, options);
-  });
-};
+    async.waterfall([
+      function setup(callback) {
+        Article.findOne(criteria).exec(function(err, articleModel) {
+          /* istanbul ignore next */
+          if (err)           { return callback(err); }
+          /* istanbul ignore next */
+          if (!articleModel) { return callback(new errors.NotFound()); }
+          // assign the new attributes
+          articleModel.set(newAttrs);
+
+          /* istanbul ignore next */
+          if(req.body.author_id) { articleModel.author = req.body.author_id; }
+
+          callback(null, articleModel, waterfallOptions);
+        });
+      },
+      this._validate,
+      this._setSlug,
+      this._setTags,
+      this._save
+
+    ], function asyncComplete(err, model) {
+
+      /* istanbul ignore next */
+      if (err) { return next(err); }
+
+      response.formatOutput(model, function(err, output) {
+        /* istanbul ignore next */
+        if (err) { return next(err); }
+
+        res.json(output);
+      });
+    });
+  }
 
 
-ArticlesController.prototype._setSlug = function(model, options, callback) {
-  slugger(Article, model.title, options.slug, function(err, articleSlug) {
-    /* istanbul ignore next */
-    if (err) { return callback(err); }
+  // Aux. "private" methods
+  // (actually they're not private so can be easily tested)
+  // =============================================================================
 
-    model.slug = articleSlug;
-    callback(null, model, options);
-  });
-};
+  _buildWaterfallOptions(slug, tags) {
+    var options = {};
+    if(!_.isUndefined(slug)) { options.slug = slug; }
+    if(!_.isUndefined(tags)) { options.tags = tags; }
+    return options;
+  }
 
 
-ArticlesController.prototype._setTags = function(model, options, callback) {
-  var tags = options.tags || [];
+  _setSlug(model, options, callback) {
+    if(_.isUndefined(options.slug)) {
+      callback(null, model, options);
+    } else {
+      slugger(Article, model.title, options.slug, function(err, articleSlug) {
+        /* istanbul ignore next */
+        if (err) { return callback(err); }
 
-  if(!_.isObject(tags) || !_.isArray(tags)) {
-    try {
-      tags = JSON.parse(tags);
-    } catch(e) {
-      return callback( errors.Validation(model, 'tags', 'Tags must be a valid JSON') );
+        model.slug = articleSlug;
+        callback(null, model, options);
+      });
     }
   }
 
-  ArticleTagsUtil.setArticleTags(model, tags, function(err) {
-    /* istanbul ignore next */
-    if (err) {
-      if(err.code === 11000) {
-        var repeatedTag = /:\ "(.+)" \}$/.exec(err.message)[1];
-        err = errors.Validation(model, 'tags', "Can't create tag '" + repeatedTag + "', already exists");
+
+  _setTags(model, options, callback) {
+    if(_.isUndefined(options.tags)) {
+      callback(null, model, options);
+    } else {
+
+      let tags = options.tags;
+
+      if(!_.isObject(tags)) {
+        try {
+          tags = JSON.parse(tags);
+        } catch(e) {
+          return callback( errors.Validation(model, 'tags', 'Tags must be a valid JSON') );
+        }
       }
 
-      return callback(err);
+      ArticleTagsUtil.setArticleTags(model, tags, function(err) {
+        /* istanbul ignore next */
+        if (err) {
+          if(err.code === 11000) {
+            var repeatedTag = /:\ "(.+)" \}$/.exec(err.message)[1];
+            err = errors.Validation(model, 'tags', "Can't create tag '" + repeatedTag + "', already exists");
+          }
+
+          return callback(err);
+        }
+        callback(null, model, options);
+      });
     }
-    callback(null, model, options);
-  });
-};
+  }
 
-
-ArticlesController.prototype._applyExpands = function(model, options, callback) {
-  model.populate(options.expands, function() {
-    callback(null, model);
-  });
-};
+}
 
 
 module.exports = ArticlesController;

@@ -12,10 +12,10 @@ if(process.env.APP_DIR_FOR_CODE_COVERAGE) {
 
 // New Relic
 /* istanbul ignore next */
-if (process.env.NEW_RELIC_ENABLED && !process.env.DEV) {
-  require('newrelic');
-  debug('Starting New Relic monitoring');
-}
+// if (process.env.NEW_RELIC_ENABLED && !process.env.DEV) {
+//   require('newrelic');
+//   debug('Starting New Relic monitoring');
+// }
 
 
 
@@ -28,6 +28,7 @@ var
   express    = require('express'),
   bodyParser = require('body-parser'),
   cors       = require('cors'),
+  config     = require('./config'),
 
   publicDir  = process.env.APP_PUBLIC_DIR,
   port       = process.env.PORT || 5000;
@@ -70,10 +71,10 @@ var createApp = function() {
   // =============================================================================
   var paginate = require('express-paginate');
 
-  app.use(paginate.middleware(20, 200));
+  app.use(paginate.middleware(config.pagination.defaultLimit, config.pagination.maxLimit));
 
 
-  // FAKE API (the real on will be implemented using Laravel)
+  // Restful API
   // =============================================================================
   var API = require('./modules/api');
 
@@ -108,7 +109,5 @@ if (process.env.DEV) {        // dev/test mode: just create one instance
 
 } else {                      // production mode: clustered, one worker per core
   var cluster = require('express-cluster');
-
   cluster(createApp);
 }
-console.log('fuck');

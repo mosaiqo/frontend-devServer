@@ -90,15 +90,18 @@ TagSchema.index({ owner: 1, slug: 1}, { unique: true });
 // Custom methods and attributes
 // ----------------------------------
 TagSchema.statics.safeAttrs = ['name', 'description', 'owner'];
+TagSchema.methods.getRefs = function() { return ['articles']; };
 
 
 // Register the plugins
 // ----------------------------------
 TagSchema.plugin( require('mongoose-paginate') );
+TagSchema.plugin( require('mongoose-deep-populate') );
 
 
 /* istanbul ignore next */
 var BlogTagModel = mongoose.models.BlogTag ?
   mongoose.model('BlogTag') : mongoose.model('BlogTag', TagSchema);
+
 
 module.exports = BlogTagModel;

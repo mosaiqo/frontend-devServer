@@ -2,6 +2,7 @@
 
 var
   fs         = require('fs'),
+  glob       = require('glob'),
   express    = require('express'),
   mongoose   = require('mongoose'),
   debug      = require('debug')('MosaiqoApp:API:' + process.pid),
@@ -27,6 +28,8 @@ var mongoConn = new mongoConfigParser().setEnv({
 mongoose.connection.on('error', function () {
     debug('Mongoose connection error');
 });
+
+/* istanbul ignore next */
 mongoose.connection.once('open', function callback() {
     debug('Mongoose connected to the database');
 });
@@ -74,10 +77,13 @@ router.get('/', function(req, res, next) {
 });
 
 // load the routes
-fs.readdirSync(routesDir).forEach(function(file) {
-  var route = routesDir + file.substr(0, file.indexOf('.'));
-  debug('Adding route:' + route);
-  require(route)(router);
+glob(routesDir + '**/*.js', function (er, files) {
+  files.forEach(function(routesFile) {
+    var route = routesFile.substr(0, routesFile.indexOf('.'));
+    debug('Adding route:' + route);
+    require(route)(router);
+  });
 });
+
 
 module.exports = router;

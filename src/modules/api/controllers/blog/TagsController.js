@@ -7,8 +7,10 @@ var
   errors          = require('src/lib/errors'),
 
   // API utilities
-  respFormatter   = require('../../util/responseFormatter'),
-  RequestUtil     = require('../../util/apiRequestUtil'),
+  Request         = require('../../util/Request'),
+  Response        = require('../../util/Response'),
+  ExpandsURLMap   = require('../../util/ExpandsURLMap'),
+  ArticleTagsUtil = require('../../util/ArticleTagsUtil'),
   slugger         = require('../../util/slugger'),
 
   // Base class
@@ -19,140 +21,188 @@ var
 
 
 /**
- * TagsController contructor
+ * TagsController
  */
-function TagsController() {
-  BaseController.call(this);
-}
-// make it extend the parent class
-TagsController.prototype = Object.create(BaseController.prototype);
+class TagsController extends BaseController
+{
+  constructor() {
+    super();
+    /**
+     * @type {Model}
+     */
+    this.Model = Tag;
+
+    /**
+     * Nested references output config
+     *
+     * @type {ExpandsURLMap}
+     */
+    this.expandsURLMap = new ExpandsURLMap({
+      "articles": {
+        "route": "/blog/tags/:parentId/articles",
+        "expands": {
+          "author": {
+            "route": "/authors/:itemId"
+          },
+          "tags": {
+            "route": "/blog/articles/:parentId/tags",
+            "expands": {
+              "articles": {
+                "route": "/blog/tags/:parentId/articles"
+              },
+              "author": {
+                "route": "/authors/:itemId"
+              }
+            }
+          }
+        }
+      }
+    });
+  }
 
 
-/**
- * @type {Model}
- */
-TagsController.prototype.Model = Tag;
+  /**
+   * Create a new Tag
+   */
+  create(req, res, next) {
+    var
+      request  = new Request(req),
+      response = new Response(request, this.expandsURLMap),
+
+      // options for the waterfall functs.
+      waterfallOptions = this._buildWaterfallOptions(null, req.body.articles),
+
+      // mass assignable attrs.
+      newAttrs = this._getAssignableAttributes(request);
 
 
-/**
- * Create a new Tag
- */
-TagsController.prototype.create = function(req, res, next) {
+    async.waterfall([
+      function setup(callback) {
+        var model = new Tag(newAttrs);
+        callback(null, model, waterfallOptions);
+      },
+      this._validate,
+      this._setSlug,
+      this._setArticles,
+      this._save
 
-  var r = new RequestUtil(req), that = this;
+    ], function asyncComplete(err, model) {
 
-  async.waterfall([
-    function setup(callback) {
-      var
-        attrs = _.extend({ owner: req.user.userId }, _.pick(req.body, Tag.safeAttrs)),
-        model = new Tag(attrs),
-        options = {
-          expands: r.expands,
-          slug:    null
-        };
+      /* istanbul ignore next */
+      if (err) { return next(err); }
 
-      callback(null, model, options);
-    },
-    that._validate,
-    that._setSlug,
-    that._save,
-    that._applyExpands
-
-  ], function asyncComplete(err, model) {
-
-    /* istanbul ignore next */
-    if (err) { return next(err); }
-
-    var meta = r.getMeta(model);
-    res.json(respFormatter(model, meta));
-  });
-};
-
-
-/**
- * Update a Tag
- */
-TagsController.prototype.update = function(req, res, next) {
-
-  var r = new RequestUtil(req), that = this;
-
-  async.waterfall([
-    function setup(callback) {
-      var criteria = _.extend({ '_id': req.params.id }, r.query);
-
-      Tag.findOne(criteria).exec(function(err, tagModel) {
+      response.formatOutput(model, function(err, output) {
         /* istanbul ignore next */
-        if (err)           { return callback(err); }
-        /* istanbul ignore next */
-        if (!tagModel) { return callback(new errors.NotFound()); }
+        if (err) { return next(err); }
 
-        var
-          options = {
-            expands: r.expands,
-            slug:    req.body.slug
-          };
-
-        // assign the new attributes
-        tagModel.set(_.pick(req.body, Tag.safeAttrs));
-
-        callback(null, tagModel, options);
+        res.json(output);
       });
-    },
-    that._validate,
-    that._setSlug,
-    that._save,
-    that._applyExpands
-
-  ], function asyncComplete(err, model) {
-
-    /* istanbul ignore next */
-    if (err) { return next(err); }
-
-    var meta = r.getMeta();
-    res.json(respFormatter(model, meta));
-  });
-};
+    });
+  }
 
 
+  /**
+   * Update a Tag
+   */
+  update(req, res, next) {
+    var
+      request  = new Request(req),
+      response = new Response(request, this.expandsURLMap),
 
-// Aux. "private" methods
-// (actually they're not private so can be easily tested)
-// =============================================================================
+      // query used to find the doc
+      criteria = this._buildCriteria(request),
 
-TagsController.prototype._validate = function(model, options, callback) {
-  model.validate(function (err) {
-    /* istanbul ignore next */
-    if (err) { return callback(err); }
-    callback(null, model, options);
-  });
-};
+      // options for the waterfall functs.
+      waterfallOptions = this._buildWaterfallOptions(req.body.slug, req.body.articles),
+
+      // mass assignable attrs.
+      newAttrs = this._getAssignableAttributes(request);
+
+    async.waterfall([
+      function setup(callback) {
+        Tag.findOne(criteria).exec(function(err, tagModel) {
+          /* istanbul ignore next */
+          if (err)           { return callback(err); }
+          /* istanbul ignore next */
+          if (!tagModel) { return callback(new errors.NotFound()); }
+
+          // assign the new attributes
+          tagModel.set(newAttrs);
+
+          callback(null, tagModel, waterfallOptions);
+        });
+      },
+      this._validate,
+      this._setSlug,
+      this._setArticles,
+      this._save
+
+    ], function asyncComplete(err, model) {
+
+      /* istanbul ignore next */
+      if (err) { return next(err); }
+
+      response.formatOutput(model, function(err, output) {
+        /* istanbul ignore next */
+        if (err) { return next(err); }
+
+        res.json(output);
+      });
+    });
+  }
 
 
-TagsController.prototype._setSlug = function(model, options, callback) {
-  slugger(Tag, model.name, options.slug, function(err, tagSlug) {
-    /* istanbul ignore next */
-    if (err) { return callback(err); }
 
-    model.slug = tagSlug;
-    callback(null, model, options);
-  });
-};
+  // Aux. "private" methods
+  // (actually they're not private so can be easily tested)
+  // =============================================================================
 
-
-TagsController.prototype._save = function(model, options, callback) {
-  model.save(function(err) {
-    /* istanbul ignore next */
-    if (err) { return callback(err); }
-    callback(null, model, options);
-  });
-};
+  _buildWaterfallOptions(slug, articles) {
+    var options = {};
+    if(!_.isUndefined(slug))     { options.slug = slug; }
+    if(!_.isUndefined(articles)) { options.articles = articles; }
+    return options;
+  }
 
 
-TagsController.prototype._applyExpands = function(model, options, callback) {
-  model.populate(options.expands, function() {
-    callback(null, model);
-  });
-};
+  _setSlug(model, options, callback) {
+    if(_.isUndefined(options.slug)) {
+      callback(null, model, options);
+    } else {
+      slugger(Tag, model.name, options.slug, function(err, tagSlug) {
+        /* istanbul ignore next */
+        if (err) { return callback(err); }
+
+        model.slug = tagSlug;
+        callback(null, model, options);
+      });
+    }
+  }
+
+
+  _setArticles(model, options, callback) {
+    if(_.isUndefined(options.articles)) {
+      callback(null, model, options);
+    } else {
+      let articles = options.articles;
+
+      if(!_.isObject(articles)) {
+        try {
+          articles = JSON.parse(articles);
+        } catch(e) {
+          return callback( errors.Validation(model, 'articles', 'Articles must be a valid JSON') );
+        }
+      }
+
+      ArticleTagsUtil.setTagArticles(model, articles, function(err, model) {
+        /* istanbul ignore next */
+        if(err) { return callback(err); }
+        callback(null, model, options);
+      });
+    }
+  }
+
+}
 
 
 module.exports = TagsController;

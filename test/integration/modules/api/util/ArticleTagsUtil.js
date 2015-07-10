@@ -4,14 +4,12 @@ var
   _                 = require('underscore'),
   async             = require('async'),
   objectid          = require('mongodb').ObjectID,
-
-  mongoose          = require('mongoose'),
-  mongoConfigParser = require('src/lib/mongoConfigParser'),
+  db                = require('test/_util/db'),
 
   // test dependencies
   mocha             = require('mocha'),
   expect            = require('chai').expect,
-  requireHelper     = require('test/require_helper'),
+  requireHelper     = require('test/_util/require_helper'),
 
   // other
   Article           = require('src/modules/api/models/blog/Article'),
@@ -26,16 +24,7 @@ describe('modules/api/util/ArticleTagsUtil', function() {
   var existingTag;
 
   before(function(done) {
-    var mongoConn = new mongoConfigParser().setEnv({
-      host     : process.env.MONGO_HOST,
-      port     : process.env.MONGO_PORT,
-      user     : process.env.MONGO_USER,
-      password : process.env.MONGO_PASSWORD,
-      database : process.env.MONGO_DATABASE
-    });
-    mongoose.connect(mongoConn.getConnectionString(), mongoConn.getConnectionOptions());
-    mongoose.connection.once('open', function() {
-
+    db.connect(function() {
       existingTag = new Tag({
         name:  'some-new-tag-0',
         slug:  'some-new-tag-0',
@@ -54,13 +43,12 @@ describe('modules/api/util/ArticleTagsUtil', function() {
 
   after(function(done) {
     existingTag.remove(function() {
-      mongoose.connection.close(done);
+      db.disconnect(done);
     });
   });
 
 
-
-  describe('createUnexistingTags', function() {
+  describe('_createUnexistingTags', function() {
 
     it('should create only the tags without id', function(done) {
 
@@ -77,7 +65,7 @@ describe('modules/api/util/ArticleTagsUtil', function() {
           { name: 'some-new-tag-2' }                    // another new tag
         ];
 
-      ArticleTagsUtil.createUnexistingTags(articleModel, tagsToAssign, function(err, model) {
+      ArticleTagsUtil._createUnexistingTags(articleModel, tagsToAssign, function(err, model) {
 
         expect(err).to.be.null;
 
@@ -110,7 +98,7 @@ describe('modules/api/util/ArticleTagsUtil', function() {
   });
 
 
-  describe('updateTagsArticles', function() {
+  describe('_updateTagsArticles', function() {
 
     it('should invoke the callback if there\'s nothing to do', function(done) {
       var
@@ -120,7 +108,7 @@ describe('modules/api/util/ArticleTagsUtil', function() {
         },
         tagsToAssign = [];
 
-      ArticleTagsUtil.updateTagsArticles(articleModel, tagsToAssign, function(err, model) {
+      ArticleTagsUtil._updateTagsArticles(articleModel, tagsToAssign, function(err, model) {
         expect(model.tags).to.be.undefined;
         done();
       });
@@ -135,7 +123,7 @@ describe('modules/api/util/ArticleTagsUtil', function() {
         },
         tagsToAssign = [existingTag];
 
-      ArticleTagsUtil.updateTagsArticles(articleModel, tagsToAssign, function(err, model) {
+      ArticleTagsUtil._updateTagsArticles(articleModel, tagsToAssign, function(err, model) {
         Tag.find({_id: existingTag._id}, function(err, models) {
           expect(models[0].articles.length).to.equal(1);
           expect(models[0].articles[0].toString()).to.equal(articleModel.id.toString());
@@ -154,7 +142,7 @@ describe('modules/api/util/ArticleTagsUtil', function() {
         },
         tagsToAssign = [];
 
-      ArticleTagsUtil.updateTagsArticles(articleModel, tagsToAssign, function(err, model) {
+      ArticleTagsUtil._updateTagsArticles(articleModel, tagsToAssign, function(err, model) {
         Tag.find({_id: existingTag._id}, function(err, models) {
           expect(models[0].articles.length).to.equal(0);
           done();
@@ -165,7 +153,7 @@ describe('modules/api/util/ArticleTagsUtil', function() {
   });
 
 
-  describe('updateArticleTags', function() {
+  describe('_updateArticleTags', function() {
 
     it('should update the tags on the article', function(done) {
       var
@@ -179,7 +167,7 @@ describe('modules/api/util/ArticleTagsUtil', function() {
           { id: objectid('000000000000000000000002') }
         ];
 
-      ArticleTagsUtil.updateArticleTags(articleModel, tagsToAssign, function(err, model) {
+      ArticleTagsUtil._updateArticleTags(articleModel, tagsToAssign, function(err, model) {
         expect(model).to.have.property('tags');
         expect(model.tags.length).to.equal(2);
 
@@ -228,6 +216,127 @@ describe('modules/api/util/ArticleTagsUtil', function() {
       ArticleTagsUtil.setArticleTags(articleModel, tagsToAssign, function(err, model) {
         expect(err).to.be.null;
         done();
+      });
+    });
+
+  });
+
+
+  describe('setTagArticles', function() {
+
+    it('should do nothing if there is no change in the articles', function(done) {
+      var tagModel = new Tag();
+
+      tagModel.set({
+        owner:    objectid('000000000000000000000001'),
+        id:       objectid('000000000000000000000012'),
+        name:     'setTagArticlesTestTag-0',
+        slug:     'set-tag-articles-test-tag-0'
+      });
+
+      tagModel.save(function(err, model) {
+        ArticleTagsUtil.setTagArticles(model, [], function(err, tag) {
+          expect(err).to.be.null;
+          done();
+        });
+      });
+    });
+
+
+    it('should link and unlink the articles', function(done) {
+      var tagModel, articleModel1, articleModel2;
+
+      async.series([
+
+        function(cb) {
+          (new Article({
+            owner:    objectid('000000000000000000000001'),
+            author:   objectid('000000000000000000000001'),
+            id:       objectid('000000000000000000000009'),
+            title:   'Some article1',
+            slug:    'some-article-00000000001'
+          })).save(function(err, model) {
+            if(err) { return cb(err); }
+            articleModel1 = model;
+            cb();
+          });
+        },
+
+        function(cb) {
+          (new Tag({
+            owner:    objectid('000000000000000000000001'),
+            id:       objectid('000000000000000000000008'),
+            name:     'setTagArticlesTestTag',
+            slug:     'set-tag-articles-test-tag',
+            articles: ['000000000000000000000009']
+          })).save(function(err, model) {
+            if(err) { return cb(err); }
+            tagModel = model;
+            cb();
+          });
+        },
+
+        function(cb) {
+          (new Article({
+            owner:    objectid('000000000000000000000001'),
+            author:   objectid('000000000000000000000001'),
+            id:       objectid('000000000000000000000010'),
+            title:   'Some article2',
+            slug:    'some-article-00000000002'
+          })).save(function(err, model) {
+            if(err) { return cb(err); }
+            articleModel2 = model;
+            cb();
+          });
+        }
+
+      ], function(err) {
+        expect(err).to.be.null;
+
+        if(err) {
+          console.log(err);
+          done();
+        }
+
+        ArticleTagsUtil.setTagArticles(tagModel, [articleModel2], function(err, tag) {
+          expect(err).to.be.null;
+
+          async.series([
+
+            function(cb) {
+              tag.populate('articles', function(err, model) {
+                expect(model.articles.length).to.equal(1);
+                expect(model.articles[0].title).to.equal('Some article2');
+                cb();
+              });
+            },
+
+            function(cb) {
+              Article.findOne(articleModel1._id).populate('tags').exec(function(err, model) {
+                expect(model.tags.length).to.equal(0);
+                cb();
+              });
+            },
+
+            function(cb) {
+              Article.findOne(articleModel2._id).populate('tags').exec(function(err, model) {
+                expect(model.tags.length).to.equal(1);
+                expect(model.tags[0].name).to.equal('setTagArticlesTestTag');
+                cb();
+              });
+            }
+
+          ], function(err) {
+            expect(err).to.be.null;
+
+            if(err) {
+              console.log(err);
+              done();
+            }
+            done();
+          });
+
+        });
       });
     });
 

@@ -8,7 +8,8 @@ var
   jwtAuth       = require('src/lib/jwtAuth'),
 
   // API utilities
-  respFormatter = require('../util/responseFormatter'),
+  Request       = require('../util/Request'),
+  Response      = require('../util/Response'),
 
   // Model managed by this controller
   User          = require('../models/User');
@@ -19,7 +20,11 @@ var AuthController = {
 
   login: function(req, res, next) {
     // auth handling implemented in the Authenticated middleware
-    return res.status(200).json( respFormatter(req.user) );
+    (new Response()).formatOutput(req.user, function(err, output) {
+      /* istanbul ignore next */
+      if (err) { return next(err); }
+      res.json(output);
+    });
   },
 
 
@@ -34,9 +39,14 @@ var AuthController = {
       /* istanbul ignore else */
       if (jwtAuth.expire(req.headers)) {
         delete req.user;
-        return res.status(200).json(respFormatter({
-          'message': 'User has been successfully logged out'
-        }));
+        var msg = { 'message': 'User has been successfully logged out' };
+
+        (new Response()).formatOutput(msg, function(err, output) {
+          /* istanbul ignore next */
+          if (err) { return next(err); }
+          res.json(output);
+        });
+
       } else {
         return next(new errors.Unauthorized());
       }
@@ -62,7 +72,12 @@ var AuthController = {
 
       jwtAuth.create(user, req, res, function() {
         jwtAuth.expire(req.headers);
-        return res.status(200).json( respFormatter(req.user) );
+
+        (new Response()).formatOutput(req.user, function(err, output) {
+          /* istanbul ignore next */
+          if (err) { return next(err); }
+          res.json(output);
+        });
       });
 
     });
@@ -76,7 +91,13 @@ var AuthController = {
       return next(new errors.Unauthorized());
     }
 
-    return res.status(200).json( respFormatter({'message': 'Token is valid'}) );
+    var msg = { 'message': 'Token is valid' };
+
+    (new Response()).formatOutput(msg, function(err, output) {
+      /* istanbul ignore next */
+      if (err) { return next(err); }
+      res.json(output);
+    });
   }
 
 };

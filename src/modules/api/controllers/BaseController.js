@@ -1,108 +1,179 @@
 'use strict';
 
 var
-  _              = require('underscore'),
-  async          = require('async'),
-  errors         = require('src/lib/errors'),
-  respFormatter  = require('../util/responseFormatter'),
-  RequestUtil    = require('../util/apiRequestUtil');
+  _             = require('underscore'),
+  async         = require('async'),
+  errors        = require('src/lib/errors'),
+  Request       = require('../util/Request'),
+  Response      = require('../util/Response'),
+  ExpandsURLMap = require('../util/ExpandsURLMap');
 
 
 /**
- * BaseController contructor
+ * BaseController
  */
-function BaseController() {}
+class BaseController
+{
+  constructor() {
 
+    /**
+     * @type {Model}
+     */
+    this.Model = null;
 
-/**
- * @type {Model}
- */
-BaseController.prototype.Model = null;
+    /**
+     * Nested references output config
+     *
+     * @type {ExpandsURLMap}
+     */
+    this.expandsURLMap = new ExpandsURLMap();
+  }
 
+  /**
+   * Retrieve one Model element
+   */
+  getOne(req, res, next) {
 
-/**
- * Retrieve one Model element
- */
-BaseController.prototype.getOne = function(req, res, next) {
+    var
+      request  = new Request(req),
+      response = new Response(request, this.expandsURLMap),
+      criteria = this._buildCriteria(request);
 
-  var
-    r        = new RequestUtil(req),
-    criteria = _.extend({ '_id': req.params.id }, r.query);
+    this.Model
+      .findOne(criteria)
+      .exec(function(err, model) {
+        /* istanbul ignore next */
+        if (err)    { return next(err); }
+        if (!model) { return next(new errors.NotFound()); }
 
-  this.Model
-    .findOne(criteria)
-    .populate(r.expands)
-    .exec(function(err, model) {
-      /* istanbul ignore next */
-      if (err)    { return next(err); }
-      if (!model) { return next(new errors.NotFound()); }
+        response.formatOutput(model, function(err, output) {
+          /* istanbul ignore next */
+          if (err) { return next(err); }
 
-      var meta = r.getMeta();
-      res.json(respFormatter(model, meta));
-    });
-};
-
-
-/**
- * Retrieve all the model instances, paginated
- */
-BaseController.prototype.getAll = function(req, res, next) {
-
-  var
-    r    = new RequestUtil(req),
-    opts = { page: r.page, limit: r.limit, populate: r.expands };
-
-  this.Model.paginate(r.query, opts, function(err, paginatedResults, pageCount, itemCount) {
-    /* istanbul ignore next */
-    if (err) { return next(err); }
-
-    var meta = r.getMeta(null, { itemCount: itemCount, pageCount: pageCount });
-
-    res.json(respFormatter(paginatedResults, meta));
-
-  }, r.options);
-};
-
-
-/**
- * Create one Model instance and save it
- * @abstract
- */
-/* istanbul ignore next */
-BaseController.prototype.create = function(req, res, next) {};
-
-
-/**
- * Edit one Model instance
- * @abstract
- */
-/* istanbul ignore next */
-BaseController.prototype.update = function(req, res, next) {};
-
-
-/**
- * Delete one Model instance
- */
-BaseController.prototype.delete = function(req, res, next) {
-
-  var
-    r = new RequestUtil(req),
-    criteria = _.extend({ '_id': req.params.id }, r.query);
-
-  this.Model
-    .findOne(criteria)
-    .populate(r.expands)
-    .exec(function(err, model) {
-
-      /* istanbul ignore next */
-      if (err)    { return next(err); }
-      if (!model) { return next( new errors.NotFound() ); }
-
-      model.remove(function() {
-        res.json(respFormatter(model));
+          res.json(output);
+        });
       });
-  });
-};
+  }
+
+
+  /**
+   * Retrieve all the model instances, paginated
+   */
+  getAll(req, res, next) {
+
+    var
+      request    = new Request(req),
+      response   = new Response(request, this.expandsURLMap),
+      criteria   = this._buildCriteria(request);
+
+
+    this.Model.paginate(criteria, request.options, function(err, paginatedResults, pageCount, itemCount) {
+      /* istanbul ignore next */
+      if (err) { return next(err); }
+
+      response
+        .setPaginationParams(pageCount, itemCount)
+        .formatOutput(paginatedResults, function(err, output) {
+          /* istanbul ignore next */
+          if (err) { return next(err); }
+
+          res.json(output);
+        });
+
+    });
+  }
+
+
+  /**
+   * Create one Model instance and save it
+   * @abstract
+   */
+  /* istanbul ignore next */
+  create(req, res, next) { next(); }
+
+
+  /**
+   * Edit one Model instance
+   * @abstract
+   */
+  /* istanbul ignore next */
+  update(req, res, next) { next(); }
+
+
+  /**
+   * Delete one Model instance
+   */
+  delete(req, res, next) {
+
+    var
+      request  = new Request(req),
+      response = new Response(request, this.expandsURLMap),
+      criteria = this._buildCriteria(request);
+
+    this.Model
+      .findOne(criteria)
+      .exec(function(err, model) {
+        /* istanbul ignore next */
+        if (err)    { return next(err); }
+        if (!model) { return next( new errors.NotFound() ); }
+
+        model.remove(function() {
+          response.formatOutput(model, function(err, output) {
+            /* istanbul ignore next */
+            if (err) { return next(err); }
+
+            res.json(output);
+          });
+        });
+    });
+  }
+
+
+  // Aux. "private" methods
+  // (actually they're not private so can be easily tested)
+  // =============================================================================
+
+  _buildCriteria(request) {
+    var criteria = {
+      owner: request.getOwnerFromAuth()
+    };
+
+    if(request.req.params.id) {
+      criteria._id = request.req.params.id;
+    }
+
+    return criteria;
+  }
+
+
+  _getAssignableAttributes(request, customAttrs) {
+    customAttrs = customAttrs || {};
+    return _.extend(
+      { owner: request.req.user.userId },
+      customAttrs,
+      _.pick(request.req.body, this.Model.safeAttrs)
+    );
+  }
+
+
+  _validate(model, options, callback) {
+    model.validate(function (err) {
+      /* istanbul ignore next */
+      if (err) { return callback(err); }
+      callback(null, model, options);
+    });
+  }
+
+
+  _save(model, options, callback) {
+    model.save(function(err) {
+      /* istanbul ignore next */
+      if (err) { return callback(err); }
+      callback(null, model, options);
+    });
+  }
+
+}
 
 
 module.exports = BaseController;

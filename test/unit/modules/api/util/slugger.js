@@ -1,6 +1,3 @@
-/* global require, module, process, console, describe, it, before, after, afterEach, __dirname */
-/* jshint -W097 */
-/* jshint expr: true */
 'use strict';
 
 var
@@ -9,7 +6,7 @@ var
   // test dependencies
   mocha          = require('mocha'),
   expect         = require('chai').expect,
-  requireHelper  = require('test/require_helper'),
+  requireHelper  = require('test/_util/require_helper'),
 
   // file to test
   slugger        = requireHelper('modules/api/util/slugger');
