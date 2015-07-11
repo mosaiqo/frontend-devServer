@@ -124,8 +124,8 @@ class Request {
   _getSort() {
     var sortOpts = null;
 
-    if(this.req.query.order) {
-      let sortParams = this.req.query.order;
+    if(this.req.query.sort) {
+      let sortParams = this.req.query.sort;
 
       if(_.isArray(sortParams)) {
         sortParams = sortParams.join(',');

@@ -25,14 +25,14 @@ module.exports = function(router) {
      *                                the number of elements returned (by default 20). There's a hard limit (200). Requests
      *                                with a greater value will return only the maximum allowed items.
      * @apiParam {Integer} [page]     The results page (for paginated results)
-     * @apiParam {String}  [order]    Sort criteria. Accepts multiple values (arrays or separated with commas).
+     * @apiParam {String}  [sort]     Sort criteria. Accepts multiple values (arrays or separated with commas).
      *                                It also accepts the sort direction (if not provided, 'asc' will be used).
      *                                Accepted values: `1`, `-1`, `asc`, `desc`.
      *                                Examples:
-     *                                  `?order=id`
-     *                                  `?order=id|asc`
-     *                                  `?order=id|asc,name|desc`
-     *                                  `?order[]=id|asc&order[]=name
+     *                                  `?sort=id`
+     *                                  `?sort=id|asc`
+     *                                  `?sort=id|asc,name|desc`
+     *                                  `?sort[]=id|asc&sort[]=name
      *
      */
 

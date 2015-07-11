@@ -113,7 +113,7 @@ The pagination can be controlled using the following querystring parameters:
 - `per_page`: Determines the maximum items returned. The API has a default value, and a hard limit that can not be overridden.
 - `page`.
 
-Additionally, there's the `order` parameter. It accepts multiple values (using commas or as an array, see the `include` parameter). It also accepts optionally the sort direction using a pipe as a separator. If the direction is not provided, it defaults to 'asc'. The accepted values for the direction are: `1`, `asc`, `-1` and `desc`.
+Additionally, there's the `sort` parameter. It accepts multiple values (using commas or as an array, see the `include` parameter). It also accepts optionally the sort direction using a pipe as a separator. If the direction is not provided, it defaults to 'asc'. The accepted values for the direction are: `1`, `asc`, `-1` and `desc`.
 
 Examples:
 
@@ -148,7 +148,7 @@ With sorting applied:
       "total_pages": 1,
       "page": 1,
       "per_page": 20,
-      "order": {
+      "sort": {
         "title": "desc",
         "publish_date": "asc",
         "id": "asc"
@@ -164,6 +164,6 @@ With sorting applied:
 
 The pagination options for the nested collections are the same, but the syntax is a little bit different:
 
-`...?include=tags:page(1):per_page(4):order(id,name|-1)`
+`...?include=tags:page(1):per_page(4):sort(id,name|-1)`
 
 Instead of ampersands it uses a colon `:` as separator, and the values go between parentheses.

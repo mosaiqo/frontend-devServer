@@ -56,7 +56,7 @@ class ResponseMeta {
     };
 
     if(pagination.sortBy) {
-      paginator.order = pagination.sortBy;
+      paginator.sort = pagination.sortBy;
     }
 
     return paginator;
