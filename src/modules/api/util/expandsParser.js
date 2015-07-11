@@ -82,7 +82,7 @@ var _parseExpandOpt = function(opts, rawOpt) {
         }
         break;
 
-      case 'order':
+      case 'sort':
         opts.sort = _.extend(opts.sort || {}, sortParser.parse(args));
         break;
     }

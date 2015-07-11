@@ -45,7 +45,7 @@ describe('modules/api/util/expandsParser', function() {
 
 
   it('should return an object with the recognised sorting options', function(done) {
-    expect(expandsParser.parse(['foo:per_page(10):order(id)'])).to.deep.equal({
+    expect(expandsParser.parse(['foo:per_page(10):sort(id)'])).to.deep.equal({
       foo: {
         options: {
           limit: 10,
@@ -55,7 +55,7 @@ describe('modules/api/util/expandsParser', function() {
       }
     });
 
-    expect(expandsParser.parse(['foo:page(2):per_page(4):order(id|-1,name)'])).to.deep.equal({
+    expect(expandsParser.parse(['foo:page(2):per_page(4):sort(id|-1,name)'])).to.deep.equal({
       foo: {
         options: {
           limit: 4,
@@ -65,7 +65,7 @@ describe('modules/api/util/expandsParser', function() {
       }
     });
 
-    expect(expandsParser.parse(['foo:page(1):per_page(4)', 'bar:order(id|24)', 'baz:xxx:foobar(321131321)'])).to.deep.equal({
+    expect(expandsParser.parse(['foo:page(1):per_page(4)', 'bar:sort(id|24)', 'baz:xxx:foobar(321131321)'])).to.deep.equal({
       foo: {
         options: {
           limit: 4,

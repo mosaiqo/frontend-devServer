@@ -159,7 +159,7 @@ describe('modules/api/util/Request', function() {
 
 
   it('should return the options with the sorting criterias', function(done) {
-    var req = {query: { page: 1, limit: 10, order: 'id' }};
+    var req = {query: { page: 1, limit: 10, sort: 'id' }};
     expect((new Request(req)).options).to.deep.equal({
       page: 1,
       limit: 10,
@@ -168,7 +168,7 @@ describe('modules/api/util/Request', function() {
       }
     });
 
-    req = {query: { page: 1, limit: 10, order: 'id,name|desc' }};
+    req = {query: { page: 1, limit: 10, sort: 'id,name|desc' }};
     expect((new Request(req)).options).to.deep.equal({
       page: 1,
       limit: 10,
@@ -178,7 +178,7 @@ describe('modules/api/util/Request', function() {
       }
     });
 
-    req = {query: { page: 1, limit: 10, order: ['id','name|desc'] }};
+    req = {query: { page: 1, limit: 10, sort: ['id','name|desc'] }};
     expect((new Request(req)).options).to.deep.equal({
       page: 1,
       limit: 10,
