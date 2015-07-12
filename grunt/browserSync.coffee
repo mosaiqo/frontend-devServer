@@ -11,5 +11,4 @@ module.exports =
       src: '<%= assetsDir %>/**/*.*'
     options:
       watchTask: true
-      proxy: 'localhost:<%= proxiedServer_port %>'
-      port: '<%= serverPort %>'
+      proxy: 'localhost:<%= serverPort %>'

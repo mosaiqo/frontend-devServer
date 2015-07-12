@@ -74,7 +74,6 @@ module.exports = (grunt) ->
 
     # Dev. server settings:
     serverPort:         9000
-    proxiedServer_port: 9001
     browserSyncUIPort:  9002
     weinrePort:         9003
 
