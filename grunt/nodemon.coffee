@@ -13,7 +13,7 @@ module.exports =
           console.log event.colour
           return
       env:
-        PORT: '<%= proxiedServer_port %>'
+        PORT: '<%= serverPort %>'
         DEBUG: 'MosaiqoApp:*'
 
   mosaiqoFrontend_production:
