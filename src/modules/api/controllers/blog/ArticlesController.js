@@ -109,6 +109,8 @@ class ArticlesController extends BaseController
    * Update an Article
    */
   update(req, res, next) {
+    var patch = arguments.length > 3 && arguments[3] === true;
+
     var
       request  = new Request(req),
       response = new Response(request, this.expandsURLMap),
@@ -120,8 +122,7 @@ class ArticlesController extends BaseController
       waterfallOptions = this._buildWaterfallOptions(req.body.slug, req.body.tags),
 
       // mass assignable attrs.
-      newAttrs = this._getAssignableAttributes(request);
-
+      newAttrs = this._getAssignableAttributes(request, patch);
 
     async.waterfall([
       function setup(callback) {
@@ -130,11 +131,25 @@ class ArticlesController extends BaseController
           if (err)           { return callback(err); }
           /* istanbul ignore next */
           if (!articleModel) { return callback(new errors.NotFound()); }
+
           // assign the new attributes
           articleModel.set(newAttrs);
 
           /* istanbul ignore next */
-          if(req.body.author_id) { articleModel.author = req.body.author_id; }
+          if(req.body.author_id || !patch) {
+            articleModel.set({author: req.body.author_id});
+          }
+
+          // if doing a full update, make sure the values are reset if there's no data
+          if(!patch) {
+            if(!req.body.slug) {
+              articleModel.set({slug: undefined});
+            }
+
+            if(!req.body.tags) {
+              waterfallOptions.tags = [];
+            }
+          }
 
           callback(null, articleModel, waterfallOptions);
         });
@@ -173,6 +188,7 @@ class ArticlesController extends BaseController
 
   _setSlug(model, options, callback) {
     if(_.isUndefined(options.slug)) {
+      console.log('_setSlug: slug is undefined');
       callback(null, model, options);
     } else {
       slugger(Article, model.title, options.slug, function(err, articleSlug) {
