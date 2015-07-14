@@ -99,6 +99,7 @@ UserSchema.methods.comparePassword = function (passw, cb) {
 // Register the plugins
 // ----------------------------------
 UserSchema.plugin( require('mongoose-paginate') );
+UserSchema.plugin( require('mongoose-time')() );
 
 
 /* istanbul ignore next */

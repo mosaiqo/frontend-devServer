@@ -53,16 +53,8 @@ var ArticleSchema = new Schema({
       delete ret.id;
 
       // convert the timestamps to dates
-      if(ret.created_at) {
-        ret.created_at = dateUtil.timestampToDate(ret.created_at);
-      }
-
       if(ret.published_at) {
         ret.published_at = dateUtil.timestampToDate(ret.published_at);
-      }
-
-      if(ret.updated_at) {
-        ret.updated_at = dateUtil.timestampToDate(ret.updated_at);
       }
 
       // convert the author id to an ObjectId
@@ -120,6 +112,7 @@ ArticleSchema.methods.getRefs = function() { return ['tags', 'author']; };
 // ----------------------------------
 ArticleSchema.plugin( require('mongoose-paginate') );
 ArticleSchema.plugin( require('mongoose-deep-populate') );
+ArticleSchema.plugin( require('mongoose-time')() );
 
 
 /* istanbul ignore next */

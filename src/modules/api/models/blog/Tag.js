@@ -37,15 +37,6 @@ var TagSchema = new Schema({
       // transform id to _id
       ret._id = ret.id;
       delete ret.id;
-
-      // convert the timestamps to dates
-      if(ret.created_at) {
-        ret.created_at = dateUtil.timestampToDate(ret.created_at);
-      }
-
-      if(ret.updated_at) {
-        ret.updated_at = dateUtil.timestampToDate(ret.updated_at);
-      }
     }
   },
 
@@ -97,6 +88,7 @@ TagSchema.methods.getRefs = function() { return ['articles']; };
 // ----------------------------------
 TagSchema.plugin( require('mongoose-paginate') );
 TagSchema.plugin( require('mongoose-deep-populate') );
+TagSchema.plugin( require('mongoose-time')() );
 
 
 /* istanbul ignore next */
