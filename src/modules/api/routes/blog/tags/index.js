@@ -80,8 +80,9 @@ module.exports = function(router) {
 
 
     /**
-     * @api {get} /blog/tags List all the tags owned by the authenticated user
+     * @api {get} /blog/tags List the tags
      * @apiName List
+     * @apiDescription List all the tags owned by the authenticated user
      * @apiGroup BlogTags
      *
      * @apiUse Tags_CommonApiParams
@@ -183,8 +184,9 @@ module.exports = function(router) {
   router.route('/blog/tags/:id')
 
     /**
-     * @api {get} /blog/tags/:id Get the tag with that id
+     * @api {get} /blog/tags/:id Get a tag
      * @apiName Get
+     * @apiDescription Get the tag with that id
      * @apiGroup BlogTags
      *
      * @apiUse Tags_CommonApiParams
@@ -221,8 +223,9 @@ module.exports = function(router) {
 
 
     /**
-     * @api {put} /blog/tags/:id Update the tag with this id
+     * @api {put} /blog/tags/:id Update a tag
      * @apiName Update
+     * @apiDescription Update the tag with this id
      * @apiGroup BlogTags
      *
      * @apiParam {String} name           Tag name. (must be unique for this client)
@@ -265,8 +268,9 @@ module.exports = function(router) {
 
 
     /**
-     * @api {patch} /blog/tags/:id Update the tag with this id. Only provided values will be applied
+     * @api {patch} /blog/tags/:id Partial update a tag
      * @apiName Patch
+     * @apiDescription Update the tag with this id. Only provided values will be applied
      * @apiGroup BlogTags
      *
      * @apiParam {String} [name]         Tag name. (must be unique for this client)
@@ -309,8 +313,9 @@ module.exports = function(router) {
 
 
     /**
-     * @api {delete} /blog/tags/:id Delete the tag with this id
+     * @api {delete} /blog/tags/:id Delete a tag
      * @apiName Delete
+     * @apiDescription Delete the tag with this id
      * @apiGroup BlogTags
      *
      * @apiUse Tags_CommonApiParams

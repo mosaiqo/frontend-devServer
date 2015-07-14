@@ -92,8 +92,9 @@ module.exports = function(router) {
 
 
     /**
-     * @api {get} /blog/articles List all the articles owned by the authenticated user
+     * @api {get} /blog/articles List the articles
      * @apiName List
+     * @apiDescription List all the articles owned by the authenticated user
      * @apiGroup BlogArticles
      *
      * @apiUse Articles_CommonApiParams
@@ -236,8 +237,9 @@ module.exports = function(router) {
   router.route('/blog/articles/:id')
 
     /**
-     * @api {get} /blog/articles/:id Get the article with that id
+     * @api {get} /blog/articles/:id Get an article
      * @apiName Get
+     * @apiDescription Get the article with that id
      * @apiGroup BlogArticles
      *
      * @apiUse Articles_CommonApiParams
@@ -285,8 +287,9 @@ module.exports = function(router) {
 
 
     /**
-     * @api {put} /blog/articles/:id Update the article with this id
+     * @api {put} /blog/articles/:id Update an article
      * @apiName Update
+     * @apiDescription Update the article with this id
      * @apiGroup BlogArticles
      *
      * @apiParam {String} title          Post title.
@@ -348,8 +351,9 @@ module.exports = function(router) {
 
 
     /**
-     * @api {patch} /blog/articles/:id Update the article with this id. Only provided values will be applied
+     * @api {patch} /blog/articles/:id Partial update an article
      * @apiName Patch
+     * @apiDescription Update the article with this id. Only provided values will be applied
      * @apiGroup BlogArticles
      *
      * @apiParam {String} [title]        Post title.
@@ -411,8 +415,9 @@ module.exports = function(router) {
 
 
     /**
-     * @api {delete} /blog/articles/:id Delete the article with this id
+     * @api {delete} /blog/articles/:id Delete an article
      * @apiName Delete
+     * @apiDescription Delete the article with this id
      * @apiGroup BlogArticles
      *
      * @apiUse Articles_CommonApiParams
