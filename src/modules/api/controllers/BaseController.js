@@ -156,10 +156,12 @@ class BaseController
 
 
   _getAssignableAttributes(request, patch) {
-    var defaults = {};
+    var
+      defaults  = {},
+      safeAttrs = this.Model.safeAttrs;
 
     if(!patch) {
-      defaults = this.Model.safeAttrs.reduce(function(memo, key) {
+      defaults = safeAttrs.reduce(function(memo, key) {
         memo[key] = undefined;
         return memo;
       }, {});
@@ -168,7 +170,7 @@ class BaseController
     return _.extend(
       { owner: request.req.user.userId },
       defaults,
-      _.pick(request.req.body, this.Model.safeAttrs)
+      _.pick(request.req.body, safeAttrs)
     );
   }
 

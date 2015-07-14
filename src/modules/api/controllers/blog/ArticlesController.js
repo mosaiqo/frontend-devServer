@@ -146,6 +146,7 @@ class ArticlesController extends BaseController
               articleModel.set({slug: undefined});
             }
 
+            /* istanbul ignore next */
             if(!req.body.tags) {
               waterfallOptions.tags = [];
             }

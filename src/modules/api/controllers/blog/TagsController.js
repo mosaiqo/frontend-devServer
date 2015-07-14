@@ -130,13 +130,14 @@ class TagsController extends BaseController
 
           // assign the new attributes
           tagModel.set(newAttrs);
-          
+
           // if doing a full update, make sure the values are reset if there's no data
           if(!patch) {
             if(!req.body.slug) {
               tagModel.set({slug: undefined});
             }
 
+            /* istanbul ignore next */
             if(!req.body.articles) {
               tagModel.articles = [];
             }
