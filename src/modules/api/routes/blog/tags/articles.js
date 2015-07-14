@@ -55,6 +55,14 @@ module.exports = function(router) {
 
 
     /**
+     * @api {patch} /blog/tags/:tagId/articles/:id Update the article with this id. Only provided values will be applied
+     * @apiName Patch
+     * @apiGroup BlogTagsArticles
+     */
+    .patch(controller.updatePartial.bind(controller))
+
+
+    /**
      * @api {delete} /blog/tags/:tagId/articles/:id Delete the article with this id
      * @apiName Delete
      * @apiGroup BlogTagsArticles

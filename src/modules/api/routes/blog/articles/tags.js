@@ -47,11 +47,19 @@ module.exports = function(router) {
 
 
     /**
-     * @api {put} /blog/articles/:articleId/tags/:id Update the tag with this id
+     * @api {patch} /blog/articles/:articleId/tags/:id Update the tag with this id
+     * @apiName Patch
+     * @apiGroup BlogArticlesTags
+     */
+    .put(controller.updatePartial.bind(controller))
+
+
+    /**
+     * @api {put} /blog/articles/:articleId/tags/:id Update the tag with this id. Only provided values will be applied
      * @apiName Update
      * @apiGroup BlogArticlesTags
      */
-    .put(controller.update.bind(controller))
+    .patch(controller.update.bind(controller))
 
 
     /**
