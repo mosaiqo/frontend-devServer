@@ -101,6 +101,15 @@ class BaseController
 
 
   /**
+   * Edit one Model instance
+   * @abstract
+   */
+  updatePartial(req, res, next) {
+    this.update(req, res, next, true);
+  }
+
+
+  /**
    * Delete one Model instance
    */
   delete(req, res, next) {
@@ -146,12 +155,22 @@ class BaseController
   }
 
 
-  _getAssignableAttributes(request, customAttrs) {
-    customAttrs = customAttrs || {};
+  _getAssignableAttributes(request, patch) {
+    var
+      defaults  = {},
+      safeAttrs = this.Model.safeAttrs;
+
+    if(!patch) {
+      defaults = safeAttrs.reduce(function(memo, key) {
+        memo[key] = undefined;
+        return memo;
+      }, {});
+    }
+
     return _.extend(
       { owner: request.req.user.userId },
-      customAttrs,
-      _.pick(request.req.body, this.Model.safeAttrs)
+      defaults,
+      _.pick(request.req.body, safeAttrs)
     );
   }
 

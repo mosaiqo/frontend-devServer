@@ -89,7 +89,7 @@ TagSchema.index({ owner: 1, slug: 1}, { unique: true });
 
 // Custom methods and attributes
 // ----------------------------------
-TagSchema.statics.safeAttrs = ['name', 'description', 'owner'];
+TagSchema.statics.safeAttrs = ['name', 'description'];
 TagSchema.methods.getRefs = function() { return ['articles']; };
 
 

@@ -213,6 +213,7 @@ describe('api/blog/tags', function() {
 
     var newAttrs = {
       name        : 'CCCCCC',
+      slug        : 'CCCCCC',
       description : 'XXXXXX'
     };
 
@@ -274,6 +275,94 @@ describe('api/blog/tags', function() {
     it('should return the modified model', function(done) {
       request(app)
         .put('/api/blog/tags/'+createdModel.id)
+        .set('Authorization', authHeader)
+        .send(newAttrs)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(200)
+        .end(function(err, res) {
+
+          var model = res.body.data;
+
+          // check the node attributes
+          isValidTagObject(model);
+
+          expect(model.title).to.equal(newAttrs.title);
+          expect(model.body).to.equal(newAttrs.body);
+
+          done();
+        });
+    });
+
+  });
+
+
+  // -- PATCH ----------------------------------
+
+  describe('Update a tag object -> PUT /api/blog/tags/:id', function() {
+
+    var newAttrs = {
+      name : 'DDDDDD'
+    };
+
+
+    it('should reject the request if there\'s no valid authorization header', function(done) {
+      request(app)
+        .patch('/api/blog/tags/'+createdModel.id)
+        .send(newAttrs)
+        .expect('Content-Type', /application\/json/)
+        .expect(401, done);
+    });
+
+
+    it('should return a 404 error if the model does not exist', function(done) {
+      request(app)
+        .patch('/api/blog/tags/a-non-existing-record-id')
+        .set('Authorization', authHeader)
+        .expect(404, done);
+    });
+
+
+    it('should return a 404 error if the model id is not valid', function(done) {
+      request(app)
+        .patch('/api/blog/tags/XD')
+        .set('Authorization', authHeader)
+        .expect(404)
+        .end(function(err, res) {
+          expect(res.body).to.have.property('error');
+          expect(res.body.error).to.have.property('code');
+          expect(res.body.error.code).to.equal(404);
+          done();
+        });
+    });
+
+
+    it('should return a validation error if the request params are not valid', function(done) {
+      request(app)
+        .patch('/api/blog/tags/'+createdModel.id)
+        .set('Authorization', authHeader)
+        .send({
+          name : ''
+        })
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(422)
+        .end(function(err, res) {
+
+          var response = res.body;
+          expect(response).to.have.property('error');
+          expect(response.error.code).to.equal(422);
+          expect(response).to.have.property('errors');
+          expect(response.errors).to.have.property('name');
+
+          done();
+        });
+    });
+
+
+    it('should return the modified model', function(done) {
+      request(app)
+        .patch('/api/blog/tags/'+createdModel.id)
         .set('Authorization', authHeader)
         .send(newAttrs)
         .set('Accept', 'application/json')

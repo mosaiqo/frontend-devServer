@@ -215,8 +215,9 @@ describe('api/blog/articles', function() {
 
     var newAttrs = {
       title     : 'CCC',
+      slug      : 'CCC',
       body      : 'DDD',
-      author_id : '000000000000000000000001',
+      author_id : '000000000000000000000001'
     };
 
 
@@ -279,6 +280,97 @@ describe('api/blog/articles', function() {
     it('should return the modified model', function(done) {
       request(app)
         .put('/api/blog/articles/'+createdModel.id)
+        .set('Authorization', authHeader)
+        .send(newAttrs)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(200)
+        .end(function(err, res) {
+
+          var model = res.body.data;
+
+          // check the node attributes
+          isValidArticleObject(model);
+
+          expect(model.title).to.equal(newAttrs.title);
+          expect(model.body).to.equal(newAttrs.body);
+
+          done();
+        });
+    });
+
+  });
+
+
+  // -- PATCH ----------------------------------
+
+  describe('Partially update an article object -> PATCH /api/blog/articles/:id', function() {
+
+    var newAttrs = {
+      title : 'DDD',
+      body  : 'EEE'
+    };
+
+
+    it('should reject the request if there\'s no valid authorization header', function(done) {
+      request(app)
+        .patch('/api/blog/articles/'+createdModel.id)
+        .send(newAttrs)
+        .expect('Content-Type', /application\/json/)
+        .expect(401, done);
+    });
+
+
+    it('should return a 404 error if the model does not exist', function(done) {
+      request(app)
+        .patch('/api/blog/articles/a-non-existing-record-id')
+        .set('Authorization', authHeader)
+        .expect(404, done);
+    });
+
+
+    it('should return a 404 error if the model id is not valid', function(done) {
+      request(app)
+        .patch('/api/blog/articles/XD')
+        .set('Authorization', authHeader)
+        .expect(404)
+        .end(function(err, res) {
+          expect(res.body).to.have.property('error');
+          expect(res.body.error).to.have.property('code');
+          expect(res.body.error.code).to.equal(404);
+          done();
+        });
+    });
+
+
+    it('should return a validation error if the request params are not valid', function(done) {
+      request(app)
+        .patch('/api/blog/articles/'+createdModel.id)
+        .set('Authorization', authHeader)
+        .send({
+          title     : '',
+          author_id : 'XD',
+        })
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /application\/json/)
+        .expect(422)
+        .end(function(err, res) {
+
+          var response = res.body;
+          expect(response).to.have.property('error');
+          expect(response.error.code).to.equal(422);
+          expect(response).to.have.property('errors');
+          expect(response.errors).to.have.property('title');
+          expect(response.errors).to.have.property('author');
+
+          done();
+        });
+    });
+
+
+    it('should return the modified model', function(done) {
+      request(app)
+        .patch('/api/blog/articles/'+createdModel.id)
         .set('Authorization', authHeader)
         .send(newAttrs)
         .set('Accept', 'application/json')

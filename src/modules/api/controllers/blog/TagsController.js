@@ -105,6 +105,8 @@ class TagsController extends BaseController
    * Update a Tag
    */
   update(req, res, next) {
+    var patch = arguments.length > 3 && arguments[3] === true;
+
     var
       request  = new Request(req),
       response = new Response(request, this.expandsURLMap),
@@ -116,7 +118,7 @@ class TagsController extends BaseController
       waterfallOptions = this._buildWaterfallOptions(req.body.slug, req.body.articles),
 
       // mass assignable attrs.
-      newAttrs = this._getAssignableAttributes(request);
+      newAttrs = this._getAssignableAttributes(request, patch);
 
     async.waterfall([
       function setup(callback) {
@@ -128,6 +130,18 @@ class TagsController extends BaseController
 
           // assign the new attributes
           tagModel.set(newAttrs);
+
+          // if doing a full update, make sure the values are reset if there's no data
+          if(!patch) {
+            if(!req.body.slug) {
+              tagModel.set({slug: undefined});
+            }
+
+            /* istanbul ignore next */
+            if(!req.body.articles) {
+              tagModel.articles = [];
+            }
+          }
 
           callback(null, tagModel, waterfallOptions);
         });
