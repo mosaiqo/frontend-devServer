@@ -54,7 +54,7 @@ var ArticleSchema = new Schema({
 
       // convert the timestamps to dates
       if(ret.published_at) {
-        ret.published_at = dateUtil.timestampToDate(ret.published_at);
+        ret.publish_date = dateUtil.timestampToDate(ret.published_at);
       }
 
       // convert the author id to an ObjectId
@@ -104,7 +104,7 @@ ArticleSchema.index({ owner: 1, slug: 1}, { unique: true });
 
 // Custom methods and attributes
 // ----------------------------------
-ArticleSchema.statics.safeAttrs = ['title', 'excerpt', 'body', 'published', 'published_at', 'commentable'];
+ArticleSchema.statics.safeAttrs = ['title', 'excerpt', 'body', 'published', 'publish_date', 'commentable'];
 ArticleSchema.methods.getRefs = function() { return ['tags', 'author']; };
 
 
