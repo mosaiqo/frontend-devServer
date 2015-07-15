@@ -189,7 +189,6 @@ class ArticlesController extends BaseController
 
   _setSlug(model, options, callback) {
     if(_.isUndefined(options.slug)) {
-      console.log('_setSlug: slug is undefined');
       callback(null, model, options);
     } else {
       slugger(Article, model.title, options.slug, function(err, articleSlug) {
