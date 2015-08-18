@@ -98,7 +98,7 @@ ArticleSchema.methods.getRefs = function() { return ['tags', 'author']; };
 // Register the plugins
 // ----------------------------------
 ArticleSchema.plugin( require('mongoose-paginate') );
-ArticleSchema.plugin( require('mongoose-deep-populate') );
+ArticleSchema.plugin( require('mongoose-deep-populate')(mongoose) );
 ArticleSchema.plugin( require('mongoose-time')() );
 
 
