@@ -32,13 +32,6 @@ var TagSchema = new Schema({
       ret.updated_at   = dateUtil.dateToTimestamp(ret.updated_at);
     }
   },
-  toObject: {
-    transform: /* istanbul ignore next */ function(doc, ret) {
-      // transform id to _id
-      ret._id = ret.id;
-      delete ret.id;
-    }
-  },
 
   'collection': 'blog.tags'
 
