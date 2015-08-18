@@ -80,7 +80,7 @@ TagSchema.methods.getRefs = function() { return ['articles']; };
 // Register the plugins
 // ----------------------------------
 TagSchema.plugin( require('mongoose-paginate') );
-TagSchema.plugin( require('mongoose-deep-populate') );
+TagSchema.plugin( require('mongoose-deep-populate')(mongoose) );
 TagSchema.plugin( require('mongoose-time')() );
 
 
