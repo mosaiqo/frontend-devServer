@@ -58,7 +58,7 @@ describe('modules/api/util/slugger', function() {
     // mock the model
     var Model = {
       data: [
-        { slug: 'a-slug' },
+        { slug: 'a-slug' }
       ],
       find: function(search, cb) { cb(null, this.data); }
     };
@@ -83,7 +83,26 @@ describe('modules/api/util/slugger', function() {
   });
 
 
-  it('sould return the provided slugged title if no slug is provided', function(done) {
+  it('should return the provided slug if there are other models with that slug and a suffix', function(done) {
+
+    // mock the model
+    var Model = {
+      data: [
+        { slug: 'a-slug-1' },
+        { slug: 'a-slug-4' }
+      ],
+      find: function(search, cb) { cb(null, this.data); }
+    };
+
+    slugger(Model, 'The title', 'a slug', function(err, slug) {
+      expect(slug).to.equal('a-slug');
+    });
+
+    done();
+  });
+
+
+  it('should return the provided slugged title if no slug is provided', function(done) {
 
     // mock the model
     var Model = {

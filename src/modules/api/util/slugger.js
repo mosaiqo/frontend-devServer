@@ -55,7 +55,18 @@ module.exports = function(Model, instanceName, instanceSlug, callback) {
         // No match, return the generated slug
         callback(null, objSlug);
       } else {
-        // Found some docs. with matching slugs.
+
+        var slugIsUsed = models.map(function(model) {
+          return model.slug;
+        }).indexOf(objSlug) > -1;
+
+
+        if(!slugIsUsed) {
+          // No exact match, return the generated slug
+          callback(null, objSlug);
+        } else {
+
+          // Found some docs. with matching slugs.
         // Get the numeric suffixes.
         var suffixes = _.compact(models.map(function(model) {
           var str = model.slug.match(regex)[1];
@@ -73,6 +84,8 @@ module.exports = function(Model, instanceName, instanceSlug, callback) {
         objSlug += '-' + (max+1);
 
         callback(null, objSlug);
+
+        }
       }
     });
 };

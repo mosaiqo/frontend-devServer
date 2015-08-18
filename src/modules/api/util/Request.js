@@ -55,7 +55,11 @@ class Request {
     if(!Array.isArray(expands)) {
       expands = [expands];
     }
-    expands = _.reduce(_.compact(expands), function(memo, expand){ return memo.concat(expand.split(',')); }, []);
+    expands = _.reduce(_.compact(expands), function(memo, expand) {
+      /* istanbul ignore next */
+      var expandParts = expand && _.isString(expand) ? expand.split(',') : [];
+      return memo.concat(expandParts);
+    }, []);
     expands = _.unique(expands);
 
     if(expands.length) {
