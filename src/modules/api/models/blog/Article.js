@@ -46,28 +46,15 @@ var ArticleSchema = new Schema({
       ret.publish_date = dateUtil.dateToTimestamp(ret.publish_date);
     }
   },
-  toObject: {
-    transform: /* istanbul ignore next */ function(doc, ret) {
-      // transform id to _id
-      ret._id = ret.id;
-      delete ret.id;
-
-      // convert the timestamps to dates
-      if(ret.published_at) {
-        ret.publish_date = dateUtil.timestampToDate(ret.published_at);
-      }
-
-      // convert the author id to an ObjectId
-      if(ret.author) {
-        ret.author = mongoose.Types.ObjectId(ret.author);
-      } else {
-        ret.author = null;
-      }
-    }
-  },
 
   'collection': 'blog.articles'
 
+});
+
+
+
+ArticleSchema.virtual('publish_date').set(function (date) {
+  this.published_at = dateUtil.timestampToDate(date);
 });
 
 
